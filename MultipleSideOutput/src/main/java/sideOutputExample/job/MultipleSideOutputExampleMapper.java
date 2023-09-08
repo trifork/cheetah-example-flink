@@ -1,7 +1,7 @@
-package side-output-example.job;
+package sideOutputExample.job;
 
-import side-output-example.model.MultipleSideOutputExampleInputEvent;
-import side-output-example.model.MultipleSideOutputExampleOutputEvent;
+import sideOutputExample.model.MultipleSideOutputExampleInputEvent;
+import sideOutputExample.model.MultipleSideOutputExampleOutputEvent;
 import org.apache.flink.api.common.functions.MapFunction;
 
 /** MultipleSideOutputExampleMapper converts from MultipleSideOutputExampleInputEvent to MultipleSideOutputExampleOutputEvent. */

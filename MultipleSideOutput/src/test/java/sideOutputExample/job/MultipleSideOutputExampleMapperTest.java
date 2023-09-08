@@ -1,6 +1,6 @@
-package side-output-example.job;
+package sideOutputExample.job;
 
-import side-output-example.model.MultipleSideOutputExampleInputEvent;
+import sideOutputExample.model.MultipleSideOutputExampleInputEvent;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;

@@ -1,4 +1,4 @@
-package side-output-example.model;
+package sideOutputExample.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

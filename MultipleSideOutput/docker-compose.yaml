@@ -25,7 +25,7 @@ services:
         - GITHUB_ACTOR
     command: |
       standalone-job
-      --job-classname side-output-example.job.MultipleSideOutputExampleJob
+      --job-classname sideOutputExample.job.MultipleSideOutputExampleJob
       --input-kafka-bootstrap-servers kafka:19092
       --input-kafka-topic MultipleSideOutputExampleInputTopic
       --output-kafka-topic MultipleSideOutputExampleOutputTopic

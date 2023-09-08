@@ -1,7 +1,7 @@
-package side-output-example.job;
+package sideOutputExample.job;
 
-import side-output-example.model.MultipleSideOutputExampleInputEvent;
-import side-output-example.model.MultipleSideOutputExampleOutputEvent;
+import sideOutputExample.model.MultipleSideOutputExampleInputEvent;
+import sideOutputExample.model.MultipleSideOutputExampleOutputEvent;
 import com.trifork.cheetah.processing.connector.kafka.KafkaDataStreamBuilder;
 import com.trifork.cheetah.processing.connector.kafka.KafkaSinkBuilder;
 import com.trifork.cheetah.processing.connector.serialization.SimpleKeySerializationSchema;

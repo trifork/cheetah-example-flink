@@ -85,7 +85,7 @@ Environment variables:
 ## Tests
 ### Unit tests
 
-This project contains a sample Unit test in `src/test/java/side-output-example/job/MultipleSideOutputExampleMapperTest.java`, which utilizes JUnit5.
+This project contains a sample Unit test in `src/test/java/sideOutputExample/job/MultipleSideOutputExampleMapperTest.java`, which utilizes JUnit5.
 
 Unit tests are automatically run as part of the build processing when building the Flink job through either `mvn`, IntelliJ or Docker.
 
