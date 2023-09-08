@@ -1,15 +1,14 @@
 package sideOutputExample.job;
 
-import sideOutputExample.model.MultipleSideOutputExampleInputEvent;
-import sideOutputExample.model.MultipleSideOutputExampleOutputEvent;
+import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
+import org.apache.flink.util.OutputTag;
+import sideOutputExample.model.InputEvent;
 import com.trifork.cheetah.processing.connector.kafka.KafkaDataStreamBuilder;
 import com.trifork.cheetah.processing.connector.kafka.KafkaSinkBuilder;
 import com.trifork.cheetah.processing.connector.serialization.SimpleKeySerializationSchema;
 import com.trifork.cheetah.processing.job.Job;
 import org.apache.flink.connector.kafka.sink.KafkaSink;
-import org.apache.flink.connector.kafka.source.enumerator.initializer.OffsetsInitializer;
 import org.apache.flink.streaming.api.datastream.DataStream;
-import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 
 import java.io.Serializable;
 
@@ -21,31 +20,36 @@ public class MultipleSideOutputExampleJob extends Job implements Serializable {
         new MultipleSideOutputExampleJob().start(args);
     }
 
+    public static OutputTag<InputEvent> outputA;
+    public static OutputTag<InputEvent> outputB;
+    public static OutputTag<InputEvent> outputC;
+    public static OutputTag<InputEvent> outputD;
+
     @Override
     protected void setup() {
         // Input source
-        final DataStream<MultipleSideOutputExampleInputEvent> inputStream =
-                KafkaDataStreamBuilder.forSource(this, MultipleSideOutputExampleInputEvent.class)
+        DataStream<InputEvent> inputStream =
+                KafkaDataStreamBuilder.forSource(this, InputEvent.class)
                         .build();
 
-        // Transform stream
-        final SingleOutputStreamOperator<MultipleSideOutputExampleOutputEvent> outputStream =
-                inputStream.map(new MultipleSideOutputExampleMapper("ExtraFieldValue"));
+        // Process element
+        SingleOutputStreamOperator<InputEvent> dataStream = inputStream.keyBy(InputEvent::getDeviceId)
+                .process(new MultipleSideOutputExampleProcess());
+
 
         // Output sink
-        final KafkaSink<MultipleSideOutputExampleOutputEvent> kafkaSink =
-                KafkaSinkBuilder.defaultKafkaConfig(this, MultipleSideOutputExampleOutputEvent.class)
+        final KafkaSink<InputEvent> kafkaSink =
+                KafkaSinkBuilder.defaultKafkaConfig(this, InputEvent.class)
                         .keySerializationSchema(
                                 new SimpleKeySerializationSchema<>() {
 
                                     @Override
-                                    public Object getKey(final MultipleSideOutputExampleOutputEvent outputEvent) {
+                                    public Object getKey(final InputEvent outputEvent) {
                                         return outputEvent.getDeviceId();
                                     }
                                 })
                         .build();
 
-        // Connect transformed stream to sink
-        outputStream.sinkTo(kafkaSink).name(MultipleSideOutputExampleJob.class.getSimpleName());
+        dataStream.getSideOutput(outputA).sinkTo(kafkaSink);
     }
 }

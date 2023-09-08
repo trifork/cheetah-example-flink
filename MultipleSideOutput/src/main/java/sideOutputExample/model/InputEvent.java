@@ -10,8 +10,11 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class MultipleSideOutputExampleInputEvent {
+public class InputEvent {
     private String deviceId;
-    private double value;
+    private double valueA;
+    private double valueB;
+    private double valueC;
+    private double valueD;
     private long timestamp;
 }
