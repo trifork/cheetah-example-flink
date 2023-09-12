@@ -1,0 +1,17 @@
+@startuml MultipleSideOutput
+
+[MultipleSideOutputExampleInputTopic] as kafkaInputTopic
+
+[MultipleSideOutputExampleJob] as flinkJob
+[OutputA-events] as sinkA
+[OutputB-events] as sinkB
+[OutputCD-events] as sinkCD
+
+flinkJob --> sinkA : Output A
+flinkJob --> sinkB : Output B
+flinkJob --> sinkCD : Output CD
+
+
+kafkaInputTopic --> flinkJob : Input
+
+@enduml
