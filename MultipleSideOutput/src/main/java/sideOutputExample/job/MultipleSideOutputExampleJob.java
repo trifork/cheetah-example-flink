@@ -10,6 +10,7 @@ import com.trifork.cheetah.processing.job.Job;
 import org.apache.flink.connector.kafka.sink.KafkaSink;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import sideOutputExample.model.OutputEvent;
+import sideOutputExample.model.OutputEvent2;
 
 import java.io.Serializable;
 
@@ -21,9 +22,10 @@ public class MultipleSideOutputExampleJob extends Job implements Serializable {
         new MultipleSideOutputExampleJob().start(args);
     }
 
+    // The 3 different kind of output produces by this job
     public static OutputTag<OutputEvent> outputA = new OutputTag<>("output-a"){};
     public static OutputTag<OutputEvent> outputB = new OutputTag<>("output-b"){};
-    public static OutputTag<InputEvent> outputCD = new OutputTag<>("output-cd");
+    public static OutputTag<OutputEvent2> outputCD = new OutputTag<>("output-cd"){};
 
     @Override
     protected void setup() {
@@ -68,5 +70,21 @@ public class MultipleSideOutputExampleJob extends Job implements Serializable {
                         .build();
 
         dataStream.getSideOutput(outputB).sinkTo(kafkaSinkB);
+
+        // Output sink for output CD
+        final KafkaSink<OutputEvent2> kafkaSinkCD =
+                KafkaSinkBuilder.defaultKafkaConfig(this, OutputEvent2.class)
+                        .topic("OutputCD-events")
+                        .keySerializationSchema(
+                                new SimpleKeySerializationSchema<>() {
+
+                                    @Override
+                                    public Object getKey(final OutputEvent2 outputEvent) {
+                                        return outputEvent.getDeviceId();
+                                    }
+                                })
+                        .build();
+
+        dataStream.getSideOutput(outputCD).sinkTo(kafkaSinkCD);
     }
 }

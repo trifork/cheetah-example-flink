@@ -11,7 +11,8 @@ import lombok.Setter;
 @NoArgsConstructor
 public class OutputEvent2 {
     private String deviceId;
-    public double value;
+    public double valueC;
+    public double valueD;
     private long timestamp;
 
 }
