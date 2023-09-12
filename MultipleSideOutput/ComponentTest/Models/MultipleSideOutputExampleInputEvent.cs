@@ -8,8 +8,17 @@ public class MultipleSideOutputExampleInputEvent
     [JsonPropertyName("deviceId")]
     public string DeviceId { get; set; }
 
-    [JsonPropertyName("value")]
-    public double Value { get; set; }
+    [JsonPropertyName("valueA")]
+    public double ValueA { get; set; }
+    
+    [JsonPropertyName("valueB")]
+    public double ValueB { get; set; }
+    
+    [JsonPropertyName("valueC")]
+    public double ValueC { get; set; }
+    
+    [JsonPropertyName("valueD")]
+    public double ValueD { get; set; }
 
     [JsonPropertyName("timestamp")]
     public long Timestamp { get; set; }

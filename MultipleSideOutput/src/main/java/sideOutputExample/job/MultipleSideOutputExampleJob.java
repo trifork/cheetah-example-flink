@@ -9,6 +9,7 @@ import com.trifork.cheetah.processing.connector.serialization.SimpleKeySerializa
 import com.trifork.cheetah.processing.job.Job;
 import org.apache.flink.connector.kafka.sink.KafkaSink;
 import org.apache.flink.streaming.api.datastream.DataStream;
+import sideOutputExample.model.OutputEvent;
 
 import java.io.Serializable;
 
@@ -20,36 +21,52 @@ public class MultipleSideOutputExampleJob extends Job implements Serializable {
         new MultipleSideOutputExampleJob().start(args);
     }
 
-    public static OutputTag<InputEvent> outputA;
-    public static OutputTag<InputEvent> outputB;
-    public static OutputTag<InputEvent> outputC;
-    public static OutputTag<InputEvent> outputD;
+    public static OutputTag<OutputEvent> outputA = new OutputTag<>("output-a"){};
+    public static OutputTag<OutputEvent> outputB = new OutputTag<>("output-b"){};
+    public static OutputTag<InputEvent> outputCD = new OutputTag<>("output-cd");
 
     @Override
     protected void setup() {
         // Input source
-        DataStream<InputEvent> inputStream =
+        final DataStream<InputEvent> inputStream =
                 KafkaDataStreamBuilder.forSource(this, InputEvent.class)
                         .build();
 
         // Process element
-        SingleOutputStreamOperator<InputEvent> dataStream = inputStream.keyBy(InputEvent::getDeviceId)
+        final SingleOutputStreamOperator<InputEvent> dataStream = inputStream.keyBy(InputEvent::getDeviceId)
                 .process(new MultipleSideOutputExampleProcess());
 
 
-        // Output sink
-        final KafkaSink<InputEvent> kafkaSink =
-                KafkaSinkBuilder.defaultKafkaConfig(this, InputEvent.class)
+        // Output sink for output A
+        final KafkaSink<OutputEvent> kafkaSinkA =
+                KafkaSinkBuilder.defaultKafkaConfig(this, OutputEvent.class)
+                        .topic("OutputA-events")
                         .keySerializationSchema(
                                 new SimpleKeySerializationSchema<>() {
 
                                     @Override
-                                    public Object getKey(final InputEvent outputEvent) {
+                                    public Object getKey(final OutputEvent outputEvent) {
                                         return outputEvent.getDeviceId();
                                     }
                                 })
                         .build();
 
-        dataStream.getSideOutput(outputA).sinkTo(kafkaSink);
+        dataStream.getSideOutput(outputA).sinkTo(kafkaSinkA);
+
+        // Output sink for output B
+        final KafkaSink<OutputEvent> kafkaSinkB =
+                KafkaSinkBuilder.defaultKafkaConfig(this, OutputEvent.class)
+                        .topic("OutputB-events")
+                        .keySerializationSchema(
+                                new SimpleKeySerializationSchema<>() {
+
+                                    @Override
+                                    public Object getKey(final OutputEvent outputEvent) {
+                                        return outputEvent.getDeviceId();
+                                    }
+                                })
+                        .build();
+
+        dataStream.getSideOutput(outputB).sinkTo(kafkaSinkB);
     }
 }

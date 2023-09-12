@@ -52,8 +52,11 @@ public class ComponentTest
         var inputEvent = new MultipleSideOutputExampleInputEvent()
         {
             DeviceId = "deviceId-1",
-            Value = 12.34,
-            Timestamp = DateTimeOffset.UnixEpoch.ToUnixTimeMilliseconds()
+            ValueA = 12.34,
+            ValueB = 22.34,
+            ValueC = 32.34,
+            ValueD = 42.34,
+            Timestamp = DateTimeOffset.Now.ToUnixTimeMilliseconds()
         };
         
         writer.Write(inputEvent);
@@ -66,7 +69,7 @@ public class ComponentTest
         // Then evaluate whether your messages are as expected, and that there are only as many as you expected 
         messages.Should().ContainSingle(message => 
             message.DeviceId == inputEvent.DeviceId && 
-            message.Value == inputEvent.Value &&
+            message.Value == inputEvent.ValueA &&
             message.Timestamp == inputEvent.Timestamp &&
             message.ExtraField == "ExtraFieldValue");
         reader.VerifyNoMoreMessages(TimeSpan.FromSeconds(20)).Should().BeTrue();
