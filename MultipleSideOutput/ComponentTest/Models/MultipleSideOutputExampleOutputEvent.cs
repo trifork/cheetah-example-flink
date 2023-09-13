@@ -13,7 +13,4 @@ public class MultipleSideOutputExampleOutputEvent
 
     [JsonPropertyName("timestamp")]
     public long Timestamp { get; set; }
-
-    [JsonPropertyName("extraField")]
-    public string ExtraField { get; set; }
 }

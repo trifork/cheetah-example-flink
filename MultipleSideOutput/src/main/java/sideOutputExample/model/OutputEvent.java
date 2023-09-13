@@ -5,13 +5,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-/** MultipleSideOutputExampleInputEvent represents the events to be processed. */
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class MultipleSideOutputExampleInputEvent {
+public class OutputEvent {
     private String deviceId;
-    private double value;
+    public double value;
     private long timestamp;
+
 }
