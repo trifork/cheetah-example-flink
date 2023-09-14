@@ -1,0 +1,83 @@
+version: "3"
+services:
+  mergetwostreams-test:
+    build:
+      context: ComponentTest
+      dockerfile: Dockerfile
+      secrets:
+        - GITHUB_TOKEN
+        - GITHUB_ACTOR
+    environment:
+      KAFKA__URL: kafka:19092
+      KAFKA__CLIENTID: ClientId
+      KAFKA__CLIENTSECRET: 1234
+      KAFKA__AUTHENDPOINT: http://cheetahoauthsimulator/oauth2/token
+
+  mergetwostreams-job:
+    image: ${DOCKER_REGISTRY-}mergetwostreams-job
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - MAVEN_ARGS=${EXTRA_MAVEN_ARGS-}
+      secrets:
+        - GITHUB_TOKEN
+        - GITHUB_ACTOR
+    command: |
+      standalone-job
+      --job-classname cheetah.example.job.MergeTwoStreamsJob
+      --kafka-bootstrap-servers kafka:19092
+      --input-kafka-topic-A MergeTwoStreamsInputTopicA
+      --input-kafka-topic-B MergeTwoStreamsInputTopicB
+      --output-kafka-topic MergeTwoStreamsOutputTopic
+    environment:
+      KAFKA_CLIENT_ID: ClientId
+      KAFKA_CLIENT_SECRET: 1234
+      KAFKA_TOKEN_URL: http://cheetahoauthsimulator/oauth2/token
+      FLINK_PROPERTIES: |
+        jobmanager.rpc.address: mergetwostreams-job
+        scheduler-mode: reactive
+        rest.flamegraph.enabled: true
+        state.backend: rocksdb
+        state.checkpoints.dir: file:///checkpoints/processing
+        state.savepoints.dir: file:///checkpoints/processing
+        execution.checkpointing.interval: 300 seconds
+        execution.checkpointing.min-pause: 240 seconds
+    depends_on:
+      - mergetwostreams-job-taskmanager
+    volumes:
+      - flink:/checkpoints
+
+  mergetwostreams-job-taskmanager:
+    image: ${DOCKER_REGISTRY-}mergetwostreams-job
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - MAVEN_ARGS=${EXTRA_MAVEN_ARGS-}
+      secrets:
+        - GITHUB_TOKEN
+        - GITHUB_ACTOR
+    command: taskmanager
+    environment:
+      - |
+        FLINK_PROPERTIES=
+        jobmanager.rpc.address: mergetwostreams-job
+        taskmanager.memory.process.size: 4gb
+        taskmanager.numberOfTaskSlots: 2
+    volumes:
+      - flink:/checkpoints
+
+volumes:
+  flink:
+
+secrets:
+  GITHUB_TOKEN:
+    environment: GITHUB_TOKEN
+  GITHUB_ACTOR:
+    environment: GITHUB_ACTOR
+
+networks:
+  default:
+    name: "cheetah-infrastructure"
+    external: true
