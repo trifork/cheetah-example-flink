@@ -5,6 +5,7 @@ using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Xunit;
 using MultipleSideOutputExample.ComponentTest.Models;
+using Confluent.Kafka;
 
 namespace MultipleSideOutputExample.ComponentTest;
 
@@ -30,47 +31,70 @@ public class ComponentTest
     }
 
     [Fact]
-    public void Should_BeImplemented_When_ServiceIsCreated()
-    {
+    public void TestFirstMessageOnAllTopics(){
         // Arrange
-        // Here you'll set up one or more writers and readers, which connect to the topic(s) that your job consumes
-        // from and publishes to. 
+        // Setting up the writer (Kafka producer), not using a message key.
         var writer = KafkaWriterBuilder.Create<string, MultipleSideOutputExampleInputEvent>(_configuration)
-            .WithTopic("MultipleSideOutputExampleInputTopic") // The topic to consume from
-            .WithKeyFunction(model => model.DeviceId) // Optional function to retrieve the message key.
-                                                          // If no key is desired, use KafkaWriterBuilder.Create<Null, InputModel>
-                                                          // and make this function return null
+            .WithTopic("MultipleSideOutputExampleInputTopic")
+            .WithKeyFunction(model => model.DeviceId)
             .Build();
 
-        var reader = KafkaReaderBuilder.Create<string, MultipleSideOutputExampleOutputEvent>(_configuration)
-            .WithTopic("MultipleSideOutputExampleOutputTopic")
-            .WithGroupId("MyGroup")
+        // Setting up readers (Kafka consumer)
+        var reader_topicA = KafkaReaderBuilder.Create<string, MultipleSideOutputExampleOutputEvent>(_configuration)
+            .WithTopic("OutputA-events")
+            .WithGroupId("ComponentTest")
             .Build();
-        
+
+        var reader_topicB = KafkaReaderBuilder.Create<string, MultipleSideOutputExampleOutputEvent>(_configuration)
+            .WithTopic("OutputB-events")
+            .WithGroupId("ComponentTest")
+            .Build();
+
+        var reader_topicCD = KafkaReaderBuilder.Create<string, MultipleSideOutputExampleOutputEvent2>(_configuration)
+            .WithTopic("OutputCD-events")
+            .WithGroupId("ComponentTest")
+            .Build();
+
         // Act
-        // Write one or more messages to the writer
-        var inputEvent = new MultipleSideOutputExampleInputEvent()
-        {
-            DeviceId = "deviceId-1",
-            Value = 12.34,
-            Timestamp = DateTimeOffset.UnixEpoch.ToUnixTimeMilliseconds()
+        // Making an input event
+        var inputEvent = new MultipleSideOutputExampleInputEvent(){
+            DeviceId = "ComponentTest",
+            ValueA = 100,
+            ValueB = 100,
+            ValueC = 100,
+            ValueD = 100,
+            Timestamp = DateTimeOffset.Now.ToUnixTimeMilliseconds()
         };
-        
-        writer.Write(inputEvent);
-        
-        // Assert
-        // Then consume using the reader, supplying how many output messages your input messages expected to generate
-        // as well as the maximum duration it is allowed to take for those messages to be produced
-        var messages = reader.ReadMessages(1, TimeSpan.FromSeconds(20));
-        
-        // Then evaluate whether your messages are as expected, and that there are only as many as you expected 
-        messages.Should().ContainSingle(message => 
-            message.DeviceId == inputEvent.DeviceId && 
-            message.Value == inputEvent.Value &&
-            message.Timestamp == inputEvent.Timestamp &&
-            message.ExtraField == "ExtraFieldValue");
-        reader.VerifyNoMoreMessages(TimeSpan.FromSeconds(20)).Should().BeTrue();
 
-        Assert.True(false, "This is really just here to make the test fail and ensure that you either decide to implement a component test or actively decide not to");
+        writer.Write(inputEvent);
+
+        // Assert
+        // Assuming the job produce the message on each topic
+        var messages_topicA = reader_topicA.ReadMessages(1, TimeSpan.FromSeconds(20));
+        var messages_topicB = reader_topicB.ReadMessages(1, TimeSpan.FromSeconds(20));
+        var messages_topicCD = reader_topicCD.ReadMessages(1, TimeSpan.FromSeconds(20));
+
+        messages_topicA.Should().ContainSingle(message =>
+            message.DeviceId == inputEvent.DeviceId &&
+            message.Value == inputEvent.ValueA &&
+            message.Timestamp == inputEvent.Timestamp
+        );
+        reader_topicA.VerifyNoMoreMessages(TimeSpan.FromSeconds(20)).Should().BeTrue();
+
+        messages_topicB.Should().ContainSingle(message =>
+            message.DeviceId == inputEvent.DeviceId &&
+            message.Value == inputEvent.ValueB &&
+            message.Timestamp == inputEvent.Timestamp
+        );
+        reader_topicB.VerifyNoMoreMessages(TimeSpan.FromSeconds(20)).Should().BeTrue();
+
+        messages_topicCD.Should().ContainSingle(message =>
+            message.DeviceId == inputEvent.DeviceId &&
+            message.ValueC == inputEvent.ValueC &&
+            message.ValueD == inputEvent.ValueD &&
+            message.Timestamp == inputEvent.Timestamp
+        );
+        reader_topicCD.VerifyNoMoreMessages(TimeSpan.FromSeconds(20)).Should().BeTrue();
     }
+    
 }
