@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-/** MergeTwoStreamsInputEvent represents the events to be processed. */
+/** MergeTwoStreamsInputEventA represents the events to be processed from Stream A. */
 @Getter
 @Setter
 @AllArgsConstructor

@@ -1,8 +1,8 @@
  # MergeTwoStreams
 
-This repository contains a templated flink job. Processing is handled by Apache Flink which is a statefull scalable stream processing framework. You can find more information about Apache Flink [here](https://flink.apache.org/).
+This repository contains a flink job used for showing how to merge information from two separate streams into one.
 
-The flink job consumes messages from a kafka topic with simple messages, enriches these messages and publishes the enriched messages on another kafka topic.
+The streams will be joined based on the deviceId found in both input-streams.
 
 ## Project structure
 
