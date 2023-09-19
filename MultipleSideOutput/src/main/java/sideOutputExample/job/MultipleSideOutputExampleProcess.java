@@ -4,22 +4,40 @@ import org.apache.flink.api.common.state.ValueState;
 import org.apache.flink.api.common.state.ValueStateDescriptor;
 import org.apache.flink.api.common.typeinfo.Types;
 import org.apache.flink.configuration.Configuration;
+import org.apache.flink.streaming.api.TimeDomain;
+import org.apache.flink.streaming.api.TimerService;
 import org.apache.flink.streaming.api.functions.KeyedProcessFunction;
 import org.apache.flink.util.Collector;
 import sideOutputExample.model.InputEvent;
 import sideOutputExample.model.OutputEvent;
 import sideOutputExample.model.OutputEvent2;
 
+/**
+ * Takes an input event and checks the values of the event, depending on the values it produces a side output.
+ * Each value is stored in the state.
+ */
 public class MultipleSideOutputExampleProcess extends KeyedProcessFunction<String, InputEvent, InputEvent> {
 
     private transient ValueState<OutputEvent> stateA;
     private transient ValueState<OutputEvent> stateB;
     private transient ValueState<OutputEvent2> stateCD;
 
+    /**
+     * Stores state A, B and CD - these are based on the values of the same name.
+     * @param inputEvent The incoming event.
+     * @param context A {@link Context} that allows querying the timestamp of the element, querying the
+     *            {@link TimeDomain} of the firing timer and getting a {@link TimerService} for registering
+     *            timers and querying the time. The context is only valid during the invocation of this
+     *            method, do not store it.
+     * @param collector The main output - it's not used in this example.
+     * @throws Exception
+     */
     @Override
     public void processElement(InputEvent inputEvent, KeyedProcessFunction<String, InputEvent, InputEvent>.Context context, Collector<InputEvent> collector) throws Exception {
-        // Update the states if the event id hasn't been seen before.
-        // Or if the state is different from the last known state.
+        /* Update the states if the event id hasn't been seen before.
+         * Or if the state is different from the last known state.
+         * Then output the given event onto its corresponding side output
+        */
         if(stateA.value() == null ||
                 stateA.value().getValue() != inputEvent.getValueA()){
             OutputEvent outputEvent = new OutputEvent(
@@ -57,6 +75,11 @@ public class MultipleSideOutputExampleProcess extends KeyedProcessFunction<Strin
 
     }
 
+    /**
+     * Set up all the states store for the given values
+     * @param parameters The configuration containing the parameters attached to the contract.
+     * @throws Exception
+     */
     @Override
     public void open(Configuration parameters) throws Exception {
         ValueStateDescriptor<OutputEvent> descriptorA = new ValueStateDescriptor<>(

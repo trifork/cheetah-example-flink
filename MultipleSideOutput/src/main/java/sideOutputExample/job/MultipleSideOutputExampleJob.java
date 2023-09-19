@@ -14,7 +14,12 @@ import sideOutputExample.model.OutputEvent2;
 
 import java.io.Serializable;
 
-/** MultipleSideOutputExampleJob sets up the data processing job. */
+/** MultipleSideOutputExampleJob sets up the data processing job.
+ *  This job does not contain a main output, as each of the 3 outputs is only
+ *  used if specific conditions is met.
+ *  This doest not mean the main output can't be used.
+ *  And it can be done just like any other main output from a function
+ *  */
 public class MultipleSideOutputExampleJob extends Job implements Serializable {
 
     @SuppressWarnings("PMD.SignatureDeclareThrowsException") // Fix once lib-processing is fixed
@@ -38,7 +43,7 @@ public class MultipleSideOutputExampleJob extends Job implements Serializable {
         final SingleOutputStreamOperator<InputEvent> dataStream = inputStream.keyBy(InputEvent::getDeviceId)
                 .process(new MultipleSideOutputExampleProcess());
 
-
+        //
         // Output sink for output A
         final KafkaSink<OutputEvent> kafkaSinkA =
                 KafkaSinkBuilder.defaultKafkaConfig(this, OutputEvent.class)
@@ -52,7 +57,7 @@ public class MultipleSideOutputExampleJob extends Job implements Serializable {
                                     }
                                 })
                         .build();
-
+        // Taking the side output from the data stream that has be put on to side output A
         dataStream.getSideOutput(outputA).sinkTo(kafkaSinkA);
 
         // Output sink for output B
@@ -68,7 +73,7 @@ public class MultipleSideOutputExampleJob extends Job implements Serializable {
                                     }
                                 })
                         .build();
-
+        // Taking the side output from the data stream that has be put on to side output B
         dataStream.getSideOutput(outputB).sinkTo(kafkaSinkB);
 
         // Output sink for output CD
@@ -84,7 +89,7 @@ public class MultipleSideOutputExampleJob extends Job implements Serializable {
                                     }
                                 })
                         .build();
-
+        // Taking the side output from the data stream that has be put on to side output CD
         dataStream.getSideOutput(outputCD).sinkTo(kafkaSinkCD);
     }
 }

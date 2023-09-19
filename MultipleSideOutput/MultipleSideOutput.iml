@@ -209,5 +209,6 @@
     <orderEntry type="library" scope="TEST" name="Maven: net.bytebuddy:byte-buddy:1.12.10" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.apache.flink:flink-statebackend-changelog:1.16.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.apache.flink:flink-statebackend-common:1.16.1" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.apache.flink:flink-streaming-java:tests:1.16.1" level="project" />
   </component>
 </module>
