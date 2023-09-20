@@ -8,7 +8,6 @@ using Observability.ComponentTest.PrometheusMetrics;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Linq;
-using System.Globalization;
 
 namespace Observability.ComponentTest;
 
@@ -64,10 +63,10 @@ public class ComponentTest
             Timestamp = DateTimeOffset.UnixEpoch.ToUnixTimeMilliseconds()
         };
 
-        writer.Write(inputEvent);
-        writer.Write(inputEvent2);
-        writer.Write(inputEvent2);
-        writer.Write(inputEvent);
+        await writer.WriteAsync(inputEvent);
+        await writer.WriteAsync(inputEvent2);
+        await writer.WriteAsync(inputEvent2);
+        await writer.WriteAsync(inputEvent);
 
         //Wait, to ensure processing is done
         Thread.Sleep(2000);

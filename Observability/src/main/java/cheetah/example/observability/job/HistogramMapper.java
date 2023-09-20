@@ -5,9 +5,7 @@ import com.codahale.metrics.SlidingWindowReservoir;
 import org.apache.flink.api.common.functions.RichMapFunction;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.dropwizard.metrics.DropwizardHistogramWrapper;
-import org.apache.flink.metrics.Gauge;
 import org.apache.flink.metrics.Histogram;
-import org.apache.flink.metrics.HistogramStatistics;
 
 public class HistogramMapper extends RichMapFunction<ObservabilityInputEvent, ObservabilityInputEvent> {
 
