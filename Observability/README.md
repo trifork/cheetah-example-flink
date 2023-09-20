@@ -1,8 +1,8 @@
  # Observability
 
-This repository contains a templated flink job. Processing is handled by Apache Flink which is a statefull scalable stream processing framework. You can find more information about Apache Flink [here](https://flink.apache.org/).
+This repository contains a flink job showing how you can add your own metrics. Processing is handled by Apache Flink which is a statefull scalable stream processing framework. You can find more information about Apache Flink [here](https://flink.apache.org/).
 
-The flink job consumes messages from a kafka topic with simple messages, enriches these messages and publishes the enriched messages on another kafka topic.
+The flink job consumes messages from a kafka topic with simple messages, processes the messages to create relevant metrics.
 
 ## Project structure
 
@@ -69,7 +69,6 @@ Program arguments:
 ```
 --kafka-bootstrap-servers localhost:9092
 --input-kafka-topic ObservabilityInputTopic
---output-kafka-topic ObservabilityOutputTopic
 ```
 Environment variables:
 ```
@@ -80,8 +79,6 @@ Environment variables:
 
 ## Tests
 ### Unit tests
-
-This project contains a sample Unit test in `src/test/java/cheetah/example/observability/job/ObservabilityMapperTest.java`, which utilizes JUnit5.
 
 Unit tests are automatically run as part of the build processing when building the Flink job through either `mvn`, IntelliJ or Docker.
 
@@ -148,6 +145,5 @@ If data needs to be persisted in a database for direct query by some other servi
 
 An approach proven to be good, is to start by writing a unit test for the processing job under development.
 Then proceed in micro iterations, carefully assert expected output and behavior.
-The project includes several examples for JUnit tests.
 
 It is not recommended to use Mockto, since Flick is not happy about it and will produce unstable results.
