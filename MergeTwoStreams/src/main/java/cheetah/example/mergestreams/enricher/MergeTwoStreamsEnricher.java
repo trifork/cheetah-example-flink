@@ -1,8 +1,8 @@
-package cheetah.example.enricher;
+package cheetah.example.mergestreams.enricher;
 
-import cheetah.example.model.MergeTwoStreamsInputEventA;
-import cheetah.example.model.MergeTwoStreamsInputEventB;
-import cheetah.example.model.MergeTwoStreamsOutputEvent;
+import cheetah.example.mergestreams.model.MergeTwoStreamsInputEventA;
+import cheetah.example.mergestreams.model.MergeTwoStreamsInputEventB;
+import cheetah.example.mergestreams.model.MergeTwoStreamsOutputEvent;
 import org.apache.flink.api.common.state.ValueState;
 import org.apache.flink.api.common.state.ValueStateDescriptor;
 import org.apache.flink.api.common.typeinfo.TypeHint;

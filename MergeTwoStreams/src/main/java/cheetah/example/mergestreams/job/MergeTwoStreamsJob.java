@@ -1,9 +1,9 @@
-package cheetah.example.job;
+package cheetah.example.mergestreams.job;
 
-import cheetah.example.enricher.MergeTwoStreamsEnricher;
-import cheetah.example.model.MergeTwoStreamsInputEventA;
-import cheetah.example.model.MergeTwoStreamsInputEventB;
-import cheetah.example.model.MergeTwoStreamsOutputEvent;
+import cheetah.example.mergestreams.enricher.MergeTwoStreamsEnricher;
+import cheetah.example.mergestreams.model.MergeTwoStreamsInputEventA;
+import cheetah.example.mergestreams.model.MergeTwoStreamsInputEventB;
+import cheetah.example.mergestreams.model.MergeTwoStreamsOutputEvent;
 import com.trifork.cheetah.processing.connector.kafka.KafkaDataStreamBuilder;
 import com.trifork.cheetah.processing.connector.kafka.KafkaSinkBuilder;
 import com.trifork.cheetah.processing.connector.serialization.SimpleKeySerializationSchema;

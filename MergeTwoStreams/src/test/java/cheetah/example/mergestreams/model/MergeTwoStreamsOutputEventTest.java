@@ -1,13 +1,14 @@
-package cheetah.example.model;
+package cheetah.example.mergestreams.model;
 
+import cheetah.example.mergestreams.model.MergeTwoStreamsOutputEvent;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.flink.types.PojoTestUtils.assertSerializedAsPojo;
 import static org.apache.flink.types.PojoTestUtils.assertSerializedAsPojoWithoutKryo;
 
-class MergeTwoStreamsInputEventTest {
+class MergeTwoStreamsOutputEventTest {
     /*
-     This test ensures that the input event class can be serialized without using the Kryo serializer. Similar tests
+     This test ensures that the output event class can be serialized without using the Kryo serializer. Similar tests
      should be implemented for any class that is serialized often, i.e. input/output models, objects that are stored in
      state, etc.
 
@@ -17,9 +18,7 @@ class MergeTwoStreamsInputEventTest {
      */
     @Test
     void isSerializedAsPojo() {
-        assertSerializedAsPojo(MergeTwoStreamsInputEventA.class);
-        assertSerializedAsPojoWithoutKryo(MergeTwoStreamsInputEventA.class);
-        assertSerializedAsPojo(MergeTwoStreamsInputEventB.class);
-        assertSerializedAsPojoWithoutKryo(MergeTwoStreamsInputEventB.class);
+        assertSerializedAsPojo(MergeTwoStreamsOutputEvent.class);
+        assertSerializedAsPojoWithoutKryo(MergeTwoStreamsOutputEvent.class);
     }
 }
