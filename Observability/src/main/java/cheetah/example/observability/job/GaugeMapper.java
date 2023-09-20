@@ -5,6 +5,9 @@ import org.apache.flink.api.common.functions.RichMapFunction;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.metrics.Gauge;
 
+/**
+ * The purpose of the GaugeMapper is to count the number of messages processed
+ */
 public class GaugeMapper extends RichMapFunction<ObservabilityInputEvent, ObservabilityInputEvent> {
 
     private transient int messagesProcessed = 0;

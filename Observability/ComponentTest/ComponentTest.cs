@@ -73,7 +73,7 @@ public class ComponentTest
 
         //Assert
         //Read counter values.
-        //Note that counters in flínk are represented as Gauges
+        //Note that counters in flink are represented as Gauges
         var counter = await metricsReader.GetCounterValueAsync("CountOfMessages");
         Assert.Equal(4, counter);
 
