@@ -25,6 +25,4 @@ runs:
   - name: Build with Maven
     shell: bash
     working-directory: ${{ inputs.settings-path }}
-    run: mvn install -B -s settings.xml
-    env:
-      GITHUB_TOKEN: ${{ inputs.PAT }}
+    run: mvn -B package --file pom.xml -D"maven.repo.local=.m2/repository"
