@@ -1,0 +1,19 @@
+name: Maven build and test
+on:
+  workflow_dispatch:
+  push:
+    branches: ["main"]
+
+jobs:
+  build-and-test:
+    name: "Build and test maven project"
+    runs-on: ubuntu-latest
+
+    steps: 
+      - uses: actions/checkout@4
+
+      - name: Build and Test maven project
+        uses: trifork/cheetah-lib-templates-java/.github/actions/maven-build-and-test
+        with: 
+          PAT: $ {{ secrets.PACKAGE_PAT }}
+          settings-path: ./MergeTwoStreams/
