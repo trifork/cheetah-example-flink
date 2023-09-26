@@ -1,11 +1,11 @@
-package tumblingWindow.model;
+package tumblingwindow.model;
 
 import org.junit.jupiter.api.Test;
 
 import static org.apache.flink.types.PojoTestUtils.assertSerializedAsPojo;
 import static org.apache.flink.types.PojoTestUtils.assertSerializedAsPojoWithoutKryo;
 
-class TumblingWindowOutputEventTest {
+class TumblingWindowInputEventTest {
     /*
      This test ensures that the input event class can be serialized without using the Kryo serializer. Similar tests
      should be implemented for any class that is serialized often, i.e. input/output models, objects that are stored in
@@ -17,7 +17,7 @@ class TumblingWindowOutputEventTest {
      */
     @Test
     void isSerializedAsPojo() {
-        assertSerializedAsPojo(TumblingWindowOutputEvent.class);
-        assertSerializedAsPojoWithoutKryo(TumblingWindowOutputEvent.class);
+        assertSerializedAsPojo(TumblingWindowInputEvent.class);
+        assertSerializedAsPojoWithoutKryo(TumblingWindowInputEvent.class);
     }
 }

@@ -1,4 +1,4 @@
-package tumblingWindow.model;
+package tumblingwindow.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,6 +12,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class TumblingWindowInputEvent {
     private String deviceId;
-    private double value;
     private long timestamp;
+    private double value;
 }

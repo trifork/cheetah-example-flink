@@ -1,4 +1,12 @@
-# Compiled class file
+# VSCode
+.vs
+
+# IntelliJ
+*.iml
+.idea
+
+# Compilation
+target
 *.class
 
 # Log file
@@ -23,4 +31,6 @@
 hs_err_pid*
 replay_pid*
 
-.vs
+# Maven
+.m2/*
+!.m2

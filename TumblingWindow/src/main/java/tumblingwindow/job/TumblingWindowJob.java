@@ -1,19 +1,19 @@
-package tumblingWindow.job;
+package tumblingwindow.job;
 
-import com.trifork.cheetah.processing.util.WatermarkStrategyBuilder;
-import org.apache.flink.api.common.eventtime.WatermarkStrategy;
-import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows;
-import org.apache.flink.streaming.api.windowing.time.Time;
-import tumblingWindow.model.TumblingWindowInputEvent;
-import tumblingWindow.model.TumblingWindowOutputEvent;
 import com.trifork.cheetah.processing.connector.kafka.KafkaDataStreamBuilder;
 import com.trifork.cheetah.processing.connector.kafka.KafkaSinkBuilder;
 import com.trifork.cheetah.processing.connector.serialization.SimpleKeySerializationSchema;
 import com.trifork.cheetah.processing.job.Job;
+import com.trifork.cheetah.processing.util.WatermarkStrategyBuilder;
+import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.connector.kafka.sink.KafkaSink;
 import org.apache.flink.connector.kafka.source.enumerator.initializer.OffsetsInitializer;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
+import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows;
+import org.apache.flink.streaming.api.windowing.time.Time;
+import tumblingwindow.model.TumblingWindowInputEvent;
+import tumblingwindow.model.TumblingWindowOutputEvent;
 
 import java.io.Serializable;
 import java.time.Instant;
@@ -29,22 +29,22 @@ public class TumblingWindowJob extends Job implements Serializable {
     @Override
     protected void setup() {
         // Input source
-        final DataStream<TumblingWindowInputEvent> inputStream =
+        DataStream<TumblingWindowInputEvent> inputStream =
                 KafkaDataStreamBuilder.forSource(this, TumblingWindowInputEvent.class)
                         .offsetsInitializer(OffsetsInitializer.earliest())
                         .build();
 
         // Transform stream
-        final WatermarkStrategy<TumblingWindowInputEvent> watermarkStrategy = WatermarkStrategyBuilder
+        WatermarkStrategy<TumblingWindowInputEvent> watermarkStrategy = WatermarkStrategyBuilder
                 .builder(TumblingWindowInputEvent.class)
                 .eventTimestampSupplier(input -> Instant.ofEpochMilli(input.getTimestamp()))
                 .build();
 
-        final SingleOutputStreamOperator<TumblingWindowOutputEvent> outputStream = inputStream
+        SingleOutputStreamOperator<TumblingWindowOutputEvent> outputStream = inputStream
                 .assignTimestampsAndWatermarks(watermarkStrategy)
                 .keyBy(TumblingWindowInputEvent::getDeviceId)
                 .window(TumblingEventTimeWindows.of(Time.minutes(5)))
-                .process(new TumblingWindowMapper());
+                .aggregate(new TumblingWindowAggregate(), new TumblingWindowFunction());
 
         // Output sink
         final KafkaSink<TumblingWindowOutputEvent> kafkaSink =
