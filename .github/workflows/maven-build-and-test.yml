@@ -13,7 +13,7 @@ jobs:
       - uses: actions/checkout@4
 
       - name: Build and Test maven project
-        uses: trifork/cheetah-lib-templates-java/.github/actions/maven-build-and-test
+        uses: trifork/cheetah-lib-templates-java/.github/actions/maven-build-and-test@main
         with: 
           PAT: $ {{ secrets.PACKAGE_PAT }}
           settings-path: ./MergeTwoStreams/
