@@ -2,9 +2,6 @@ name: "Build and test maven project"
 description: Action that builds and test maven project
 
 inputs:
-  PAT:
-    description: A personal access token with permission to publish a package
-    required: true
   settings-path:
     description: Path of maven settings file
     required: true
@@ -25,4 +22,4 @@ runs:
   - name: Build with Maven
     shell: bash
     working-directory: ${{ inputs.settings-path }}
-    run: mvn -B package --file pom.xml -D"maven.repo.local=.m2/repository"
+    run: mvn install -B -s settings.xml
