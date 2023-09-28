@@ -56,7 +56,8 @@ RUN mkdir /opt/flink/plugins/s3-fs-hadoop/; \
     mkdir ./plugins/azure-fs-hadoop; \
     cp /opt/flink/opt/flink-s3-fs-hadoop-1.16.1.jar /opt/flink/plugins/s3-fs-hadoop/; \
     cp /opt/flink/opt/flink-s3-fs-presto-1.16.1.jar /opt/flink/plugins/s3-fs-presto/; \
-    cp ./opt/flink-azure-fs-hadoop-1.16.1.jar ./plugins/azure-fs-hadoop/
+    cp ./opt/flink-azure-fs-hadoop-1.16.1.jar ./plugins/azure-fs-hadoop/; \
+    rm -rf /opt/flink/opt/*
 
 RUN mkdir -p /checkpoints && chmod 777 /checkpoints
 

@@ -23,7 +23,6 @@ public class FlinkReducingStatesMapper extends RichFlatMapFunction<FlinkStatesIn
     public void flatMap(FlinkStatesInputEvent value, Collector<Double> out) throws Exception {
         sum.add(value.getValue());
         out.collect(sum.get());
-
     }
 
     @Override

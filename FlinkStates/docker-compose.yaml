@@ -28,7 +28,11 @@ services:
       --job-classname cheetah.example.job.FlinkStatesJob
       --kafka-bootstrap-servers kafka:19092
       --input-kafka-topic FlinkStatesInputTopic
-      --output-kafka-topic FlinkStatesOutputTopic
+      --output-kafka-topic-value FlinkStatesOutputTopic-value
+      --output-kafka-topic-reducing FlinkStatesOutputTopic-reducing
+      --output-kafka-topic-aggregating FlinkStatesOutputTopic-aggregating
+      --output-kafka-topic-list FlinkStatesOutputTopic-list
+      --output-kafka-topic-map FlinkStatesOutputTopic-map
     environment:
       KAFKA_CLIENT_ID: ClientId
       KAFKA_CLIENT_SECRET: 1234
