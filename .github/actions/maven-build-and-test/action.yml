@@ -5,6 +5,9 @@ inputs:
   settings-path:
     description: Path of maven settings file
     required: true
+  PAT:
+    description: Personal access token to access external dependencies 
+    required: true
 
 runs:
   using: composite
@@ -24,4 +27,4 @@ runs:
     working-directory: ${{ inputs.settings-path }}
     run: mvn install -B -s settings.xml
     env:
-      GITHUB_TOKEN: ${{ github.token }}
+      GITHUB_TOKEN: ${{ inputs.PAT }}

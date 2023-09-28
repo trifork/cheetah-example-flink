@@ -1,18 +1,76 @@
-name: Maven build and test
+name: Maven build and test all projects in Cheetah Platform Examples
 on:
   workflow_dispatch:
+  
   push:
     branches: ["main"]
 
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    - cron: '30 0 * * *'
+
 jobs:
-  build-and-test:
-    name: "Build and test maven project"
+  build-and-test-flink-states:
+    name: "Build and test Flink States maven project"
     runs-on: ubuntu-latest
 
     steps: 
       - uses: actions/checkout@v4
 
-      - name: Build and Test maven project
+      - name: Build and test Flink States maven project
         uses: trifork/cheetah-platform-examples/.github/actions/maven-build-and-test@main
         with: 
-          settings-path: ./MergeTwoStreams/
+          settings-path: ./FlinkStates/
+          PAT: ${{ secrets.PACKAGE_PAT }}
+  
+  build-and-test-merge-two-streams:
+    name: "Build and test Merge Two Streams maven project"
+    runs-on: ubuntu-latest
+
+    steps: 
+      - uses: actions/checkout@v4
+
+      - name: Build and test Merge Two Streams maven project
+        uses: trifork/cheetah-platform-examples/.github/actions/maven-build-and-test@main
+        with: 
+          settings-path: ./FlinkStates/
+          PAT: ${{ secrets.PACKAGE_PAT }}
+
+  build-and-test-multiple-side-output:
+    name: "Build and test Multiple Side Output maven project"
+    runs-on: ubuntu-latest
+
+    steps: 
+      - uses: actions/checkout@v4
+
+      - name: Build and test Multiple Side Output maven project
+        uses: trifork/cheetah-platform-examples/.github/actions/maven-build-and-test@main
+        with: 
+          settings-path: ./FlinkStates/
+          PAT: ${{ secrets.PACKAGE_PAT }}
+  
+  build-and-test-observability:
+    name: "Build and test Observability maven project"
+    runs-on: ubuntu-latest
+
+    steps: 
+      - uses: actions/checkout@v4
+
+      - name: Build and test Observability maven project
+        uses: trifork/cheetah-platform-examples/.github/actions/maven-build-and-test@main
+        with: 
+          settings-path: ./FlinkStates/
+          PAT: ${{ secrets.PACKAGE_PAT }}
+  
+  build-and-test-tumbling-window:
+    name: "Build and test Tumbling Window maven project"
+    runs-on: ubuntu-latest
+
+    steps: 
+      - uses: actions/checkout@v4
+
+      - name: Build and test Tumbling Window maven project
+        uses: trifork/cheetah-platform-examples/.github/actions/maven-build-and-test@main
+        with: 
+          settings-path: ./FlinkStates/
+          PAT: ${{ secrets.PACKAGE_PAT }}
