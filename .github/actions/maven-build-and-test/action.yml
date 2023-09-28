@@ -22,4 +22,4 @@ runs:
   - name: Build with Maven
     shell: bash
     working-directory: ${{ inputs.settings-path }}
-    run: mvn install -B -s settings.xml
+    run: mvn install -B -ssettings.xml
