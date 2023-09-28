@@ -1,0 +1,16 @@
+# Maven
+.git
+.idea
+/target
+# Local m2 repo for caching
+!.m2/
+.m2/**
+# exclude .gitkeep
+!.gitkeep
+
+# .NET
+**/bin
+**/obj
+
+# Mega-linter
+megalinter-reports/

@@ -1,0 +1,82 @@
+version: "3"
+services:
+  flinkstates-test:
+    build:
+      context: ComponentTest
+      dockerfile: Dockerfile
+      secrets:
+        - GITHUB_TOKEN
+        - GITHUB_ACTOR
+    environment:
+      KAFKA__URL: kafka:19092
+      KAFKA__CLIENTID: ClientId
+      KAFKA__CLIENTSECRET: 1234
+      KAFKA__AUTHENDPOINT: http://cheetahoauthsimulator/oauth2/token
+
+  flinkstates-jobmanager:
+    image: ${DOCKER_REGISTRY-}flinkstates-job
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - MAVEN_ARGS=${EXTRA_MAVEN_ARGS-}
+      secrets:
+        - GITHUB_TOKEN
+        - GITHUB_ACTOR
+    command: |
+      standalone-job
+      --job-classname cheetah.example.job.FlinkStatesJob
+      --kafka-bootstrap-servers kafka:19092
+      --input-kafka-topic FlinkStatesInputTopic
+      --output-kafka-topic FlinkStatesOutputTopic
+    environment:
+      KAFKA_CLIENT_ID: ClientId
+      KAFKA_CLIENT_SECRET: 1234
+      KAFKA_TOKEN_URL: http://cheetahoauthsimulator/oauth2/token
+      FLINK_PROPERTIES: |
+        jobmanager.rpc.address: flinkstates-jobmanager
+        scheduler-mode: reactive
+        rest.flamegraph.enabled: true
+        state.backend: rocksdb
+        state.checkpoints.dir: file:///checkpoints/processing
+        state.savepoints.dir: file:///checkpoints/processing
+        execution.checkpointing.interval: 300 seconds
+        execution.checkpointing.min-pause: 240 seconds
+    depends_on:
+      - flinkstates-taskmanager
+    volumes:
+      - flink:/checkpoints
+
+  flinkstates-taskmanager:
+    image: ${DOCKER_REGISTRY-}flinkstates-job
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - MAVEN_ARGS=${EXTRA_MAVEN_ARGS-}
+      secrets:
+        - GITHUB_TOKEN
+        - GITHUB_ACTOR
+    command: taskmanager
+    environment:
+      - |
+        FLINK_PROPERTIES=
+        jobmanager.rpc.address: flinkstates-jobmanager
+        taskmanager.memory.process.size: 4gb
+        taskmanager.numberOfTaskSlots: 2
+    volumes:
+      - flink:/checkpoints
+
+volumes:
+  flink:
+
+secrets:
+  GITHUB_TOKEN:
+    environment: GITHUB_TOKEN
+  GITHUB_ACTOR:
+    environment: GITHUB_ACTOR
+
+networks:
+  default:
+    name: "cheetah-infrastructure"
+    external: true
