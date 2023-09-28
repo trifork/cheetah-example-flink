@@ -22,4 +22,6 @@ runs:
   - name: Build with Maven
     shell: bash
     working-directory: ${{ inputs.settings-path }}
-    run: mvn install -B -ssettings.xml
+    run: mvn install -B -s settings.xml
+    env:
+      GITHUB_TOKEN: ${{ github.token }}
