@@ -6,7 +6,7 @@ import tumblingwindow.model.TumblingWindowInputEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TumblingWindowAggregate implements AggregateFunction<TumblingWindowInputEvent, List<Double>, List<Double>> {
+public class TumblingWindowAggregate implements AggregateFunction<TumblingWindowInputEvent, List<Double>, Double[]> {
     @Override
     public List<Double> createAccumulator() {
         return new ArrayList<>();
@@ -19,8 +19,8 @@ public class TumblingWindowAggregate implements AggregateFunction<TumblingWindow
     }
 
     @Override
-    public List<Double> getResult(List<Double> acc) {
-        return acc;
+    public Double[] getResult(List<Double> acc) {
+        return acc.toArray(Double[]::new);
     }
 
     @Override

@@ -5,6 +5,7 @@ using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Xunit;
 using TumblingWindow.ComponentTest.Models;
+using System.Linq;
 
 namespace TumblingWindow.ComponentTest;
 
@@ -51,14 +52,35 @@ public class ComponentTest
         
         // Act
         // Write one or more messages to the writer
-        var inputEvent = new TumblingWindowInputEvent()
+        var inputEvent1 = new TumblingWindowInputEvent()
         {
             DeviceId = "deviceId-1",
             Value = 12.34,
-            Timestamp = DateTimeOffset.UnixEpoch.ToUnixTimeMilliseconds()
+            Timestamp = DateTimeOffset.Now.ToUnixTimeMilliseconds()
         };
+        var inputEvent2 = new TumblingWindowInputEvent()
+        {
+            DeviceId = "deviceId-1",
+            Value = 56.78,
+            Timestamp = DateTimeOffset.Now.ToUnixTimeMilliseconds()
+        };
+        var inputEvent3 = new TumblingWindowInputEvent()
+        {
+            DeviceId = "deviceId-1",
+            Value = 910.1112,
+            Timestamp = DateTimeOffset.Now.ToUnixTimeMilliseconds()
+        };
+
+        var inputEvent4 = new TumblingWindowInputEvent()
+        {
+            DeviceId = "deviceId-1",
+            Value = 910.1112,
+            Timestamp = DateTimeOffset.Now.AddMinutes(10).ToUnixTimeMilliseconds()
+        };
+
         
-        writer.Write(inputEvent);
+        writer.Write(inputEvent1, inputEvent2, inputEvent3);
+        writer.Write(inputEvent4);
         
         // Assert
         // Then consume using the reader, supplying how many output messages your input messages expected to generate
@@ -67,12 +89,16 @@ public class ComponentTest
         
         // Then evaluate whether your messages are as expected, and that there are only as many as you expected 
         messages.Should().ContainSingle(message => 
-            message.DeviceId == inputEvent.DeviceId && 
-            message.Value == inputEvent.Value &&
-            message.Timestamp == inputEvent.Timestamp &&
-            message.ExtraField == "ExtraFieldValue");
+            message.DeviceId == inputEvent1.DeviceId &&
+            message.Values.Count == 3 &&
+            message.Values.All(item => new double[]{inputEvent1.Value,
+                                                    inputEvent2.Value,
+                                                    inputEvent3.Value}
+                                                    .Contains(item)));
         reader.VerifyNoMoreMessages(TimeSpan.FromSeconds(20)).Should().BeTrue();
 
-        Assert.True(false, "This is really just here to make the test fail and ensure that you either decide to implement a component test or actively decide not to");
+        // Assert.True(false, "This is really just here to make the test fail and ensure that you either decide to implement a component test or actively decide not to");
     }
+
+
 }

@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using System.Collections.Generic;
 
 namespace TumblingWindow.ComponentTest.Models;
 
@@ -9,11 +10,8 @@ public class TumblingWindowOutputEvent
     public string DeviceId { get; set; }
 
     [JsonPropertyName("value")]
-    public double Value { get; set; }
+    public List<double> Values { get; set; }
 
     [JsonPropertyName("timestamp")]
     public long Timestamp { get; set; }
-
-    [JsonPropertyName("extraField")]
-    public string ExtraField { get; set; }
 }

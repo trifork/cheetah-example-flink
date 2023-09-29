@@ -42,6 +42,10 @@ public class TumblingWindowJob extends Job implements Serializable {
 
         SingleOutputStreamOperator<TumblingWindowOutputEvent> outputStream = inputStream
                 .assignTimestampsAndWatermarks(watermarkStrategy)
+                .map(message -> {
+                    System.out.println(message);
+                    return message;
+                })
                 .keyBy(TumblingWindowInputEvent::getDeviceId)
                 .window(TumblingEventTimeWindows.of(Time.minutes(5)))
                 .aggregate(new TumblingWindowAggregate(), new TumblingWindowFunction());
@@ -58,6 +62,8 @@ public class TumblingWindowJob extends Job implements Serializable {
                                     }
                                 })
                         .build();
+
+        getParameters().get("dsadasd");
 
         // Connect transformed stream to sink
         outputStream.sinkTo(kafkaSink).name(TumblingWindowJob.class.getSimpleName());

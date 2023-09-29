@@ -8,10 +8,10 @@ import tumblingwindow.model.TumblingWindowOutputEvent;
 import java.util.List;
 
 /** TumblingWindowMapper converts from TumblingWindowInputEvent to TumblingWindowOutputEvent. */
-public class TumblingWindowFunction extends ProcessWindowFunction<List<Double>, TumblingWindowOutputEvent, String, TimeWindow> {
+public class TumblingWindowFunction extends ProcessWindowFunction<Double[], TumblingWindowOutputEvent, String, TimeWindow> {
 
     @Override
-    public void process(String key, ProcessWindowFunction<List<Double>, TumblingWindowOutputEvent, String, TimeWindow>.Context context, Iterable<List<Double>> elements, Collector<TumblingWindowOutputEvent> out) throws Exception {
+    public void process(String key, ProcessWindowFunction<Double[], TumblingWindowOutputEvent, String, TimeWindow>.Context context, Iterable<Double[]> elements, Collector<TumblingWindowOutputEvent> out) throws Exception {
         out.collect(new TumblingWindowOutputEvent(key, context.window().getStart(), context.window().getEnd(), elements.iterator().next()));
     }
 }

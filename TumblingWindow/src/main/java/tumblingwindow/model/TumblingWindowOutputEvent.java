@@ -16,5 +16,5 @@ public class TumblingWindowOutputEvent {
     private String deviceId;
     private long startTime;
     private long endTime;
-    private List<Double> value;
+    private Double[] value;
 }

@@ -25,7 +25,7 @@ services:
         - GITHUB_ACTOR
     command: |
       standalone-job
-      --job-classname tumblingWindow.job.TumblingWindowJob
+      --job-classname tumblingwindow.job.TumblingWindowJob
       --input-kafka-bootstrap-servers kafka:19092
       --input-kafka-topic TumblingWindowInputTopic
       --output-kafka-topic TumblingWindowOutputTopic
