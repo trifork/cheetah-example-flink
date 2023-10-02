@@ -38,24 +38,24 @@ jobs:
           upload_image: false
           architecture: "linux/amd64" # docker exporter does not currently support exporting manifest lists
 
-      - name: Log in to the Container registry
-        uses: docker/login-action@v2
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.PACKAGE_PAT }}
+      # - name: Log in to the Container registry
+      #   uses: docker/login-action@v2
+      #   with:
+      #     registry: ghcr.io
+      #     username: ${{ github.actor }}
+      #     password: ${{ secrets.PACKAGE_PAT }}
 
-      - name: Checkout trifork/cheetah-development-infrastructure
-        uses: actions/checkout@v4
-        with:
-          repository: trifork/cheetah-development-infrastructure
-          token: ${{ secrets.PACKAGE_PAT }}
-          path: development-infrastructure
+      # - name: Checkout trifork/cheetah-development-infrastructure
+      #   uses: actions/checkout@v4
+      #   with:
+      #     repository: trifork/cheetah-development-infrastructure
+      #     token: ${{ secrets.PACKAGE_PAT }}
+      #     path: development-infrastructure
     
-      - name: "Start e2e infrastructure"
-        working-directory: integrationtests/
-        run: docker compose --profile kafka --profile oauth --profile opensearch up -d --build --quiet-pull
-        env:
-          DOCKER_REGISTRY: ghcr.io/trifork/
+      # - name: "Start e2e infrastructure"
+      #   working-directory: integrationtests/
+      #   run: docker compose --profile kafka --profile oauth --profile opensearch up -d --build --quiet-pull
+      #   env:
+      #     DOCKER_REGISTRY: ghcr.io/trifork/
 
 
