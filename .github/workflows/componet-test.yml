@@ -9,7 +9,7 @@ env:
   JAR_NAME_PATTERN: cheetah-*.jar # entrypoint assembly name
   FLINK_IMAGE_VERSION: 1.16.1
   BASE_IMAGE: Dockerfile
-  CONTEXT: .
+  CONTEXT: ./FlinkStates/
 
 
 jobs:
