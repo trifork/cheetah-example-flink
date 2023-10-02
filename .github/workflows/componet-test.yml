@@ -11,10 +11,6 @@ env:
   BASE_IMAGE: Dockerfile
   CONTEXT: .
 
-permissions:
-      contents: read
-      packages: write
-
 
 jobs:
   run-componenttests:
@@ -24,6 +20,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.PACKAGE_PAT }} 
 
       - name: "Build"
         id: build
