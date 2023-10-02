@@ -53,7 +53,7 @@ jobs:
           path: development-infrastructure
     
       - name: "Start e2e infrastructure"
-        working-directory: integrationtests/
+        working-directory: development-infrastructure/
         run: docker compose --profile kafka --profile oauth --profile opensearch up -d --build --quiet-pull
         env:
           DOCKER_REGISTRY: ghcr.io/trifork/
