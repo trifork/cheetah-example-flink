@@ -20,12 +20,10 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.PACKAGE_PAT }} 
 
       - name: "Build"
         id: build
-        uses: trifork/cheetah-infrastructure-utils/.github/actions/maven/maven-publish-archetype@main
+        uses: trifork/cheetah-infrastructure-utils/.github/actions/build-image@main
         with:
           read_package_pat: ${{ secrets.PACKAGE_PAT }} # we need this, as GITHUB_TOKEN only have permission to its own repo
           context: ${{ env.CONTEXT }}
