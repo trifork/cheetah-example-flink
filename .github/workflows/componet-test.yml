@@ -2,16 +2,60 @@ name: Component tests of projects in Cheetah Platform Examples
 on:
   workflow_dispatch:
 
+env:
+  DOCKER_BUILDKIT: 1
+  IMAGE_NAME: ${{ github.repository }}
+  IMAGE_REGISTRY: ghcr.io
+  JAR_NAME_PATTERN: cheetah-*.jar # entrypoint assembly name
+  FLINK_IMAGE_VERSION: 1.16.1
+  BASE_IMAGE: Dockerfile
+  CONTEXT: .
+
+
 jobs:
   run-componenttests:
     name: "Run all componenttests"
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check out infrastuctrue repo
-        uses: actions/checkout@master
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: "Build"
+        id: build
+        uses: trifork/cheetah-infrastructure-utils/.github/actions/build-image@main
         with:
-          repository: trifork/cheetah-development-infrastructure.git
+          read_package_pat: ${{ secrets.PACKAGE_PAT }} # we need this, as GITHUB_TOKEN only have permission to its own repo
+          context: ${{ env.CONTEXT }}
+          image_name: ${{ env.IMAGE_NAME }}
+          jar_name_pattern: ${{ env.JAR_NAME_PATTERN }}
+          flink_image_version: ${{ env.FLINK_IMAGE_VERSION }}
+          github_actor: ${{ github.actor }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_run_id: ${{ github.run_id }}
+          base_image: ${{ env.BASE_IMAGE }}
+          push_image: false
+          upload_image: false
+          architecture: "linux/amd64" # docker exporter does not currently support exporting manifest lists
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.PACKAGE_PAT }}
+
+      - name: Checkout trifork/cheetah-development-infrastructure
+        uses: actions/checkout@v4
+        with:
+          repository: trifork/cheetah-development-infrastructure
           token: ${{ secrets.PACKAGE_PAT }}
-          
+          path: development-infrastructure
+    
+      - name: "Start e2e infrastructure"
+        working-directory: integrationtests/
+        run: docker compose --profile kafka --profile oauth --profile opensearch up -d --build --quiet-pull
+        env:
+          DOCKER_REGISTRY: ghcr.io/trifork/
+
 
