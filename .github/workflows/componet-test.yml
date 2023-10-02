@@ -1,0 +1,17 @@
+name: Component tests of projects in Cheetah Platform Examples 
+on:
+  workflow_dispatch:
+
+jobs:
+  run-componenttests:
+    name: "Run all componenttests"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out infrastuctrue repo
+        uses: actions/checkout@master
+        with:
+          repository: trifork/cheetah-development-infrastructure.git
+          token: ${{ secrets.PACKAGE_PAT }}
+          
+
