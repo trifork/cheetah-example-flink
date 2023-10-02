@@ -61,5 +61,9 @@ jobs:
       - name: "Test Flink States Job"
         working-directory: ./FlinkStates/
         run: docker compose up
+        env:
+          GITHUB_ACTOR: ${{ github.actor }}
+          GITHUB_TOKEN: ${{ secrets.PACKAGE_PAT }}
+          FLINK_BUILD_IMAGE_NAME: ${{ steps.build.outputs.image_tag }}
 
 
