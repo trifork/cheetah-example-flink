@@ -11,6 +11,10 @@ env:
   BASE_IMAGE: Dockerfile
   CONTEXT: .
 
+permissions:
+      contents: read
+      packages: write
+
 
 jobs:
   run-componenttests:
@@ -23,7 +27,7 @@ jobs:
 
       - name: "Build"
         id: build
-        uses: trifork/cheetah-infrastructure-utils/.github/actions/build-image@main
+        uses: trifork/cheetah-infrastructure-utils/.github/actions/maven/maven-publish-archetype@main
         with:
           read_package_pat: ${{ secrets.PACKAGE_PAT }} # we need this, as GITHUB_TOKEN only have permission to its own repo
           context: ${{ env.CONTEXT }}
