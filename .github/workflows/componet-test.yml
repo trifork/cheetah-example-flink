@@ -3,8 +3,6 @@ on:
   workflow_dispatch:
 
 env:
-  DOCKER_BUILDKIT: 1
-  IMAGE_NAME: ${{ github.repository }}
   IMAGE_REGISTRY: ghcr.io
   JAR_NAME_PATTERN: cheetah-*.jar # entrypoint assembly name
   FLINK_IMAGE_VERSION: 1.16.1
@@ -21,49 +19,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: "Build"
-        id: build
-        uses: trifork/cheetah-infrastructure-utils/.github/actions/build-image@main
+      - name: Build image and run component test
+        uses: trifork/cheetah-platform-examples/.github/actions/component-test@main
         with:
-          read_package_pat: ${{ secrets.PACKAGE_PAT }} # we need this, as GITHUB_TOKEN only have permission to its own repo
-          context: ${{ env.CONTEXT }}
-          image_name: ${{ env.IMAGE_NAME }}
-          jar_name_pattern: ${{ env.JAR_NAME_PATTERN }}
-          flink_image_version: ${{ env.FLINK_IMAGE_VERSION }}
-          github_actor: ${{ github.actor }}
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          github_run_id: ${{ github.run_id }}
-          base_image: ${{ env.BASE_IMAGE }}
-          push_image: false
-          upload_image: false
-          architecture: "linux/amd64" # docker exporter does not currently support exporting manifest lists
-
-      - name: Log in to the Container registry
-        uses: docker/login-action@v2
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.PACKAGE_PAT }}
-
-      - name: Checkout trifork/cheetah-development-infrastructure
-        uses: actions/checkout@v4
-        with:
-          repository: trifork/cheetah-development-infrastructure
-          token: ${{ secrets.PACKAGE_PAT }}
-          path: development-infrastructure
-    
-      - name: "Start e2e infrastructure"
-        working-directory: development-infrastructure/
-        run: docker compose --profile kafka --profile oauth --profile opensearch up -d --build --quiet-pull
-        env:
-          DOCKER_REGISTRY: ghcr.io/trifork/
-
-      - name: "Test Flink States Job"
-        working-directory: ./FlinkStates/
-        run: docker compose up --abort-on-container-exit --quiet-pull
-        env:
-          GITHUB_ACTOR: ${{ github.actor }}
-          GITHUB_TOKEN: ${{ secrets.PACKAGE_PAT }}
-          FLINK_BUILD_IMAGE_NAME: ${{ steps.build.outputs.image_tag }}
-
+          context-path: ./FlinkStates/
+          PAT: ${{ secrets.PACKAGE_PAT }}
+          flink-image-version: ${{ env.FLINK_IMAGE_VERSION }}
+          image-name: ${{ github.repository }}/FlinkState
+          image-registry: ${{ env.IMAGE_REGISTRY }}
+          jar-name-pattern: ${{ env.JAR_NAME_PATTERN }}
 

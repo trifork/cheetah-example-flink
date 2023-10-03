@@ -1,0 +1,75 @@
+name: "Run Component test"
+description: "Build image and run component test"
+
+inputs:
+  context-path:
+    description: Path to Dockerfile
+    required: true
+  PAT:
+    description: Personal access token to access external dependencies 
+    required: true
+  flink-image-version:
+    description: Image version of Flink
+    required: true
+  image-name:
+    description: Name of image to build
+    required: true
+  image-registry:
+    description: Name of image registry
+    required: true
+  jar-name-pattern:
+    description: Pattern name of jar file
+    required: true
+    
+runs:
+  using: composite
+  steps:
+    - name: "Build image"
+      id: build
+      uses: trifork/cheetah-infrastructure-utils/.github/actions/build-image@main
+      with:
+        read_package_pat: ${{ inputs.PAT }} # we need this, as GITHUB_TOKEN only have permission to its own repo
+        context: ${{ inputs.context-path }}
+        image_name: ${{ inputs.image-name }}
+        jar_name_pattern: ${{ inputs.jar-name-pattern }}
+        flink_image_version: ${{ inputs.flink-image-version }}
+        github_actor: ${{ github.actor }}
+        github_token: ${{ inputs.PAT }}
+        github_run_id: ${{ github.run_id }}
+        base_image: ${{ inputs.context-path }}/Dockerfile
+        push_image: false
+        upload_image: false
+        architecture: "linux/amd64" # docker exporter does not currently support exporting manifest lists
+
+    - name: Log in to the Container registry
+      uses: docker/login-action@v2
+      with:
+        registry: ${{ inputs.image-registry }}
+        username: ${{ github.actor }}
+        password: ${{ inputs.PAT }}
+
+    - name: Checkout trifork/cheetah-development-infrastructure
+      uses: actions/checkout@v4
+      with:
+        repository: trifork/cheetah-development-infrastructure
+        token: ${{ inputs.PAT }}
+        path: development-infrastructure
+
+    - name: "Start e2e infrastructure"
+      working-directory: development-infrastructure/
+      shell: bash
+      run: docker compose --profile kafka --profile oauth --profile opensearch up -d --build --quiet-pull
+      env:
+        DOCKER_REGISTRY: ghcr.io/trifork/
+
+    - name: "Run Component Test"
+      working-directory: ${{ inputs.context-path }}
+      shell: bash
+      run: docker compose up --abort-on-container-exit --quiet-pull
+      env:
+        GITHUB_ACTOR: ${{ github.actor }}
+        GITHUB_TOKEN: ${{ inputs.PAT }}
+        FLINK_BUILD_IMAGE_NAME: ${{ steps.build.outputs.image_tag }}
+
+  
+
