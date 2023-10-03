@@ -11,7 +11,79 @@ env:
 
 
 jobs:
-  run-componenttests:
+  flink-state-componenttest:
+    name: "Run all componenttests"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build image and run component test
+        uses: trifork/cheetah-platform-examples/.github/actions/component-test@main
+        with:
+          context-path: ./FlinkStates/
+          PAT: ${{ secrets.PACKAGE_PAT }}
+          flink-image-version: ${{ env.FLINK_IMAGE_VERSION }}
+          image-name: ${{ github.repository }}/FlinkState
+          image-registry: ${{ env.IMAGE_REGISTRY }}
+          jar-name-pattern: ${{ env.JAR_NAME_PATTERN }}
+
+  merge-two-streams-componenttest:
+    name: "Run all componenttests"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build image and run component test
+        uses: trifork/cheetah-platform-examples/.github/actions/component-test@main
+        with:
+          context-path: ./FlinkStates/
+          PAT: ${{ secrets.PACKAGE_PAT }}
+          flink-image-version: ${{ env.FLINK_IMAGE_VERSION }}
+          image-name: ${{ github.repository }}/FlinkState
+          image-registry: ${{ env.IMAGE_REGISTRY }}
+          jar-name-pattern: ${{ env.JAR_NAME_PATTERN }}
+
+  multiple-sideoutput-componenttest:
+    name: "Run all componenttests"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build image and run component test
+        uses: trifork/cheetah-platform-examples/.github/actions/component-test@main
+        with:
+          context-path: ./FlinkStates/
+          PAT: ${{ secrets.PACKAGE_PAT }}
+          flink-image-version: ${{ env.FLINK_IMAGE_VERSION }}
+          image-name: ${{ github.repository }}/FlinkState
+          image-registry: ${{ env.IMAGE_REGISTRY }}
+          jar-name-pattern: ${{ env.JAR_NAME_PATTERN }}
+
+  opservability-componenttest:
+    name: "Run all componenttests"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build image and run component test
+        uses: trifork/cheetah-platform-examples/.github/actions/component-test@main
+        with:
+          context-path: ./FlinkStates/
+          PAT: ${{ secrets.PACKAGE_PAT }}
+          flink-image-version: ${{ env.FLINK_IMAGE_VERSION }}
+          image-name: ${{ github.repository }}/FlinkState
+          image-registry: ${{ env.IMAGE_REGISTRY }}
+          jar-name-pattern: ${{ env.JAR_NAME_PATTERN }}
+  
+  tumblingwindow-componenttest:
     name: "Run all componenttests"
     runs-on: ubuntu-latest
 
