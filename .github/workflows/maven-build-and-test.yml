@@ -4,6 +4,9 @@ on:
   
   push:
     branches: ["main"]
+  
+  pull_request:
+    branches: ["main"]
 
   schedule:
     # * is a special character in YAML so you have to quote this string
@@ -33,7 +36,7 @@ jobs:
       - name: Build and test Merge Two Streams maven project
         uses: trifork/cheetah-platform-examples/.github/actions/maven-build-and-test@main
         with: 
-          settings-path: ./FlinkStates/
+          settings-path: ./MergeTwoStreams/
           PAT: ${{ secrets.PACKAGE_PAT }}
 
   build-and-test-multiple-side-output:
@@ -46,7 +49,7 @@ jobs:
       - name: Build and test Multiple Side Output maven project
         uses: trifork/cheetah-platform-examples/.github/actions/maven-build-and-test@main
         with: 
-          settings-path: ./FlinkStates/
+          settings-path: ./MultipleSideOutput/
           PAT: ${{ secrets.PACKAGE_PAT }}
   
   build-and-test-observability:
@@ -59,7 +62,7 @@ jobs:
       - name: Build and test Observability maven project
         uses: trifork/cheetah-platform-examples/.github/actions/maven-build-and-test@main
         with: 
-          settings-path: ./FlinkStates/
+          settings-path: ./Observability/
           PAT: ${{ secrets.PACKAGE_PAT }}
   
   build-and-test-tumbling-window:
@@ -72,5 +75,5 @@ jobs:
       - name: Build and test Tumbling Window maven project
         uses: trifork/cheetah-platform-examples/.github/actions/maven-build-and-test@main
         with: 
-          settings-path: ./FlinkStates/
+          settings-path: ./TumblingWindow/
           PAT: ${{ secrets.PACKAGE_PAT }}

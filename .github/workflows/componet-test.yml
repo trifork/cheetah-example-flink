@@ -1,25 +1,32 @@
-name: Component tests of projects in Cheetah Platform Examples 
+name: Component tests of all examples in Cheetah Platform Examples 
 on:
   workflow_dispatch:
+  
+  push:
+    branches: ["main"]
+
+  pull_request:
+    branches: ["main"]
+
+  schedule:
+  # * is a special character in YAML so you have to quote this string
+  - cron: '30 0 * * *'
 
 env:
   IMAGE_REGISTRY: ghcr.io
   JAR_NAME_PATTERN: cheetah-*.jar # entrypoint assembly name
   FLINK_IMAGE_VERSION: 1.16.1
-  BASE_IMAGE: ./FlinkStates/Dockerfile
-  CONTEXT: ./FlinkStates/
-
 
 jobs:
   flink-state-componenttest:
-    name: "Run all componenttests"
+    name: "Flink States example componenttests"
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Build image and run component test
+      - name: Build Flink States example image and run component test
         uses: trifork/cheetah-platform-examples/.github/actions/component-test@main
         with:
           context-path: ./FlinkStates/
@@ -30,74 +37,74 @@ jobs:
           jar-name-pattern: ${{ env.JAR_NAME_PATTERN }}
 
   merge-two-streams-componenttest:
-    name: "Run all componenttests"
+    name: "Merge Two Streams example componenttest"
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Build image and run component test
+      - name: Build Merge Two Streams example image and run component test
         uses: trifork/cheetah-platform-examples/.github/actions/component-test@main
         with:
-          context-path: ./FlinkStates/
+          context-path: ./MergeTwoStreams/
           PAT: ${{ secrets.PACKAGE_PAT }}
           flink-image-version: ${{ env.FLINK_IMAGE_VERSION }}
-          image-name: ${{ github.repository }}/FlinkState
+          image-name: ${{ github.repository }}/MergeTwoStreams
           image-registry: ${{ env.IMAGE_REGISTRY }}
           jar-name-pattern: ${{ env.JAR_NAME_PATTERN }}
 
   multiple-sideoutput-componenttest:
-    name: "Run all componenttests"
+    name: "Multiple Side Output componenttest"
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Build image and run component test
+      - name: Build Multiple Side Output example image and run component test
         uses: trifork/cheetah-platform-examples/.github/actions/component-test@main
         with:
-          context-path: ./FlinkStates/
+          context-path: ./MultipleSideOutput/
           PAT: ${{ secrets.PACKAGE_PAT }}
           flink-image-version: ${{ env.FLINK_IMAGE_VERSION }}
-          image-name: ${{ github.repository }}/FlinkState
+          image-name: ${{ github.repository }}/MultipleSideOutput
           image-registry: ${{ env.IMAGE_REGISTRY }}
           jar-name-pattern: ${{ env.JAR_NAME_PATTERN }}
 
   opservability-componenttest:
-    name: "Run all componenttests"
+    name: "Observability componenttest"
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Build image and run component test
+      - name: Build Observability example image and run component test
         uses: trifork/cheetah-platform-examples/.github/actions/component-test@main
         with:
-          context-path: ./FlinkStates/
+          context-path: ./Observability/
           PAT: ${{ secrets.PACKAGE_PAT }}
           flink-image-version: ${{ env.FLINK_IMAGE_VERSION }}
-          image-name: ${{ github.repository }}/FlinkState
+          image-name: ${{ github.repository }}/Observability
           image-registry: ${{ env.IMAGE_REGISTRY }}
           jar-name-pattern: ${{ env.JAR_NAME_PATTERN }}
   
   tumblingwindow-componenttest:
-    name: "Run all componenttests"
+    name: "Tumbling Window componenttest"
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Build image and run component test
+      - name: Build Tumbling Window example image and run component test
         uses: trifork/cheetah-platform-examples/.github/actions/component-test@main
         with:
-          context-path: ./FlinkStates/
+          context-path: ./TumblingWindow/
           PAT: ${{ secrets.PACKAGE_PAT }}
           flink-image-version: ${{ env.FLINK_IMAGE_VERSION }}
-          image-name: ${{ github.repository }}/FlinkState
+          image-name: ${{ github.repository }}/TumblingWindow
           image-registry: ${{ env.IMAGE_REGISTRY }}
           jar-name-pattern: ${{ env.JAR_NAME_PATTERN }}
 

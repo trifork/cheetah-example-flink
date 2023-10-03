@@ -55,7 +55,7 @@ runs:
         token: ${{ inputs.PAT }}
         path: development-infrastructure
 
-    - name: "Start e2e infrastructure"
+    - name: "Start development infrastructure"
       working-directory: development-infrastructure/
       shell: bash
       run: docker compose --profile kafka --profile oauth --profile opensearch up -d --build --quiet-pull
