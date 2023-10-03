@@ -80,7 +80,9 @@ public class ComponentTest
 
         
         writer.Write(inputEvent1, inputEvent2, inputEvent3);
-        writer.Write(inputEvent4);
+
+        writer.Write(inputEvent4, inputEvent4);
+
         
         // Assert
         // Then consume using the reader, supplying how many output messages your input messages expected to generate
