@@ -25,7 +25,7 @@ services:
         - GITHUB_ACTOR
     command: |
       standalone-job
-      --job-classname cheetah.example.job.MergeTwoStreamsJob
+      --job-classname cheetah.example.mergestreams.job.MergeTwoStreamsJob
       --kafka-bootstrap-servers kafka:19092
       --input-kafka-topic-A MergeTwoStreamsInputTopicA
       --input-kafka-topic-B MergeTwoStreamsInputTopicB
