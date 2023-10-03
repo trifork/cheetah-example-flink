@@ -60,7 +60,7 @@ jobs:
 
       - name: "Test Flink States Job"
         working-directory: ./FlinkStates/
-        run: docker compose up
+        run: docker compose up --abort-on-container-exit --quiet-pull
         env:
           GITHUB_ACTOR: ${{ github.actor }}
           GITHUB_TOKEN: ${{ secrets.PACKAGE_PAT }}
