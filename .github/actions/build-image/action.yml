@@ -169,7 +169,7 @@ runs:
           echo "::set-output name=exists::false"
         fi
 
-    - uses: trifork/cheetah-infrastructure-utils/.github/actions/maven/maven-restore@main
+    - uses: trifork/cheetah-platform-examples/.github/actions/maven-restore@main
       if: steps.pomfile.outputs.exists == 'true'
       with:
         settings-path: ${{ inputs.settings-path }} # location for the settings.xml file
