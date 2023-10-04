@@ -26,7 +26,7 @@ runs:
   steps:
     - name: "Build image"
       id: build
-      uses: trifork/cheetah-infrastructure-utils/.github/actions/build-image@main
+      uses: trifork/cheetah-platform-examples/.github/actions/build-image@main
       with:
         read_package_pat: ${{ inputs.PAT }} # we need this, as GITHUB_TOKEN only have permission to its own repo
         context: ${{ inputs.context-path }}
