@@ -52,25 +52,6 @@ public class ComponentTest
 
         // Act
 
-        // Write two messages with same deviceId to the two topics, resulting in a message on the output topic
-        var inputEventA = new MergeTwoStreamsInputEvent()
-        {
-            DeviceId = "deviceId-1",
-            Value = 12.34,
-            Timestamp = DateTimeOffset.UnixEpoch.ToUnixTimeMilliseconds()
-        };
-
-        writerA.Write(inputEventA);
-
-        var inputEventB = new MergeTwoStreamsInputEvent()
-        {
-            DeviceId = "deviceId-1",
-            Value = 56.78,
-            Timestamp = DateTimeOffset.UnixEpoch.ToUnixTimeMilliseconds()
-        };
-
-        writerB.Write(inputEventB);
-
         // Write two messages with different deviceIds, resulting in no new messages on the output topic
         var inputEventC = new MergeTwoStreamsInputEvent()
         {
@@ -89,6 +70,25 @@ public class ComponentTest
         };
 
         writerB.Write(inputEventD);
+
+        // Write two messages with same deviceId to the two topics, resulting in a message on the output topic
+        var inputEventA = new MergeTwoStreamsInputEvent()
+        {
+            DeviceId = "deviceId-1",
+            Value = 12.34,
+            Timestamp = DateTimeOffset.UnixEpoch.ToUnixTimeMilliseconds()
+        };
+
+        writerA.Write(inputEventA);
+
+        var inputEventB = new MergeTwoStreamsInputEvent()
+        {
+            DeviceId = "deviceId-1",
+            Value = 56.78,
+            Timestamp = DateTimeOffset.UnixEpoch.ToUnixTimeMilliseconds()
+        };
+
+        writerB.Write(inputEventB);
 
         // Assert
         // Then consume using the reader, supplying how many output messages your input messages expected to generate
