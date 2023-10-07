@@ -1,7 +1,7 @@
 #
 #  Install dependencies, compile sources, build jars.
 #
-FROM maven:3.6.3-openjdk-11 as build
+FROM maven:3.8.6-openjdk-11 as build
 
 WORKDIR /app
 
