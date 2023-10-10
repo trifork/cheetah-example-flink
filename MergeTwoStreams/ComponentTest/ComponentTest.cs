@@ -5,6 +5,7 @@ using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Xunit;
 using MergeTwoStreams.ComponentTest.Models;
+using System.Threading;
 
 namespace MergeTwoStreams.ComponentTest;
 
@@ -52,35 +53,33 @@ public class ComponentTest
 
         // Act
 
-        // Write two messages with different deviceIds, resulting in no new messages on the output topic
-        var inputEventC = new MergeTwoStreamsInputEvent()
-        {
-            DeviceId = "deviceId-2",
-            Value = 90.12,
-            Timestamp = DateTimeOffset.UnixEpoch.ToUnixTimeMilliseconds()
-        };
-
-        writerA.Write(inputEventC);
-
-        var inputEventD = new MergeTwoStreamsInputEvent()
-        {
-            DeviceId = "deviceId-3",
-            Value = 32.10,
-            Timestamp = DateTimeOffset.UnixEpoch.ToUnixTimeMilliseconds()
-        };
-
-        writerB.Write(inputEventD);
-
-        // Write two messages with same deviceId to the two topics, resulting in a message on the output topic
+        // Write two messages with different deviceIds to stream A
         var inputEventA = new MergeTwoStreamsInputEvent()
         {
             DeviceId = "deviceId-1",
             Value = 12.34,
             Timestamp = DateTimeOffset.UnixEpoch.ToUnixTimeMilliseconds()
         };
+        var inputEventD = new MergeTwoStreamsInputEvent()
+        {
+            DeviceId = "deviceId-2",
+            Value = 90.12,
+            Timestamp = DateTimeOffset.UnixEpoch.ToUnixTimeMilliseconds()
+        };
 
         writerA.Write(inputEventA);
+        writerA.Write(inputEventD);
 
+        // Wait to make sure the elements on stream A have been processed before writing to stream B
+        Thread.Sleep(500);
+
+        // Write two messages to stream B - one with a deviceIds which has been processed on stream A, and one which hasn't. Resulting in one message on the output topic
+        var inputEventC = new MergeTwoStreamsInputEvent()
+        {
+            DeviceId = "deviceId-3",
+            Value = 32.10,
+            Timestamp = DateTimeOffset.UnixEpoch.ToUnixTimeMilliseconds()
+        };
         var inputEventB = new MergeTwoStreamsInputEvent()
         {
             DeviceId = "deviceId-1",
@@ -88,19 +87,20 @@ public class ComponentTest
             Timestamp = DateTimeOffset.UnixEpoch.ToUnixTimeMilliseconds()
         };
 
+        writerB.Write(inputEventC);
         writerB.Write(inputEventB);
 
         // Assert
         // Then consume using the reader, supplying how many output messages your input messages expected to generate
         // as well as the maximum duration it is allowed to take for those messages to be produced
-        var messages = reader.ReadMessages(1, TimeSpan.FromSeconds(20));
+        var messages = reader.ReadMessages(1, TimeSpan.FromSeconds(5));
         
         // Then evaluate whether your messages are as expected, and that there are only as many as you expected 
         messages.Should().ContainSingle(message => 
             message.DeviceId == inputEventA.DeviceId &&
             message.ValueA == inputEventA.Value &&
             message.ValueB == inputEventB.Value);
-        reader.VerifyNoMoreMessages(TimeSpan.FromSeconds(20)).Should().BeTrue();
+        reader.VerifyNoMoreMessages(TimeSpan.FromSeconds(5)).Should().BeTrue();
 
     }
 }
