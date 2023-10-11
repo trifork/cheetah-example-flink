@@ -52,6 +52,7 @@ public class ComponentTest
             .Build();
 
         // Act
+        Thread.Sleep(5000);
 
         // Write two messages with different deviceIds to stream A
         var inputEventA = new MergeTwoStreamsInputEvent()
