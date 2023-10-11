@@ -51,7 +51,7 @@ services:
     volumes:
       - flink:/checkpoints
     healthcheck:
-      test: curl mergetwostreams-job:8081 || exit -1
+      test: curl mergetwostreams-job:8081/config || exit -1
       interval: 1s
       timeout: 10s
       retries: 10
