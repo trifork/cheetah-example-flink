@@ -53,6 +53,7 @@ jobs:
           image-name: ${{ github.repository }}/MergeTwoStreams
           image-registry: ${{ env.IMAGE_REGISTRY }}
           jar-name-pattern: ${{ env.JAR_NAME_PATTERN }}
+          INITIAL_KAFKA_TOPICS: "MergeTwoStreamsInputTopicA MergeTwoStreamsInputTopicB"
 
   multiple-sideoutput-componenttest:
     name: "Multiple Side Output componenttest"
