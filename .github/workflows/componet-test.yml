@@ -45,7 +45,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Build Merge Two Streams example image and run component test
-        uses: trifork/cheetah-platform-examples/.github/actions/component-test@origin/patch/fix-mergetwostreams-cp
+        uses: trifork/cheetah-platform-examples/.github/actions/component-test@patch/fix-mergetwostreams-cp
         with:
           context-path: ./MergeTwoStreams/
           PAT: ${{ secrets.PACKAGE_PAT }}
