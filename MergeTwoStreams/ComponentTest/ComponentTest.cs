@@ -52,8 +52,6 @@ public class ComponentTest
             .Build();
 
         // Act
-        // Wait to make sure the job is initialized before writing elements. 
-        Thread.Sleep(5000);
 
         // Write two messages with different deviceIds to stream A
         var inputEventA = new MergeTwoStreamsInputEvent()

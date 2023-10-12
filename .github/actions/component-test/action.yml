@@ -20,6 +20,9 @@ inputs:
   jar-name-pattern:
     description: Pattern name of jar file
     required: true
+  INITIAL_KAFKA_TOPICS:
+    description: Topics to be created on kafka steps.build.outputs.image_tag
+    required: false
     
 runs:
   using: composite
@@ -60,6 +63,7 @@ runs:
       shell: bash
       run: docker compose --profile kafka --profile oauth --profile opensearch up -d --build --quiet-pull
       env:
+        INITIAL_KAFKA_TOPICS: ${{ inputs.INITIAL_KAFKA_TOPICS }}
         DOCKER_REGISTRY: ghcr.io/trifork/
 
     - name: "Run Component Test"
