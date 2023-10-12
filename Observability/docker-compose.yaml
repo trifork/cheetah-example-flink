@@ -54,7 +54,7 @@ services:
     volumes:
       - flink:/checkpoints
     healthcheck:
-      test: curl localhost:8081
+      test: curl localhost:8081/jobs | grep -q '"status":"RUNNING"' || exit -1
       interval: 10s
       timeout: 30s
       retries: 6

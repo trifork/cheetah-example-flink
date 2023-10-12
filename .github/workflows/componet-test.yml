@@ -64,7 +64,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Build Multiple Side Output example image and run component test
-        uses: trifork/cheetah-platform-examples/.github/actions/component-test@main
+        uses: trifork/cheetah-platform-examples/.github/actions/component-test@patch/fix-mergetwostreams-cp
         with:
           context-path: ./MultipleSideOutput/
           PAT: ${{ secrets.PACKAGE_PAT }}
@@ -72,6 +72,7 @@ jobs:
           image-name: ${{ github.repository }}/MultipleSideOutput
           image-registry: ${{ env.IMAGE_REGISTRY }}
           jar-name-pattern: ${{ env.JAR_NAME_PATTERN }}
+          INITIAL_KAFKA_TOPICS: "MultipleSideOutputExampleInputTopic"
 
   opservability-componenttest:
     name: "Observability componenttest"
@@ -82,7 +83,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Build Observability example image and run component test
-        uses: trifork/cheetah-platform-examples/.github/actions/component-test@main
+        uses: trifork/cheetah-platform-examples/.github/actions/component-test@patch/fix-mergetwostreams-cp
         with:
           context-path: ./Observability/
           PAT: ${{ secrets.PACKAGE_PAT }}
@@ -90,6 +91,7 @@ jobs:
           image-name: ${{ github.repository }}/Observability
           image-registry: ${{ env.IMAGE_REGISTRY }}
           jar-name-pattern: ${{ env.JAR_NAME_PATTERN }}
+          INITIAL_KAFKA_TOPICS: "ObservabilityInputTopic"
   
   tumblingwindow-componenttest:
     name: "Tumbling Window componenttest"
@@ -100,7 +102,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Build Tumbling Window example image and run component test
-        uses: trifork/cheetah-platform-examples/.github/actions/component-test@main
+        uses: trifork/cheetah-platform-examples/.github/actions/component-test@patch/fix-mergetwostreams-cp
         with:
           context-path: ./TumblingWindow/
           PAT: ${{ secrets.PACKAGE_PAT }}
@@ -108,4 +110,5 @@ jobs:
           image-name: ${{ github.repository }}/TumblingWindow
           image-registry: ${{ env.IMAGE_REGISTRY }}
           jar-name-pattern: ${{ env.JAR_NAME_PATTERN }}
+          INITIAL_KAFKA_TOPICS: "TumblingWindowInputTopic"
 
