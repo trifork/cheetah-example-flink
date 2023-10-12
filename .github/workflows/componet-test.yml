@@ -27,7 +27,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Build Flink States example image and run component test
-        uses: trifork/cheetah-platform-examples/.github/actions/component-test@main
+        uses: ./.github/actions/component-test
         with:
           context-path: ./FlinkStates/
           PAT: ${{ secrets.PACKAGE_PAT }}
@@ -64,7 +64,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Build Multiple Side Output example image and run component test
-        uses: trifork/cheetah-platform-examples/.github/actions/component-test@patch/fix-mergetwostreams-cp
+        uses: ./.github/actions/component-test
         with:
           context-path: ./MultipleSideOutput/
           PAT: ${{ secrets.PACKAGE_PAT }}
@@ -83,7 +83,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Build Observability example image and run component test
-        uses: trifork/cheetah-platform-examples/.github/actions/component-test@patch/fix-mergetwostreams-cp
+        uses: ./.github/actions/component-test
         with:
           context-path: ./Observability/
           PAT: ${{ secrets.PACKAGE_PAT }}
@@ -102,7 +102,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Build Tumbling Window example image and run component test
-        uses: trifork/cheetah-platform-examples/.github/actions/component-test@patch/fix-mergetwostreams-cp
+        uses: ./.github/actions/component-test
         with:
           context-path: ./TumblingWindow/
           PAT: ${{ secrets.PACKAGE_PAT }}
