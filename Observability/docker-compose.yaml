@@ -13,8 +13,8 @@ services:
       KAFKA__CLIENTSECRET: 1234
       KAFKA__AUTHENDPOINT: http://cheetahoauthsimulator/oauth2/token
     depends_on:
-     observability-job:
-       condition: service_healthy
+      observability-job:
+        condition: service_healthy
 
   observability-job:
     image: ${DOCKER_REGISTRY-}observability-job

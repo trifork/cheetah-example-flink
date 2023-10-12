@@ -12,6 +12,9 @@ services:
       KAFKA__CLIENTID: ClientId
       KAFKA__CLIENTSECRET: 1234
       KAFKA__AUTHENDPOINT: http://cheetahoauthsimulator/oauth2/token
+    depends_on:
+      externallookup-job:
+        condition: service_healthy
 
   externallookup-job:
     image: ${DOCKER_REGISTRY-}externallookup-job

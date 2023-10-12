@@ -12,6 +12,9 @@ services:
       KAFKA__CLIENTID: ClientId
       KAFKA__CLIENTSECRET: 1234
       KAFKA__AUTHENDPOINT: http://cheetahoauthsimulator/oauth2/token
+    depends_on:
+      tumblingwindow-job:
+        condition: service_healthy
 
   tumblingwindow-job:
     image: ${DOCKER_REGISTRY-}tumblingwindow-job

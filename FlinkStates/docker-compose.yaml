@@ -12,6 +12,9 @@ services:
       KAFKA__CLIENTID: ClientId
       KAFKA__CLIENTSECRET: 1234
       KAFKA__AUTHENDPOINT: http://cheetahoauthsimulator/oauth2/token
+    depends_on:
+      flinkstates-jobmanager:
+        condition: service_healthy
 
   flinkstates-jobmanager:
     image: ${DOCKER_REGISTRY-}flinkstates-job
