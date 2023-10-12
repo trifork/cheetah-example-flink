@@ -1,4 +1,4 @@
-version: "3"
+version: "3.8"
 services:
   mergetwostreams-test:
     build:
@@ -51,10 +51,10 @@ services:
     volumes:
       - flink:/checkpoints
     healthcheck:
-      test: curl mergetwostreams-job:8081/config || exit -1
+      test: curl mergetwostreams-job:8081/taskmanagers/metrics | grep -q -v '^\[\]$' || exit -1
       interval: 1s
-      timeout: 10s
-      retries: 10
+      timeout: 1s
+      retries: 30
 
   mergetwostreams-job-taskmanager:
     image: ${DOCKER_REGISTRY-}mergetwostreams-job
