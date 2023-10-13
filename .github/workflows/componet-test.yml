@@ -1,16 +1,20 @@
 name: Component tests of all examples in Cheetah Platform Examples 
 on:
   workflow_dispatch:
-  
   push:
     branches: ["main"]
-
   pull_request:
     branches: ["main"]
-
+    types:
+      - labeled
+      - opened
+      - edited
+      - ready_for_review
+      - auto_merge_enabled
+      - synchronize
+      - reopened
   schedule:
-  # * is a special character in YAML so you have to quote this string
-  - cron: '30 0 * * *'
+    - cron: '30 0 * * *'
 
 env:
   IMAGE_REGISTRY: ghcr.io
@@ -18,9 +22,30 @@ env:
   FLINK_IMAGE_VERSION: 1.16.1
 
 jobs:
+  should-run: # seperate step to support ci/cd status checks
+    runs-on: ubuntu-latest
+    outputs:
+      tag-check: ${{ steps.tag-check.outputs.value }}
+      event-name-check: ${{ steps.event-name-check.outputs.value }}
+
+    steps:
+      # the pull request contains the 'e2e-test' label
+      - name: Tag check
+        id: tag-check
+        if: ${{ contains(github.event.pull_request.labels.*.name, 'e2e-test') && !contains(github.event.pull_request.labels.*.name, 'blocked') }}
+        run: echo "value=true" >> "$GITHUB_OUTPUT"
+
+      # not started from a pull-request
+      - name: Check for specific label
+        id: event-name-check
+        if: ${{github.event_name != 'pull_request'}}
+        run: echo "value=true" >> "$GITHUB_OUTPUT"
+
   flink-state-componenttest:
     name: "Flink States example componenttests"
+    needs: should-run
     runs-on: ubuntu-latest
+    if: ${{ needs.should-run.outputs.event-name-check == 'true' || needs.should-run.outputs.tag-check == 'true' }}
 
     steps:
       - name: Checkout repository
@@ -38,7 +63,9 @@ jobs:
 
   merge-two-streams-componenttest:
     name: "Merge Two Streams example componenttest"
+    needs: should-run
     runs-on: ubuntu-latest
+    if: ${{ needs.should-run.outputs.event-name-check == 'true' || needs.should-run.outputs.tag-check == 'true' }}
 
     steps:
       - name: Checkout repository
@@ -57,7 +84,9 @@ jobs:
 
   multiple-sideoutput-componenttest:
     name: "Multiple Side Output componenttest"
+    needs: should-run
     runs-on: ubuntu-latest
+    if: ${{ needs.should-run.outputs.event-name-check == 'true' || needs.should-run.outputs.tag-check == 'true' }}
 
     steps:
       - name: Checkout repository
@@ -76,7 +105,9 @@ jobs:
 
   opservability-componenttest:
     name: "Observability componenttest"
+    needs: should-run
     runs-on: ubuntu-latest
+    if: ${{ needs.should-run.outputs.event-name-check == 'true' || needs.should-run.outputs.tag-check == 'true' }}
 
     steps:
       - name: Checkout repository
@@ -95,7 +126,9 @@ jobs:
   
   tumblingwindow-componenttest:
     name: "Tumbling Window componenttest"
+    needs: should-run
     runs-on: ubuntu-latest
+    if: ${{ needs.should-run.outputs.event-name-check == 'true' || needs.should-run.outputs.tag-check == 'true' }}
 
     steps:
       - name: Checkout repository
