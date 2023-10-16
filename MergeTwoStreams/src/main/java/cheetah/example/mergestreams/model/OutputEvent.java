@@ -12,8 +12,8 @@ import java.io.Serializable;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class MergeTwoStreamsOutputEvent implements Serializable {
-    public MergeTwoStreamsOutputEvent(MergeTwoStreamsInputEventA inputEventA){
+public class OutputEvent implements Serializable {
+    public OutputEvent(InputEventA inputEventA){
         this.deviceId = inputEventA.getDeviceId();
         this.valueA = inputEventA.getValue();
     }

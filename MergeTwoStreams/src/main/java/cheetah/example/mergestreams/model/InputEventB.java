@@ -5,12 +5,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-/** MergeTwoStreamsInputEventA represents the events to be processed from Stream A. */
+/** MergeTwoStreamsInputEventB represents the events to be processed from Stream B. */
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class MergeTwoStreamsInputEventA {
+public class InputEventB {
     private String deviceId;
     private double value;
     private long timestamp;

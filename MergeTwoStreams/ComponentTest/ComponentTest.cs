@@ -5,7 +5,7 @@ using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Xunit;
 using MergeTwoStreams.ComponentTest.Models;
-using System.Threading;
+using System.Threading.Tasks;
 
 namespace MergeTwoStreams.ComponentTest;
 
@@ -31,7 +31,7 @@ public class ComponentTest
     }
 
     [Fact]
-    public void Should_BeImplemented_When_ServiceIsCreated()
+    public async Task Should_BeImplemented_When_ServiceIsCreated()
     {
         // Arrange
         // Here you'll set up one or more writers and readers, which connect to the topic(s) that your job consumes
@@ -65,12 +65,12 @@ public class ComponentTest
             Value = 90.12,
             Timestamp = DateTimeOffset.UnixEpoch.ToUnixTimeMilliseconds()
         };
-
-        writerA.WriteAsync(inputEventA);
-        writerA.WriteAsync(inputEventD);
+        
+        await writerA.WriteAsync(inputEventA);
+        await writerA.WriteAsync(inputEventD);
 
         // Wait to make sure the elements on stream A have been processed before writing to stream B
-        Thread.Sleep(500);
+        await Task.Delay(500);
 
         // Write two messages to stream B - one with a deviceIds which has been processed on stream A, and one which hasn't. Resulting in one message on the output topic
         var inputEventC = new MergeTwoStreamsInputEvent()
@@ -86,8 +86,8 @@ public class ComponentTest
             Timestamp = DateTimeOffset.UnixEpoch.ToUnixTimeMilliseconds()
         };
 
-        writerB.WriteAsync(inputEventC);
-        writerB.WriteAsync(inputEventB);
+        await writerB.WriteAsync(inputEventC);
+        await writerB.WriteAsync(inputEventB);
 
         // Assert
         // Then consume using the reader, supplying how many output messages your input messages expected to generate

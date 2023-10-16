@@ -1,7 +1,5 @@
 package cheetah.example.mergestreams.model;
 
-import cheetah.example.mergestreams.model.MergeTwoStreamsInputEventA;
-import cheetah.example.mergestreams.model.MergeTwoStreamsInputEventB;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.flink.types.PojoTestUtils.assertSerializedAsPojo;
@@ -19,9 +17,9 @@ class MergeTwoStreamsInputEventTest {
      */
     @Test
     void isSerializedAsPojo() {
-        assertSerializedAsPojo(MergeTwoStreamsInputEventA.class);
-        assertSerializedAsPojoWithoutKryo(MergeTwoStreamsInputEventA.class);
-        assertSerializedAsPojo(MergeTwoStreamsInputEventB.class);
-        assertSerializedAsPojoWithoutKryo(MergeTwoStreamsInputEventB.class);
+        assertSerializedAsPojo(InputEventA.class);
+        assertSerializedAsPojoWithoutKryo(InputEventA.class);
+        assertSerializedAsPojo(InputEventB.class);
+        assertSerializedAsPojoWithoutKryo(InputEventB.class);
     }
 }
