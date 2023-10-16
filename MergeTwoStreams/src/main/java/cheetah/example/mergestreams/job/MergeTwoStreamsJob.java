@@ -4,12 +4,16 @@ import cheetah.example.mergestreams.enricher.MergeTwoStreamsEnricher;
 import cheetah.example.mergestreams.model.MergeTwoStreamsInputEventA;
 import cheetah.example.mergestreams.model.MergeTwoStreamsInputEventB;
 import cheetah.example.mergestreams.model.MergeTwoStreamsOutputEvent;
-import com.trifork.cheetah.processing.connector.kafka.KafkaDataStreamBuilder;
-import com.trifork.cheetah.processing.connector.kafka.KafkaSinkBuilder;
-import com.trifork.cheetah.processing.connector.serialization.SimpleKeySerializationSchema;
+import com.trifork.cheetah.processing.connector.kafka.CheetahKafkaSink;
+import com.trifork.cheetah.processing.connector.kafka.CheetahKafkaSource;
+import com.trifork.cheetah.processing.connector.kafka.config.CheetahKafkaSinkConfig;
+import com.trifork.cheetah.processing.connector.kafka.config.CheetahKafkaSourceConfig;
+import com.trifork.cheetah.processing.connector.serde.CheetahSerdeSchemas;
 import com.trifork.cheetah.processing.job.Job;
 import org.apache.flink.api.java.functions.KeySelector;
 import org.apache.flink.connector.kafka.sink.KafkaSink;
+import org.apache.flink.connector.kafka.source.KafkaSource;
+import org.apache.flink.formats.json.JsonSerializationSchema;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 
@@ -30,38 +34,36 @@ public class MergeTwoStreamsJob extends Job implements Serializable {
     @Override
     protected void setup() {
         // Setup reading from Stream A
-        final DataStream<MergeTwoStreamsInputEventA> inputStreamA =
-                KafkaDataStreamBuilder.forSource(this, MergeTwoStreamsInputEventA.class)
-                        .kafkaPostfix("A")
-                        .build();
+        CheetahKafkaSourceConfig configA = CheetahKafkaSourceConfig.defaultConfig(this, "a");
+
+        final KafkaSource<MergeTwoStreamsInputEventA> kafkaSourceA = CheetahKafkaSource.builder(MergeTwoStreamsInputEventA.class, configA).build();
+
+        final DataStream<MergeTwoStreamsInputEventA> dataStreamA = CheetahKafkaSource.toDataStream(this, kafkaSourceA, "my-source-name-a");
 
         // Setup reading from Stream B
-        final DataStream<MergeTwoStreamsInputEventB> inputStreamB =
-                KafkaDataStreamBuilder.forSource(this, MergeTwoStreamsInputEventB.class)
-                        .kafkaPostfix("B")
-                        .build();
+        CheetahKafkaSourceConfig configB = CheetahKafkaSourceConfig.defaultConfig(this, "b");
+
+        final KafkaSource<MergeTwoStreamsInputEventB> kafkaSourceB = CheetahKafkaSource.builder(MergeTwoStreamsInputEventB.class,configB).build();
+
+        final DataStream<MergeTwoStreamsInputEventB> dataStreamB = CheetahKafkaSource.toDataStream(this, kafkaSourceB, "my-source-name-b");
 
         // Merge the two streams by connecting them, giving the KeyBy, which tells which fields to merge by.
         // Final processing is done by the Enricher
         final SingleOutputStreamOperator<MergeTwoStreamsOutputEvent> outputStream =
-                inputStreamA
-                        .connect(inputStreamB)
+                dataStreamA
+                        .connect(dataStreamB)
                         .keyBy((KeySelector<MergeTwoStreamsInputEventA, String>) MergeTwoStreamsInputEventA::getDeviceId,
                                 (KeySelector<MergeTwoStreamsInputEventB, String>) MergeTwoStreamsInputEventB::getDeviceId)
                         .process(new MergeTwoStreamsEnricher());
 
         // Output the result to a new Stream
-        final KafkaSink<MergeTwoStreamsOutputEvent> kafkaSink =
-                KafkaSinkBuilder.defaultKafkaConfig(this, MergeTwoStreamsOutputEvent.class)
-                        .keySerializationSchema(
-                                new SimpleKeySerializationSchema<>() {
-
-                                    @Override
-                                    public Object getKey(final MergeTwoStreamsOutputEvent outputEvent) {
-                                        return outputEvent.getDeviceId();
-                                    }
-                                })
-                        .build();
+       final KafkaSink<MergeTwoStreamsOutputEvent> kafkaSink = CheetahKafkaSink.builder(MergeTwoStreamsOutputEvent.class, this)
+               .setRecordSerializer(CheetahSerdeSchemas.kafkaRecordSerializationSchema(
+                       CheetahKafkaSinkConfig.defaultConfig(this),
+                       message -> message.getDeviceId().getBytes(),
+                       new JsonSerializationSchema<>()
+               ))
+               .build();
 
         // Connect transformed stream to sink
         outputStream.sinkTo(kafkaSink).name(MergeTwoStreamsJob.class.getSimpleName());

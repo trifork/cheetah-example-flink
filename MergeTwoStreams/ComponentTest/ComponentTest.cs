@@ -48,11 +48,10 @@ public class ComponentTest
 
         var reader = KafkaReaderBuilder.Create<string, MergeTwoStreamsOutputEvent>(_configuration)
             .WithTopic("MergeTwoStreamsOutputTopic")    // The topic being published to from the job
-            .WithGroupId("MyGroup")                     // The consumer group used for reading from the topic
+            .WithConsumerGroup("MyGroup")                     // The consumer group used for reading from the topic
             .Build();
 
         // Act
-
         // Write two messages with different deviceIds to stream A
         var inputEventA = new MergeTwoStreamsInputEvent()
         {
@@ -67,8 +66,8 @@ public class ComponentTest
             Timestamp = DateTimeOffset.UnixEpoch.ToUnixTimeMilliseconds()
         };
 
-        writerA.Write(inputEventA);
-        writerA.Write(inputEventD);
+        writerA.WriteAsync(inputEventA);
+        writerA.WriteAsync(inputEventD);
 
         // Wait to make sure the elements on stream A have been processed before writing to stream B
         Thread.Sleep(500);
@@ -87,8 +86,8 @@ public class ComponentTest
             Timestamp = DateTimeOffset.UnixEpoch.ToUnixTimeMilliseconds()
         };
 
-        writerB.Write(inputEventC);
-        writerB.Write(inputEventB);
+        writerB.WriteAsync(inputEventC);
+        writerB.WriteAsync(inputEventB);
 
         // Assert
         // Then consume using the reader, supplying how many output messages your input messages expected to generate
