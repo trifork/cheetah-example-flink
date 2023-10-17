@@ -7,15 +7,44 @@ on:
 
   pull_request:
     branches: ["main"]
-
+    types:
+      - labeled
+      - opened
+      - edited
+      - ready_for_review
+      - auto_merge_enabled
+      - synchronize
+      - reopened
+      
   schedule:
   # * is a special character in YAML so you have to quote this string
   - cron: '30 0 * * *'
 
 jobs:
+  should-run: # seperate step to support ci/cd status checks
+    runs-on: ubuntu-latest
+    outputs:
+      tag-check: ${{ steps.tag-check.outputs.value }}
+      event-name-check: ${{ steps.event-name-check.outputs.value }}
+
+    steps:
+      # the pull request contains the 'e2e-test' label
+      - name: Tag check
+        id: tag-check
+        if: ${{ contains(github.event.pull_request.labels.*.name, 'e2e-test') && !contains(github.event.pull_request.labels.*.name, 'blocked') }}
+        run: echo "value=true" >> "$GITHUB_OUTPUT"
+
+      # not started from a pull-request
+      - name: Check for specific label
+        id: event-name-check
+        if: ${{github.event_name != 'pull_request'}}
+        run: echo "value=true" >> "$GITHUB_OUTPUT"
+
   flink-state-component-test:
     name: "Flink States example component test"
+    needs: should-run
     runs-on: ubuntu-latest
+    if: ${{ needs.should-run.outputs.event-name-check == 'true' || needs.should-run.outputs.tag-check == 'true' }}
     steps:
       - name: Build Flink States example image and run component test
         uses: ./.github/actions/component-test
@@ -26,6 +55,8 @@ jobs:
 
   merge-two-streams-component-test:
     name: "Merge Two Streams example component test"
+    needs: should-run
+    if: ${{ needs.should-run.outputs.event-name-check == 'true' || needs.should-run.outputs.tag-check == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Build Merge Two Streams example image and run component test
@@ -37,6 +68,8 @@ jobs:
 
   multiple-sideoutput-component-test:
     name: "Multiple Side Output component test"
+    needs: should-run
+    if: ${{ needs.should-run.outputs.event-name-check == 'true' || needs.should-run.outputs.tag-check == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Build Multiple Side Output example image and run component test
@@ -48,6 +81,8 @@ jobs:
 
   observability-component-test:
     name: "Observability component test"
+    needs: should-run
+    if: ${{ needs.should-run.outputs.event-name-check == 'true' || needs.should-run.outputs.tag-check == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Build Observability example image and run component test
@@ -59,6 +94,8 @@ jobs:
   
   tumbling-window-component-test:
     name: "Tumbling Window component test"
+    needs: should-run
+    if: ${{ needs.should-run.outputs.event-name-check == 'true' || needs.should-run.outputs.tag-check == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Build Tumbling Window example image and run component test
@@ -70,7 +107,9 @@ jobs:
 
   external-lookup-component-test:
     name: "Tumbling Window component test"
+    needs: should-run
     runs-on: ubuntu-latest
+    if: ${{ needs.should-run.outputs.event-name-check == 'true' || needs.should-run.outputs.tag-check == 'true' }}
     steps:
       - name: Build Tumbling Window example image and run component test
         uses: ./.github/actions/component-test
