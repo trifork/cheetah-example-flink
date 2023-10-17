@@ -30,11 +30,11 @@ services:
       standalone-job
       --job-classname cheetah.example.mergestreams.job.MergeTwoStreamsJob
       --kafka-bootstrap-servers kafka:19092
+      --kafka-group-id MergeTwoStreams-group-id
+      --kafka-security-protocol SASL_PLAINTEXT
       --input-kafka-topic-a MergeTwoStreamsInputTopicA
       --input-kafka-topic-b MergeTwoStreamsInputTopicB
       --output-kafka-topic MergeTwoStreamsOutputTopic
-      --kafka-group-id MergeTwoStreams-group-id
-      --kafka-security-protocol SASL_PLAINTEXT
     environment:
       KAFKA_CLIENT_ID: ClientId
       KAFKA_CLIENT_SECRET: 1234

@@ -3,7 +3,7 @@
 namespace MergeTwoStreams.ComponentTest.Models;
 
 // Output from the merge, including data from both Stream A and Stream B
-public class MergeTwoStreamsOutputEvent
+public class OutputEvent
 {
     [JsonPropertyName("deviceId")]
     public string DeviceId { get; set; }
