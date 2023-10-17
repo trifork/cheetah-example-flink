@@ -3,7 +3,7 @@
 namespace MultipleSideOutputExample.ComponentTest.Models;
 
 // Rename and implement a model that fits what your job expects to receive
-public class MultipleSideOutputExampleInputEvent
+public class InputEvent
 {
     [JsonPropertyName("deviceId")]
     public string DeviceId { get; set; }

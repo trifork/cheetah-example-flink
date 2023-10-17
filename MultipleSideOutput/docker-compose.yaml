@@ -26,10 +26,14 @@ services:
     command: |
       standalone-job
       --job-classname sideOutputExample.job.MultipleSideOutputExampleJob
-      --input-kafka-bootstrap-servers kafka:19092
+      --kafka-bootstrap-servers kafka:19092
       --input-kafka-topic MultipleSideOutputExampleInputTopic
       --output-kafka-topic MultipleSideOutputExampleOutputTopic
-      --output-kafka-bootstrap-servers kafka:19092
+      --output-kafka-topic-a OutputA-events
+      --output-kafka-topic-b OutputB-events
+      --output-kafka-topic-cd OutputCD-events
+      --kafka-group-id MultipleSideOutput-group-id
+      --kafka-security-protocol SASL_PLAINTEXT
     environment:
       KAFKA_CLIENT_ID: ClientId
       KAFKA_CLIENT_SECRET: 1234
