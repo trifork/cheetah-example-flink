@@ -1,11 +1,11 @@
-package tumblingwindow.model;
+package cheetah.example.mergetwostreams.model;
 
 import org.junit.jupiter.api.Test;
 
 import static org.apache.flink.types.PojoTestUtils.assertSerializedAsPojo;
 import static org.apache.flink.types.PojoTestUtils.assertSerializedAsPojoWithoutKryo;
 
-class TumblingWindowInputEventTest {
+class MergeTwoStreamsInputEventTest {
     /*
      This test ensures that the input event class can be serialized without using the Kryo serializer. Similar tests
      should be implemented for any class that is serialized often, i.e. input/output models, objects that are stored in
@@ -17,7 +17,9 @@ class TumblingWindowInputEventTest {
      */
     @Test
     void isSerializedAsPojo() {
-        assertSerializedAsPojo(InputEvent.class);
-        assertSerializedAsPojoWithoutKryo(InputEvent.class);
+        assertSerializedAsPojo(InputEventA.class);
+        assertSerializedAsPojoWithoutKryo(InputEventA.class);
+        assertSerializedAsPojo(InputEventB.class);
+        assertSerializedAsPojoWithoutKryo(InputEventB.class);
     }
 }

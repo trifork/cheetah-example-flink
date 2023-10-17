@@ -1,9 +1,9 @@
-package tumblingwindow.function;
+package cheetah.example.tumblingwindow.function;
 
+import cheetah.example.tumblingwindow.model.EventWindow;
 import org.apache.flink.streaming.api.functions.windowing.ProcessWindowFunction;
 import org.apache.flink.streaming.api.windowing.windows.TimeWindow;
 import org.apache.flink.util.Collector;
-import tumblingwindow.model.EventWindow;
 
 /** TumblingWindowMapper converts from TumblingWindowInputEvent to TumblingWindowOutputEvent. */
 public class TumblingWindowFunction extends ProcessWindowFunction<Double[], EventWindow, String, TimeWindow> {

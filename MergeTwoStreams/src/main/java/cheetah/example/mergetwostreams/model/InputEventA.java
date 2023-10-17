@@ -1,16 +1,16 @@
-package cheetah.example.mergestreams.model;
+package cheetah.example.mergetwostreams.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-/** MergeTwoStreamsInputEventB represents the events to be processed from Stream B. */
+/** MergeTwoStreamsInputEventA represents the events to be processed from Stream A. */
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class InputEventB {
+public class InputEventA {
     private String deviceId;
     private double value;
     private long timestamp;

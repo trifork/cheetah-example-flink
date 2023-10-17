@@ -1,9 +1,9 @@
-package cheetah.example.mergestreams.job;
+package cheetah.example.mergetwostreams.job;
 
-import cheetah.example.mergestreams.enricher.EventMerger;
-import cheetah.example.mergestreams.model.InputEventA;
-import cheetah.example.mergestreams.model.InputEventB;
-import cheetah.example.mergestreams.model.OutputEvent;
+import cheetah.example.mergetwostreams.enricher.EventMerger;
+import cheetah.example.mergetwostreams.model.InputEventA;
+import cheetah.example.mergetwostreams.model.InputEventB;
+import cheetah.example.mergetwostreams.model.OutputEvent;
 import org.apache.flink.api.common.typeinfo.Types;
 import org.apache.flink.streaming.api.operators.co.KeyedCoProcessOperator;
 import org.apache.flink.streaming.runtime.streamrecord.StreamRecord;

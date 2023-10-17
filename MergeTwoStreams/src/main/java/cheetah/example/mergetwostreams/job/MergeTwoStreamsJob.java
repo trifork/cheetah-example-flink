@@ -1,19 +1,16 @@
-package cheetah.example.mergestreams.job;
+package cheetah.example.mergetwostreams.job;
 
-import cheetah.example.mergestreams.enricher.EventMerger;
-import cheetah.example.mergestreams.model.InputEventA;
-import cheetah.example.mergestreams.model.InputEventB;
-import cheetah.example.mergestreams.model.OutputEvent;
+import cheetah.example.mergetwostreams.enricher.EventMerger;
+import cheetah.example.mergetwostreams.model.InputEventA;
+import cheetah.example.mergetwostreams.model.InputEventB;
+import cheetah.example.mergetwostreams.model.OutputEvent;
 import com.trifork.cheetah.processing.connector.kafka.CheetahKafkaSink;
 import com.trifork.cheetah.processing.connector.kafka.CheetahKafkaSource;
-import com.trifork.cheetah.processing.connector.kafka.config.CheetahKafkaSinkConfig;
 import com.trifork.cheetah.processing.connector.kafka.config.CheetahKafkaSourceConfig;
-import com.trifork.cheetah.processing.connector.serde.CheetahSerdeSchemas;
 import com.trifork.cheetah.processing.job.Job;
 import org.apache.flink.api.java.functions.KeySelector;
 import org.apache.flink.connector.kafka.sink.KafkaSink;
 import org.apache.flink.connector.kafka.source.KafkaSource;
-import org.apache.flink.formats.json.JsonSerializationSchema;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 

@@ -1,17 +1,17 @@
-package cheetah.example.mergestreams.model;
+package cheetah.example.tumblingwindow.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-/** MergeTwoStreamsInputEventA represents the events to be processed from Stream A. */
+/** TumblingWindowInputEvent represents the events to be processed. */
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class InputEventA {
+public class InputEvent {
     private String deviceId;
-    private double value;
     private long timestamp;
+    private double value;
 }

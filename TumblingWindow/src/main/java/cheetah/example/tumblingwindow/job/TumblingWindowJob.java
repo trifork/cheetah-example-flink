@@ -1,6 +1,8 @@
-package tumblingwindow.job;
+package cheetah.example.tumblingwindow.job;
 
-import com.trifork.cheetah.processing.connector.kafka.CheetahKafkaSink;
+import cheetah.example.tumblingwindow.function.TumblingWindowAggregate;
+import cheetah.example.tumblingwindow.model.EventWindow;
+import cheetah.example.tumblingwindow.model.InputEvent;
 import com.trifork.cheetah.processing.connector.kafka.CheetahKafkaSource;
 import com.trifork.cheetah.processing.connector.kafka.config.CheetahKafkaSinkConfig;
 import com.trifork.cheetah.processing.connector.kafka.config.CheetahKafkaSourceConfig;
@@ -14,10 +16,7 @@ import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows;
 import org.apache.flink.streaming.api.windowing.time.Time;
-import tumblingwindow.function.TumblingWindowAggregate;
-import tumblingwindow.function.TumblingWindowFunction;
-import tumblingwindow.model.EventWindow;
-import tumblingwindow.model.InputEvent;
+import cheetah.example.tumblingwindow.function.TumblingWindowFunction;
 
 import java.io.Serializable;
 import java.time.Instant;

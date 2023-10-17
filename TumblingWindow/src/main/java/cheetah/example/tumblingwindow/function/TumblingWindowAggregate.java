@@ -1,7 +1,7 @@
-package tumblingwindow.function;
+package cheetah.example.tumblingwindow.function;
 
 import org.apache.flink.api.common.functions.AggregateFunction;
-import tumblingwindow.model.InputEvent;
+import cheetah.example.tumblingwindow.model.InputEvent;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package cheetah.example.mergestreams.model;
+package cheetah.example.mergetwostreams.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
