@@ -1,13 +1,10 @@
-package cheetah.example.job;
+package cheetah.example.function;
 
-import cheetah.example.model.FlinkStatesInputEvent;
+import cheetah.example.model.InputEvent;
 import org.apache.flink.api.common.functions.AggregateFunction;
-import org.apache.flink.api.common.functions.ReduceFunction;
 import org.apache.flink.api.common.functions.RichFlatMapFunction;
 import org.apache.flink.api.common.state.AggregatingState;
 import org.apache.flink.api.common.state.AggregatingStateDescriptor;
-import org.apache.flink.api.common.state.ReducingState;
-import org.apache.flink.api.common.state.ReducingStateDescriptor;
 import org.apache.flink.api.common.typeinfo.TypeHint;
 import org.apache.flink.api.common.typeinfo.TypeInformation;
 import org.apache.flink.configuration.Configuration;
@@ -18,9 +15,9 @@ import org.apache.flink.util.Collector;
  * The AggregatingState can contain other elements during aggregation than the one returned. This is in contrast to the ReducingState,
  * where the temporary storage must be the same as the final result
  */
-public class FlinkAggregatingStatesMapper extends RichFlatMapFunction<FlinkStatesInputEvent, Double> {
+public class FlinkAggregatingStatesMapper extends RichFlatMapFunction<InputEvent, Double> {
 
-    private transient AggregatingState<FlinkStatesInputEvent, Double> sum;
+    private transient AggregatingState<InputEvent, Double> sum;
 
     /**
      * Mapping the incoming messages to the sum of all elements seen
@@ -28,14 +25,14 @@ public class FlinkAggregatingStatesMapper extends RichFlatMapFunction<FlinkState
      * @param out The collector for returning result values.
      */
     @Override
-    public void flatMap(FlinkStatesInputEvent value, Collector<Double> out) throws Exception {
+    public void flatMap(InputEvent value, Collector<Double> out) throws Exception {
         sum.add(value);
         out.collect(sum.get());
     }
 
     @Override
     public void open(Configuration config) {
-      AggregatingStateDescriptor<FlinkStatesInputEvent, Double, Double> descriptor =
+      AggregatingStateDescriptor<InputEvent, Double, Double> descriptor =
               new AggregatingStateDescriptor<>(
                       "values", // the state name
                       getAggregateFunction(),
@@ -47,7 +44,7 @@ public class FlinkAggregatingStatesMapper extends RichFlatMapFunction<FlinkState
     /**
      * Returns the aggregateFunction telling how to aggregate the elements.
      */
-    private static AggregateFunction<FlinkStatesInputEvent, Double, Double> getAggregateFunction() {
+    private static AggregateFunction<InputEvent, Double, Double> getAggregateFunction() {
         return new AggregateFunction<>() {
             @Override
             public Double createAccumulator() {
@@ -55,7 +52,7 @@ public class FlinkAggregatingStatesMapper extends RichFlatMapFunction<FlinkState
             }
 
             @Override
-            public Double add(FlinkStatesInputEvent value, Double accumulator) {
+            public Double add(InputEvent value, Double accumulator) {
                 return accumulator + value.getValue();
             }
 

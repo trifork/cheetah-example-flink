@@ -1,6 +1,6 @@
-package cheetah.example.job;
+package cheetah.example.function;
 
-import cheetah.example.model.FlinkStatesInputEvent;
+import cheetah.example.model.InputEvent;
 import org.apache.flink.api.common.functions.RichFlatMapFunction;
 import org.apache.flink.api.common.state.ListState;
 import org.apache.flink.api.common.state.ListStateDescriptor;
@@ -14,7 +14,7 @@ import org.apache.flink.util.IterableUtils;
  * The FlinkListStateMapper is an example of how to use the ListState to store a list of values between messages.
  * The example outputs the list for every two messages.
  */
-public class FlinkListStatesMapper extends RichFlatMapFunction<FlinkStatesInputEvent, Double[]> {
+public class FlinkListStatesMapper extends RichFlatMapFunction<InputEvent, Double[]> {
 
     private transient ListState<Double> values;
 
@@ -24,7 +24,7 @@ public class FlinkListStatesMapper extends RichFlatMapFunction<FlinkStatesInputE
      * @param out The collector for returning result values.
      */
     @Override
-    public void flatMap(FlinkStatesInputEvent value, Collector<Double[]> out) throws Exception {
+    public void flatMap(InputEvent value, Collector<Double[]> out) throws Exception {
         values.add(value.getValue());
         var iterator = values.get();
         int counter = 0;

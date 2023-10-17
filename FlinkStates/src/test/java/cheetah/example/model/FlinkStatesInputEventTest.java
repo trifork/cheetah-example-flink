@@ -17,7 +17,7 @@ class FlinkStatesInputEventTest {
      */
     @Test
     void isSerializedAsPojo() {
-        assertSerializedAsPojo(FlinkStatesInputEvent.class);
-        assertSerializedAsPojoWithoutKryo(FlinkStatesInputEvent.class);
+        assertSerializedAsPojo(InputEvent.class);
+        assertSerializedAsPojoWithoutKryo(InputEvent.class);
     }
 }

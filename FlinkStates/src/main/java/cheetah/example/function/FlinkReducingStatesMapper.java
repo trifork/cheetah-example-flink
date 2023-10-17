@@ -1,6 +1,6 @@
-package cheetah.example.job;
+package cheetah.example.function;
 
-import cheetah.example.model.FlinkStatesInputEvent;
+import cheetah.example.model.InputEvent;
 import org.apache.flink.api.common.functions.ReduceFunction;
 import org.apache.flink.api.common.functions.RichFlatMapFunction;
 import org.apache.flink.api.common.state.ReducingState;
@@ -15,12 +15,12 @@ import org.apache.flink.util.Collector;
  * The ReducingState must contain values like the one returned. This is in contrast to the AggregatingState,
  * where the temporary storage can be different from the final result
  */
-public class FlinkReducingStatesMapper extends RichFlatMapFunction<FlinkStatesInputEvent, Double> {
+public class FlinkReducingStatesMapper extends RichFlatMapFunction<InputEvent, Double> {
 
     private transient ReducingState<Double> sum;
 
     @Override
-    public void flatMap(FlinkStatesInputEvent value, Collector<Double> out) throws Exception {
+    public void flatMap(InputEvent value, Collector<Double> out) throws Exception {
         sum.add(value.getValue());
         out.collect(sum.get());
     }

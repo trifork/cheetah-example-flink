@@ -1,6 +1,6 @@
-package cheetah.example.job;
+package cheetah.example.function;
 
-import cheetah.example.model.FlinkStatesInputEvent;
+import cheetah.example.model.InputEvent;
 import org.apache.flink.api.common.functions.RichFlatMapFunction;
 import org.apache.flink.api.common.state.ValueState;
 import org.apache.flink.api.common.state.ValueStateDescriptor;
@@ -13,12 +13,12 @@ import org.apache.flink.util.Collector;
 /**
  * The FlinkValueStatesMapper is an example of using the ValueState to calculate the average of every two messages seen.
  */
-public class FlinkValueStatesMapper extends RichFlatMapFunction<FlinkStatesInputEvent, Double> {
+public class FlinkValueStatesMapper extends RichFlatMapFunction<InputEvent, Double> {
 
     private transient ValueState<Tuple2<Long, Double>> sum;
 
     @Override
-    public void flatMap(FlinkStatesInputEvent value, Collector<Double> out) throws Exception {
+    public void flatMap(InputEvent value, Collector<Double> out) throws Exception {
         var currentSum = sum.value();
         if (currentSum == null) {
             currentSum = new Tuple2<>(0L, 0.0);

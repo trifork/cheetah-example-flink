@@ -1,6 +1,6 @@
-package cheetah.example.job;
+package cheetah.example.function;
 
-import cheetah.example.model.FlinkStatesInputEvent;
+import cheetah.example.model.InputEvent;
 import org.apache.flink.api.common.functions.RichFlatMapFunction;
 import org.apache.flink.api.common.state.MapState;
 import org.apache.flink.api.common.state.MapStateDescriptor;
@@ -12,7 +12,7 @@ import org.apache.flink.util.Collector;
 /**
  * The FlinkMapStatesMapper is an example of using the MapState to calculate the sum of values received per deviceId.
  */
-public class FlinkMapStatesMapper extends RichFlatMapFunction<FlinkStatesInputEvent, Double> {
+public class FlinkMapStatesMapper extends RichFlatMapFunction<InputEvent, Double> {
 
     private transient MapState<String, Double> sumPerDevice;
 
@@ -22,7 +22,7 @@ public class FlinkMapStatesMapper extends RichFlatMapFunction<FlinkStatesInputEv
      * @param out The collector for returning result values.
      */
     @Override
-    public void flatMap(FlinkStatesInputEvent value, Collector<Double> out) throws Exception {
+    public void flatMap(InputEvent value, Collector<Double> out) throws Exception {
         var sum = sumPerDevice.get(value.getDeviceId());
         if (sum == null) {
             sum = 0.0;
