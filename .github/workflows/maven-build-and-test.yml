@@ -1,7 +1,7 @@
-name: Maven build and test all projects in Cheetah Platform Examples
+name: Build and test all projects in Cheetah Platform Examples with Maven
 on:
   workflow_dispatch:
-  
+
   push:
     branches: ["main"]
   
@@ -13,67 +13,52 @@ on:
     - cron: '30 0 * * *'
 
 jobs:
-  build-and-test-flink-states:
-    name: "Build and test Flink States maven project"
+  flink-states-build-and-test:
+    name: "Flink States - Build and Test"
     runs-on: ubuntu-latest
-
     steps: 
-      - uses: actions/checkout@v4
-
-      - name: Build and test Flink States maven project
+      - name: Flink States - Build and Test
         uses: trifork/cheetah-platform-examples/.github/actions/maven-build-and-test@main
         with: 
           settings-path: ./FlinkStates/
-          PAT: ${{ secrets.PACKAGE_PAT }}
+          access-token: ${{ secrets.PACKAGE_PAT }}
   
-  build-and-test-merge-two-streams:
-    name: "Build and test Merge Two Streams maven project"
+  merge-two-streams-build-and-test:
+    name: "Merge Two Streams - Build and Test"
     runs-on: ubuntu-latest
-
     steps: 
-      - uses: actions/checkout@v4
-
-      - name: Build and test Merge Two Streams maven project
+      - name: Merge Two Streams - Build and Test
         uses: trifork/cheetah-platform-examples/.github/actions/maven-build-and-test@main
         with: 
           settings-path: ./MergeTwoStreams/
-          PAT: ${{ secrets.PACKAGE_PAT }}
+          access-token: ${{ secrets.PACKAGE_PAT }}
 
-  build-and-test-multiple-side-output:
-    name: "Build and test Multiple Side Output maven project"
+  multiple-side-output-build-and-test:
+    name: "Multiple Side Output - Build and Test"
     runs-on: ubuntu-latest
-
     steps: 
-      - uses: actions/checkout@v4
-
-      - name: Build and test Multiple Side Output maven project
+      - name: Multiple Side Output - Build and Test
         uses: trifork/cheetah-platform-examples/.github/actions/maven-build-and-test@main
         with: 
           settings-path: ./MultipleSideOutput/
-          PAT: ${{ secrets.PACKAGE_PAT }}
+          access-token: ${{ secrets.PACKAGE_PAT }}
   
-  build-and-test-observability:
-    name: "Build and test Observability maven project"
+  observability-build-and-test:
+    name: "Observability - Build and Test"
     runs-on: ubuntu-latest
-
     steps: 
-      - uses: actions/checkout@v4
-
-      - name: Build and test Observability maven project
+      - name: Observability - Build and Test
         uses: trifork/cheetah-platform-examples/.github/actions/maven-build-and-test@main
         with: 
           settings-path: ./Observability/
-          PAT: ${{ secrets.PACKAGE_PAT }}
+          access-token: ${{ secrets.PACKAGE_PAT }}
   
-  build-and-test-tumbling-window:
-    name: "Build and test Tumbling Window maven project"
+  tumbling-window-build-and-test:
+    name: "Tumbling Window - Build and Test"
     runs-on: ubuntu-latest
-
     steps: 
-      - uses: actions/checkout@v4
-
-      - name: Build and test Tumbling Window maven project
+      - name: Tumbling Window - Build and Test
         uses: trifork/cheetah-platform-examples/.github/actions/maven-build-and-test@main
         with: 
           settings-path: ./TumblingWindow/
-          PAT: ${{ secrets.PACKAGE_PAT }}
+          access-token: ${{ secrets.PACKAGE_PAT }}
