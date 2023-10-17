@@ -1,5 +1,8 @@
 package cheetah.example.observability.job;
 
+import cheetah.example.observability.function.CounterMapper;
+import cheetah.example.observability.function.GaugeMapper;
+import cheetah.example.observability.function.HistogramMapper;
 import cheetah.example.observability.model.InputEvent;
 import com.trifork.cheetah.processing.connector.kafka.CheetahKafkaSource;
 import com.trifork.cheetah.processing.connector.kafka.config.CheetahKafkaSourceConfig;

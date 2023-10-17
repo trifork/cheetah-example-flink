@@ -1,6 +1,6 @@
 package cheetah.example.mergetwostreams.job;
 
-import cheetah.example.mergetwostreams.enricher.EventMerger;
+import cheetah.example.mergetwostreams.function.EventMerger;
 import cheetah.example.mergetwostreams.model.InputEventA;
 import cheetah.example.mergetwostreams.model.InputEventB;
 import cheetah.example.mergetwostreams.model.OutputEvent;
