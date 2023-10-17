@@ -46,6 +46,9 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ needs.should-run.outputs.event-name-check == 'true' || needs.should-run.outputs.tag-check == 'true' }}
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
       - name: Build Flink States example image and run component test
         uses: ./.github/actions/component-test
         with:
@@ -59,6 +62,9 @@ jobs:
     if: ${{ needs.should-run.outputs.event-name-check == 'true' || needs.should-run.outputs.tag-check == 'true' }}
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Build Merge Two Streams example image and run component test
         uses: ./.github/actions/component-test
         with:
@@ -72,6 +78,9 @@ jobs:
     if: ${{ needs.should-run.outputs.event-name-check == 'true' || needs.should-run.outputs.tag-check == 'true' }}
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Build Multiple Side Output example image and run component test
         uses: ./.github/actions/component-test
         with:
@@ -85,6 +94,9 @@ jobs:
     if: ${{ needs.should-run.outputs.event-name-check == 'true' || needs.should-run.outputs.tag-check == 'true' }}
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Build Observability example image and run component test
         uses: ./.github/actions/component-test
         with:
@@ -98,6 +110,9 @@ jobs:
     if: ${{ needs.should-run.outputs.event-name-check == 'true' || needs.should-run.outputs.tag-check == 'true' }}
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Build Tumbling Window example image and run component test
         uses: ./.github/actions/component-test
         with:
@@ -111,6 +126,9 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ needs.should-run.outputs.event-name-check == 'true' || needs.should-run.outputs.tag-check == 'true' }}
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Build Tumbling Window example image and run component test
         uses: ./.github/actions/component-test
         with:

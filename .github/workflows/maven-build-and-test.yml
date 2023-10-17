@@ -16,7 +16,11 @@ jobs:
   flink-states-build-and-test:
     name: "Flink States - Build and Test"
     runs-on: ubuntu-latest
-    steps: 
+    steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
       - name: Flink States - Build and Test
         uses: ./.github/actions/maven-build-and-test
         with: 
@@ -27,6 +31,9 @@ jobs:
     name: "Merge Two Streams - Build and Test"
     runs-on: ubuntu-latest
     steps: 
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
       - name: Merge Two Streams - Build and Test
         uses: ./.github/actions/maven-build-and-test
         with: 
@@ -37,6 +44,9 @@ jobs:
     name: "Multiple Side Output - Build and Test"
     runs-on: ubuntu-latest
     steps: 
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
       - name: Multiple Side Output - Build and Test
         uses: ./.github/actions/maven-build-and-test
         with: 
@@ -47,6 +57,9 @@ jobs:
     name: "Observability - Build and Test"
     runs-on: ubuntu-latest
     steps: 
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
       - name: Observability - Build and Test
         uses: ./.github/actions/maven-build-and-test
         with: 
@@ -57,6 +70,9 @@ jobs:
     name: "Tumbling Window - Build and Test"
     runs-on: ubuntu-latest
     steps: 
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
       - name: Tumbling Window - Build and Test
         uses: ./.github/actions/maven-build-and-test
         with: 
