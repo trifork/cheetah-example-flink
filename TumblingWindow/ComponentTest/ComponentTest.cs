@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Xunit;
 using TumblingWindow.ComponentTest.Models;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace TumblingWindow.ComponentTest;
 
@@ -30,48 +31,46 @@ public class ComponentTest
             .Build();
     }
 
-    [Fact]
-    public void Should_BeImplemented_When_ServiceIsCreated()
+    [Fact] 
+    public async Task Should_ProduceOneWindow_When_ProvidedMultipleMessagesInWindowAndOneAfter()
     {
         // Arrange
         // Here you'll set up one or more writers and readers, which connect to the topic(s) that your job consumes
         // from and publishes to. 
-        var writer = KafkaWriterBuilder.Create<string, TumblingWindowInputEvent>()
-            .WithKafkaConfigurationPrefix(string.Empty, _configuration)
+        var writer = KafkaWriterBuilder.Create<string, InputEvent>(_configuration)
             .WithTopic("TumblingWindowInputTopic") // The topic to consume from
             .WithKeyFunction(model => model.DeviceId) // Optional function to retrieve the message key.
                                                           // If no key is desired, use KafkaWriterBuilder.Create<Null, InputModel>
                                                           // and make this function return null
             .Build();
 
-        var reader = KafkaReaderBuilder.Create<string, TumblingWindowOutputEvent>()
-            .WithKafkaConfigurationPrefix(string.Empty, _configuration)
+        var reader = KafkaReaderBuilder.Create<string, Models.EventWindow>(_configuration)
             .WithTopic("TumblingWindowOutputTopic")
-            .WithGroupId("MyGroup")
+            .WithConsumerGroup("MyGroup")
             .Build();
         
         // Act
         // Write one or more messages to the writer
-        var inputEvent1 = new TumblingWindowInputEvent()
+        var inputEvent1 = new InputEvent()
         {
             DeviceId = "deviceId-1",
             Value = 12.34,
             Timestamp = DateTimeOffset.Now.ToUnixTimeMilliseconds()
         };
-        var inputEvent2 = new TumblingWindowInputEvent()
+        var inputEvent2 = new InputEvent()
         {
             DeviceId = "deviceId-1",
             Value = 56.78,
             Timestamp = DateTimeOffset.Now.ToUnixTimeMilliseconds()
         };
-        var inputEvent3 = new TumblingWindowInputEvent()
+        var inputEvent3 = new InputEvent()
         {
             DeviceId = "deviceId-1",
             Value = 910.1112,
             Timestamp = DateTimeOffset.Now.ToUnixTimeMilliseconds()
         };
 
-        var inputEvent4 = new TumblingWindowInputEvent()
+        var inputEvent4 = new InputEvent()
         {
             DeviceId = "deviceId-1",
             Value = 910.1112,
@@ -79,9 +78,9 @@ public class ComponentTest
         };
 
         
-        writer.Write(inputEvent1, inputEvent2, inputEvent3);
+        await writer.WriteAsync(inputEvent1, inputEvent2, inputEvent3);
 
-        writer.Write(inputEvent4, inputEvent4);
+        await writer.WriteAsync(inputEvent4, inputEvent4);
 
         
         // Assert
@@ -98,8 +97,6 @@ public class ComponentTest
                                                     inputEvent3.Value}
                                                     .Contains(item)));
         reader.VerifyNoMoreMessages(TimeSpan.FromSeconds(20)).Should().BeTrue();
-
-        // Assert.True(false, "This is really just here to make the test fail and ensure that you either decide to implement a component test or actively decide not to");
     }
 
 

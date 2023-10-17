@@ -1,19 +1,21 @@
 package tumblingwindow.job;
 
-import com.trifork.cheetah.processing.connector.kafka.KafkaDataStreamBuilder;
-import com.trifork.cheetah.processing.connector.kafka.KafkaSinkBuilder;
-import com.trifork.cheetah.processing.connector.serialization.SimpleKeySerializationSchema;
+import com.trifork.cheetah.processing.connector.kafka.CheetahKafkaSink;
+import com.trifork.cheetah.processing.connector.kafka.CheetahKafkaSource;
+import com.trifork.cheetah.processing.connector.kafka.config.CheetahKafkaSinkConfig;
+import com.trifork.cheetah.processing.connector.kafka.config.CheetahKafkaSourceConfig;
 import com.trifork.cheetah.processing.job.Job;
 import com.trifork.cheetah.processing.util.WatermarkStrategyBuilder;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.connector.kafka.sink.KafkaSink;
+import org.apache.flink.connector.kafka.source.KafkaSource;
 import org.apache.flink.connector.kafka.source.enumerator.initializer.OffsetsInitializer;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows;
 import org.apache.flink.streaming.api.windowing.time.Time;
-import tumblingwindow.model.TumblingWindowInputEvent;
-import tumblingwindow.model.TumblingWindowOutputEvent;
+import tumblingwindow.model.EventWindow;
+import tumblingwindow.model.InputEvent;
 
 import java.io.Serializable;
 import java.time.Instant;
@@ -28,42 +30,32 @@ public class TumblingWindowJob extends Job implements Serializable {
 
     @Override
     protected void setup() {
-        // Input source
-        DataStream<TumblingWindowInputEvent> inputStream =
-                KafkaDataStreamBuilder.forSource(this, TumblingWindowInputEvent.class)
-                        .offsetsInitializer(OffsetsInitializer.earliest())
-                        .build();
 
         // Transform stream
-        WatermarkStrategy<TumblingWindowInputEvent> watermarkStrategy = WatermarkStrategyBuilder
-                .builder(TumblingWindowInputEvent.class)
+        WatermarkStrategy<InputEvent> watermarkStrategy = WatermarkStrategyBuilder
+                .builder(InputEvent.class)
                 .eventTimestampSupplier(input -> Instant.ofEpochMilli(input.getTimestamp()))
                 .build();
 
-        SingleOutputStreamOperator<TumblingWindowOutputEvent> outputStream = inputStream
+        CheetahKafkaSourceConfig config = CheetahKafkaSourceConfig.defaultConfig(this);
+        final KafkaSource<InputEvent> kafkaSource = CheetahKafkaSource.builder(InputEvent.class, config).setStartingOffsets(OffsetsInitializer.earliest()).build();
+        final DataStream<InputEvent> inputStream = CheetahKafkaSource.toDataStream(this, kafkaSource, watermarkStrategy,"Input Event Source");
+
+
+        SingleOutputStreamOperator<EventWindow> outputStream = inputStream
                 .assignTimestampsAndWatermarks(watermarkStrategy)
                 .map(message -> {
                     System.out.println(message);
                     return message;
                 })
-                .keyBy(TumblingWindowInputEvent::getDeviceId)
+                .keyBy(InputEvent::getDeviceId)
                 .window(TumblingEventTimeWindows.of(Time.minutes(5)))
                 .aggregate(new TumblingWindowAggregate(), new TumblingWindowFunction());
 
         // Output sink
-        final KafkaSink<TumblingWindowOutputEvent> kafkaSink =
-                KafkaSinkBuilder.defaultKafkaConfig(this, TumblingWindowOutputEvent.class)
-                        .keySerializationSchema(
-                                new SimpleKeySerializationSchema<>() {
-
-                                    @Override
-                                    public Object getKey(final TumblingWindowOutputEvent outputEvent) {
-                                        return outputEvent.getDeviceId();
-                                    }
-                                })
+        final KafkaSink<EventWindow> kafkaSink =
+                CheetahKafkaSink.builder(EventWindow.class, CheetahKafkaSinkConfig.defaultConfig(this))
                         .build();
-
-        getParameters().get("dsadasd");
 
         // Connect transformed stream to sink
         outputStream.sinkTo(kafkaSink).name(TumblingWindowJob.class.getSimpleName());

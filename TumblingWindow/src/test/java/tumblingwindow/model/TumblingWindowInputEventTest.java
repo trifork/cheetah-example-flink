@@ -17,7 +17,7 @@ class TumblingWindowInputEventTest {
      */
     @Test
     void isSerializedAsPojo() {
-        assertSerializedAsPojo(TumblingWindowInputEvent.class);
-        assertSerializedAsPojoWithoutKryo(TumblingWindowInputEvent.class);
+        assertSerializedAsPojo(InputEvent.class);
+        assertSerializedAsPojoWithoutKryo(InputEvent.class);
     }
 }

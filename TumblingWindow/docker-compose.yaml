@@ -29,10 +29,11 @@ services:
     command: |
       standalone-job
       --job-classname tumblingwindow.job.TumblingWindowJob
-      --input-kafka-bootstrap-servers kafka:19092
+      --kafka-bootstrap-servers kafka:19092      
+      --kafka-group-id MergeTwoStreams-group-id
+      --kafka-security-protocol SASL_PLAINTEXT
       --input-kafka-topic TumblingWindowInputTopic
       --output-kafka-topic TumblingWindowOutputTopic
-      --output-kafka-bootstrap-servers kafka:19092
     environment:
       KAFKA_CLIENT_ID: ClientId
       KAFKA_CLIENT_SECRET: 1234

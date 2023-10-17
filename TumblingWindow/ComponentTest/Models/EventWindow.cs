@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace TumblingWindow.ComponentTest.Models;
 
 // Rename and implement a model that fits the one you expect your job to produce
-public class TumblingWindowOutputEvent
+public class EventWindow
 {
     [JsonPropertyName("deviceId")]
     public string DeviceId { get; set; }

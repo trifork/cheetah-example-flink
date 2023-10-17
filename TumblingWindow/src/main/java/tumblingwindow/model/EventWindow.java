@@ -5,13 +5,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-/** TumblingWindowInputEvent represents the events to be processed. */
+/** TumblingWindowOutputEvent represents the events being generated. */
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class TumblingWindowInputEvent {
+public class EventWindow {
     private String deviceId;
-    private long timestamp;
-    private double value;
+    private long startTime;
+    private long endTime;
+    private Double[] value;
 }

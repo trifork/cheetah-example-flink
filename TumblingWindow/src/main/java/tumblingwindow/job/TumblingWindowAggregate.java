@@ -1,19 +1,19 @@
 package tumblingwindow.job;
 
 import org.apache.flink.api.common.functions.AggregateFunction;
-import tumblingwindow.model.TumblingWindowInputEvent;
+import tumblingwindow.model.InputEvent;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TumblingWindowAggregate implements AggregateFunction<TumblingWindowInputEvent, List<Double>, Double[]> {
+public class TumblingWindowAggregate implements AggregateFunction<InputEvent, List<Double>, Double[]> {
     @Override
     public List<Double> createAccumulator() {
         return new ArrayList<>();
     }
 
     @Override
-    public List<Double> add(TumblingWindowInputEvent in, List<Double> acc) {
+    public List<Double> add(InputEvent in, List<Double> acc) {
         acc.add(in.getValue());
         return acc;
     }
