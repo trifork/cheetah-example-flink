@@ -1,6 +1,6 @@
 package cheetah.example.observability.job;
 
-import cheetah.example.observability.model.ObservabilityInputEvent;
+import cheetah.example.observability.model.InputEvent;
 import org.apache.flink.api.common.functions.RichMapFunction;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.metrics.Gauge;
@@ -8,7 +8,7 @@ import org.apache.flink.metrics.Gauge;
 /**
  * The purpose of the GaugeMapper is to count the number of messages processed
  */
-public class GaugeMapper extends RichMapFunction<ObservabilityInputEvent, ObservabilityInputEvent> {
+public class GaugeMapper extends RichMapFunction<InputEvent, InputEvent> {
 
     private transient int messagesProcessed = 0;
 
@@ -26,7 +26,7 @@ public class GaugeMapper extends RichMapFunction<ObservabilityInputEvent, Observ
     }
 
     @Override
-    public ObservabilityInputEvent map(ObservabilityInputEvent value) throws Exception {
+    public InputEvent map(InputEvent value) throws Exception {
         this.messagesProcessed++;
         return value;
     }

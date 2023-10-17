@@ -1,6 +1,6 @@
 package cheetah.example.observability.job;
 
-import cheetah.example.observability.model.ObservabilityInputEvent;
+import cheetah.example.observability.model.InputEvent;
 import com.codahale.metrics.SlidingWindowReservoir;
 import org.apache.flink.api.common.functions.RichMapFunction;
 import org.apache.flink.configuration.Configuration;
@@ -10,7 +10,7 @@ import org.apache.flink.metrics.Histogram;
 /**
  * The purpose of the HistogramMapper is to make a Histogram over the values in the messages
  */
-public class HistogramMapper extends RichMapFunction<ObservabilityInputEvent, ObservabilityInputEvent> {
+public class HistogramMapper extends RichMapFunction<InputEvent, InputEvent> {
 
     private Histogram histogram;
 
@@ -24,7 +24,7 @@ public class HistogramMapper extends RichMapFunction<ObservabilityInputEvent, Ob
     }
 
     @Override
-    public ObservabilityInputEvent map(ObservabilityInputEvent value) throws Exception {
+    public InputEvent map(InputEvent value) throws Exception {
         this.histogram.update((long) value.getValue());
         return value;
     }

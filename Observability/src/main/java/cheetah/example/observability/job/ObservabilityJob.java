@@ -1,8 +1,10 @@
 package cheetah.example.observability.job;
 
-import cheetah.example.observability.model.ObservabilityInputEvent;
-import com.trifork.cheetah.processing.connector.kafka.KafkaDataStreamBuilder;
+import cheetah.example.observability.model.InputEvent;
+import com.trifork.cheetah.processing.connector.kafka.CheetahKafkaSource;
+import com.trifork.cheetah.processing.connector.kafka.config.CheetahKafkaSourceConfig;
 import com.trifork.cheetah.processing.job.Job;
+import org.apache.flink.connector.kafka.source.KafkaSource;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 
@@ -19,16 +21,16 @@ public class ObservabilityJob extends Job implements Serializable {
     @Override
     protected void setup() {
         // Input source
-        final DataStream<ObservabilityInputEvent> inputStream =
-                KafkaDataStreamBuilder.forSource(this, ObservabilityInputEvent.class)
-                        .build();
+        final KafkaSource<InputEvent> kafkaSource = CheetahKafkaSourceConfig.builder(this).toKafkaSourceBuilder(InputEvent.class).build();
+
+        final DataStream<InputEvent> inputStream = CheetahKafkaSource.toDataStream(this, kafkaSource,"my-source-name");
 
         //Use three distinct mappers to add the different types of metrics, that are available
-        final SingleOutputStreamOperator<ObservabilityInputEvent> countedStream =
+        final SingleOutputStreamOperator<InputEvent> countedStream =
                 inputStream.map(new CounterMapper());
-        final SingleOutputStreamOperator<ObservabilityInputEvent> gaugedStream =
+        final SingleOutputStreamOperator<InputEvent> gaugedStream =
                 countedStream.map(new GaugeMapper());
-        final SingleOutputStreamOperator<ObservabilityInputEvent> histogramStream =
+        final SingleOutputStreamOperator<InputEvent> histogramStream =
                 gaugedStream.map(new HistogramMapper());
 
         histogramStream.name(ObservabilityJob.class.getSimpleName());
