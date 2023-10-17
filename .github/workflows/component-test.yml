@@ -12,88 +12,70 @@ on:
   # * is a special character in YAML so you have to quote this string
   - cron: '30 0 * * *'
 
-env:
-  IMAGE_REGISTRY: ghcr.io
-  JAR_NAME_PATTERN: cheetah-*.jar # entrypoint assembly name
-  FLINK_IMAGE_VERSION: 1.16.1
-
 jobs:
-  flink-state-componenttest:
-    name: "Flink States example componenttests"
+  flink-state-component-test:
+    name: "Flink States example component test"
     runs-on: ubuntu-latest
-
     steps:
       - name: Build Flink States example image and run component test
         uses: ./.github/actions/component-test
         with:
           context-path: ./FlinkStates/
-          PAT: ${{ secrets.PACKAGE_PAT }}
-          flink-image-version: ${{ env.FLINK_IMAGE_VERSION }}
-          image-name: ${{ github.repository }}/FlinkState
-          image-registry: ${{ env.IMAGE_REGISTRY }}
-          jar-name-pattern: ${{ env.JAR_NAME_PATTERN }}
+          access-token: ${{ secrets.PACKAGE_PAT }}
+          initial-kafka-topics: "MergeTwoStreamsInputTopicA MergeTwoStreamsInputTopicB"
 
-  merge-two-streams-componenttest:
-    name: "Merge Two Streams example componenttest"
+  merge-two-streams-component-test:
+    name: "Merge Two Streams example component test"
     runs-on: ubuntu-latest
-
     steps:
       - name: Build Merge Two Streams example image and run component test
         uses: ./.github/actions/component-test
         with:
           context-path: ./MergeTwoStreams/
-          PAT: ${{ secrets.PACKAGE_PAT }}
-          flink-image-version: ${{ env.FLINK_IMAGE_VERSION }}
-          image-name: ${{ github.repository }}/MergeTwoStreams
-          image-registry: ${{ env.IMAGE_REGISTRY }}
-          jar-name-pattern: ${{ env.JAR_NAME_PATTERN }}
-          INITIAL_KAFKA_TOPICS: "MergeTwoStreamsInputTopicA MergeTwoStreamsInputTopicB"
+          access-token: ${{ secrets.PACKAGE_PAT }}
+          initial-kafka-topics: "MergeTwoStreamsInputTopicA MergeTwoStreamsInputTopicB"
 
-  multiple-sideoutput-componenttest:
-    name: "Multiple Side Output componenttest"
+  multiple-sideoutput-component-test:
+    name: "Multiple Side Output component test"
     runs-on: ubuntu-latest
-
     steps:
       - name: Build Multiple Side Output example image and run component test
         uses: ./.github/actions/component-test
         with:
           context-path: ./MultipleSideOutput/
-          PAT: ${{ secrets.PACKAGE_PAT }}
-          flink-image-version: ${{ env.FLINK_IMAGE_VERSION }}
-          image-name: ${{ github.repository }}/MultipleSideOutput
-          image-registry: ${{ env.IMAGE_REGISTRY }}
-          jar-name-pattern: ${{ env.JAR_NAME_PATTERN }}
-          INITIAL_KAFKA_TOPICS: "MultipleSideOutputExampleInputTopic"
+          access-token: ${{ secrets.PACKAGE_PAT }}
+          initial-kafka-topics: "MultipleSideOutputExampleInputTopic"
 
-  opservability-componenttest:
-    name: "Observability componenttest"
+  observability-component-test:
+    name: "Observability component test"
     runs-on: ubuntu-latest
-
     steps:
       - name: Build Observability example image and run component test
         uses: ./.github/actions/component-test
         with:
           context-path: ./Observability/
-          PAT: ${{ secrets.PACKAGE_PAT }}
-          flink-image-version: ${{ env.FLINK_IMAGE_VERSION }}
-          image-name: ${{ github.repository }}/Observability
-          image-registry: ${{ env.IMAGE_REGISTRY }}
-          jar-name-pattern: ${{ env.JAR_NAME_PATTERN }}
-          INITIAL_KAFKA_TOPICS: "ObservabilityInputTopic"
+          access-token: ${{ secrets.PACKAGE_PAT }}
+          initial-kafka-topics: "ObservabilityInputTopic"
   
-  tumblingwindow-componenttest:
-    name: "Tumbling Window componenttest"
+  tumbling-window-component-test:
+    name: "Tumbling Window component test"
     runs-on: ubuntu-latest
-
     steps:
       - name: Build Tumbling Window example image and run component test
         uses: ./.github/actions/component-test
         with:
           context-path: ./TumblingWindow/
-          PAT: ${{ secrets.PACKAGE_PAT }}
-          flink-image-version: ${{ env.FLINK_IMAGE_VERSION }}
-          image-name: ${{ github.repository }}/TumblingWindow
-          image-registry: ${{ env.IMAGE_REGISTRY }}
-          jar-name-pattern: ${{ env.JAR_NAME_PATTERN }}
-          INITIAL_KAFKA_TOPICS: "TumblingWindowInputTopic"
+          access-token: ${{ secrets.PACKAGE_PAT }}
+          initial-kafka-topics: "TumblingWindowInputTopic"
+
+  external-lookup-component-test:
+    name: "Tumbling Window component test"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build Tumbling Window example image and run component test
+        uses: ./.github/actions/component-test
+        with:
+          context-path: ./ExternalLookup/
+          access-token: ${{ secrets.PACKAGE_PAT }}
+          initial-kafka-topics: "ExternalLookupInputTopic"
 
