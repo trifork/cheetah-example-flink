@@ -1,11 +1,12 @@
 package sideOutputExample.job;
 
+import com.trifork.cheetah.processing.connector.kafka.CheetahKafkaSink;
+import com.trifork.cheetah.processing.connector.kafka.CheetahKafkaSource;
+import com.trifork.cheetah.processing.connector.kafka.config.CheetahKafkaSinkConfig;
+import org.apache.flink.connector.kafka.source.KafkaSource;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.util.OutputTag;
 import sideOutputExample.model.InputEvent;
-import com.trifork.cheetah.processing.connector.kafka.KafkaDataStreamBuilder;
-import com.trifork.cheetah.processing.connector.kafka.KafkaSinkBuilder;
-import com.trifork.cheetah.processing.connector.serialization.SimpleKeySerializationSchema;
 import com.trifork.cheetah.processing.job.Job;
 import org.apache.flink.connector.kafka.sink.KafkaSink;
 import org.apache.flink.streaming.api.datastream.DataStream;
@@ -35,9 +36,9 @@ public class MultipleSideOutputExampleJob extends Job implements Serializable {
     @Override
     protected void setup() {
         // Input source
-        final DataStream<InputEvent> inputStream =
-                KafkaDataStreamBuilder.forSource(this, InputEvent.class)
-                        .build();
+        final KafkaSource<InputEvent> kafkaSource = CheetahKafkaSource.builder(InputEvent.class, this).build();
+
+        final DataStream<InputEvent> inputStream = CheetahKafkaSource.toDataStream(this, kafkaSource, "my-source-name");
 
         // Process element
         final SingleOutputStreamOperator<InputEvent> dataStream = inputStream.keyBy(InputEvent::getDeviceId)
@@ -45,50 +46,23 @@ public class MultipleSideOutputExampleJob extends Job implements Serializable {
 
         //
         // Output sink for output A
-        final KafkaSink<OutputEvent> kafkaSinkA =
-                KafkaSinkBuilder.defaultKafkaConfig(this, OutputEvent.class)
-                        .topic("OutputA-events")
-                        .keySerializationSchema(
-                                new SimpleKeySerializationSchema<>() {
+        final KafkaSink<OutputEvent> kafkaSinkA = CheetahKafkaSink.builder(OutputEvent.class, CheetahKafkaSinkConfig.defaultConfig(this, "a"))
+                .build();
 
-                                    @Override
-                                    public Object getKey(final OutputEvent outputEvent) {
-                                        return outputEvent.getDeviceId();
-                                    }
-                                })
-                        .build();
         // Taking the side output from the data stream that has be put on to side output A
         dataStream.getSideOutput(outputA).sinkTo(kafkaSinkA);
 
         // Output sink for output B
-        final KafkaSink<OutputEvent> kafkaSinkB =
-                KafkaSinkBuilder.defaultKafkaConfig(this, OutputEvent.class)
-                        .topic("OutputB-events")
-                        .keySerializationSchema(
-                                new SimpleKeySerializationSchema<>() {
+        final KafkaSink<OutputEvent> kafkaSinkB = CheetahKafkaSink.builder(OutputEvent.class, CheetahKafkaSinkConfig.defaultConfig(this, "b"))
+                .build();
 
-                                    @Override
-                                    public Object getKey(final OutputEvent outputEvent) {
-                                        return outputEvent.getDeviceId();
-                                    }
-                                })
-                        .build();
         // Taking the side output from the data stream that has be put on to side output B
         dataStream.getSideOutput(outputB).sinkTo(kafkaSinkB);
 
         // Output sink for output CD
-        final KafkaSink<OutputEvent2> kafkaSinkCD =
-                KafkaSinkBuilder.defaultKafkaConfig(this, OutputEvent2.class)
-                        .topic("OutputCD-events")
-                        .keySerializationSchema(
-                                new SimpleKeySerializationSchema<>() {
+        final KafkaSink<OutputEvent2> kafkaSinkCD = CheetahKafkaSink.builder(OutputEvent2.class, CheetahKafkaSinkConfig.defaultConfig(this, "cd"))
+                .build();
 
-                                    @Override
-                                    public Object getKey(final OutputEvent2 outputEvent) {
-                                        return outputEvent.getDeviceId();
-                                    }
-                                })
-                        .build();
         // Taking the side output from the data stream that has be put on to side output CD
         dataStream.getSideOutput(outputCD).sinkTo(kafkaSinkCD);
     }
