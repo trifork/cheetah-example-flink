@@ -14,6 +14,8 @@ import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows;
 import org.apache.flink.streaming.api.windowing.time.Time;
+import tumblingwindow.function.TumblingWindowAggregate;
+import tumblingwindow.function.TumblingWindowFunction;
 import tumblingwindow.model.EventWindow;
 import tumblingwindow.model.InputEvent;
 
@@ -37,10 +39,8 @@ public class TumblingWindowJob extends Job implements Serializable {
                 .eventTimestampSupplier(input -> Instant.ofEpochMilli(input.getTimestamp()))
                 .build();
 
-        CheetahKafkaSourceConfig config = CheetahKafkaSourceConfig.defaultConfig(this);
-        final KafkaSource<InputEvent> kafkaSource = CheetahKafkaSource.builder(InputEvent.class, config).setStartingOffsets(OffsetsInitializer.earliest()).build();
+        final KafkaSource<InputEvent> kafkaSource = CheetahKafkaSourceConfig.builder(this).toKafkaSourceBuilder(InputEvent.class).setStartingOffsets(OffsetsInitializer.earliest()).build();
         final DataStream<InputEvent> inputStream = CheetahKafkaSource.toDataStream(this, kafkaSource, watermarkStrategy,"Input Event Source");
-
 
         SingleOutputStreamOperator<EventWindow> outputStream = inputStream
                 .assignTimestampsAndWatermarks(watermarkStrategy)
@@ -53,9 +53,7 @@ public class TumblingWindowJob extends Job implements Serializable {
                 .aggregate(new TumblingWindowAggregate(), new TumblingWindowFunction());
 
         // Output sink
-        final KafkaSink<EventWindow> kafkaSink =
-                CheetahKafkaSink.builder(EventWindow.class, CheetahKafkaSinkConfig.defaultConfig(this))
-                        .build();
+        final KafkaSink<EventWindow> kafkaSink = CheetahKafkaSinkConfig.builder(this).toSinkBuilder(EventWindow.class).build();
 
         // Connect transformed stream to sink
         outputStream.sinkTo(kafkaSink).name(TumblingWindowJob.class.getSimpleName());

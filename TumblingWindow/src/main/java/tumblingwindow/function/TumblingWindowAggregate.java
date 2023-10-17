@@ -1,4 +1,4 @@
-package tumblingwindow.job;
+package tumblingwindow.function;
 
 import org.apache.flink.api.common.functions.AggregateFunction;
 import tumblingwindow.model.InputEvent;

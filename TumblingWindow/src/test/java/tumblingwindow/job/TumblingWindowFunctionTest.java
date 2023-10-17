@@ -2,6 +2,7 @@ package tumblingwindow.job;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import tumblingwindow.function.TumblingWindowAggregate;
 import tumblingwindow.model.InputEvent;
 
 import java.util.ArrayList;
