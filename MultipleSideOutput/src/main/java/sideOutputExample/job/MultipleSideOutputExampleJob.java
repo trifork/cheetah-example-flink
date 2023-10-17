@@ -3,6 +3,7 @@ package sideOutputExample.job;
 import com.trifork.cheetah.processing.connector.kafka.CheetahKafkaSink;
 import com.trifork.cheetah.processing.connector.kafka.CheetahKafkaSource;
 import com.trifork.cheetah.processing.connector.kafka.config.CheetahKafkaSinkConfig;
+import com.trifork.cheetah.processing.connector.kafka.config.CheetahKafkaSourceConfig;
 import org.apache.flink.connector.kafka.source.KafkaSource;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.util.OutputTag;
@@ -36,8 +37,7 @@ public class MultipleSideOutputExampleJob extends Job implements Serializable {
     @Override
     protected void setup() {
         // Input source
-        final KafkaSource<InputEvent> kafkaSource = CheetahKafkaSource.builder(InputEvent.class, this).build();
-
+        final KafkaSource<InputEvent> kafkaSource = CheetahKafkaSourceConfig.builder(this).toKafkaSourceBuilder(InputEvent.class).build();
         final DataStream<InputEvent> inputStream = CheetahKafkaSource.toDataStream(this, kafkaSource, "my-source-name");
 
         // Process element

@@ -3,7 +3,7 @@
 namespace MergeTwoStreams.ComponentTest.Models;
 
 // Inputs used to merge two streams based on deviceId
-public class MergeTwoStreamsInputEvent
+public class InputEvent
 {
     [JsonPropertyName("deviceId")]
     public string DeviceId { get; set; }

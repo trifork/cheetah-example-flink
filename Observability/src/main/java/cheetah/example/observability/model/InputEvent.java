@@ -10,7 +10,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ObservabilityInputEvent {
+public class InputEvent {
     private String deviceId;
     private double value;
     private long timestamp;

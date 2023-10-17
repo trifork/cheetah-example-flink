@@ -34,17 +34,11 @@ public class MergeTwoStreamsJob extends Job implements Serializable {
     @Override
     protected void setup() {
         // Setup reading from Stream A
-        CheetahKafkaSourceConfig configA = CheetahKafkaSourceConfig.defaultConfig(this, "a");
-
-        final KafkaSource<InputEventA> kafkaSourceA = CheetahKafkaSource.builder(InputEventA.class, configA).build();
-
+        final KafkaSource<InputEventA> kafkaSourceA = CheetahKafkaSourceConfig.builder(this,"a").toKafkaSourceBuilder(InputEventA.class).build();
         final DataStream<InputEventA> inputStreamA  = CheetahKafkaSource.toDataStream(this, kafkaSourceA, "my-source-name-a");
 
         // Setup reading from Stream B
-        CheetahKafkaSourceConfig configB = CheetahKafkaSourceConfig.defaultConfig(this, "b");
-
-        final KafkaSource<InputEventB> kafkaSourceB = CheetahKafkaSource.builder(InputEventB.class,configB).build();
-
+        final KafkaSource<InputEventB> kafkaSourceB = CheetahKafkaSourceConfig.builder(this, "b").toKafkaSourceBuilder(InputEventB.class).build();
         final DataStream<InputEventB> inputStreamB = CheetahKafkaSource.toDataStream(this, kafkaSourceB, "my-source-name-b");
 
         // Merge the two streams by connecting them, giving the KeyBy, which tells which fields to merge by.
@@ -58,11 +52,6 @@ public class MergeTwoStreamsJob extends Job implements Serializable {
 
         // Output the result to a new Stream
        final KafkaSink<OutputEvent> kafkaSink = CheetahKafkaSink.builder(OutputEvent.class, this)
-               .setRecordSerializer(CheetahSerdeSchemas.kafkaRecordSerializationSchema(
-                       CheetahKafkaSinkConfig.defaultConfig(this),
-                       message -> message.getDeviceId().getBytes(),
-                       new JsonSerializationSchema<>()
-               ))
                .build();
 
         // Connect transformed stream to sink
