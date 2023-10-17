@@ -1,8 +1,7 @@
-package Externallookup.job;
+package Externallookup.function;
 
-import Externallookup.model.ExternalLookupInputEvent;
-import Externallookup.model.ExternalLookupOutputEvent;
-import org.apache.flink.api.common.functions.MapFunction;
+import Externallookup.model.InputEvent;
+import Externallookup.model.OutputEvent;
 import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.streaming.api.functions.async.ResultFuture;
@@ -13,22 +12,19 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.nio.charset.StandardCharsets;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.function.Supplier;
 
 /** ExternalLookupMapper converts from ExternalLookupInputEvent to ExternalLookupOutputEvent. */
-public class ExternalLookupMapper extends RichAsyncFunction<ExternalLookupInputEvent, ExternalLookupOutputEvent> {
+public class ExternalLookupMapper extends RichAsyncFunction<InputEvent, OutputEvent> {
 
     private ObjectMapper mapper;
     private String idServiceHost;
     private HttpClient client;
 
     @Override
-    public void asyncInvoke(ExternalLookupInputEvent externalLookupInputEvent, ResultFuture<ExternalLookupOutputEvent> resultFuture) throws Exception {
+    public void asyncInvoke(InputEvent externalLookupInputEvent, ResultFuture<OutputEvent> resultFuture) throws Exception {
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(idServiceHost + "ExternalLookup"))
@@ -48,7 +44,7 @@ public class ExternalLookupMapper extends RichAsyncFunction<ExternalLookupInputE
                 // Normally handled explicitly.
                 return null;
             }
-        }).thenAccept( (String body) -> resultFuture.complete(Collections.singleton(new ExternalLookupOutputEvent(externalLookupInputEvent, body))));
+        }).thenAccept( (String body) -> resultFuture.complete(Collections.singleton(new OutputEvent(externalLookupInputEvent, body))));
     }
 
     @Override

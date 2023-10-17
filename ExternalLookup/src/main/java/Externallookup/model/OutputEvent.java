@@ -10,8 +10,8 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ExternalLookupOutputEvent {
-    public ExternalLookupOutputEvent(ExternalLookupInputEvent inputEvent, String extraFieldValue){
+public class OutputEvent {
+    public OutputEvent(InputEvent inputEvent, String extraFieldValue){
         this.deviceId = inputEvent.getDeviceId();
         this.value = inputEvent.getValue();
         this.timestamp = inputEvent.getTimestamp();

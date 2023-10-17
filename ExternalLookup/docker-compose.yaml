@@ -29,10 +29,11 @@ services:
     command: |
       standalone-job
       --job-classname Externallookup.job.ExternalLookupJob
-      --input-kafka-bootstrap-servers kafka:19092
+      --kafka-bootstrap-servers kafka:19092
+      --kafka-group-id ExternalLookup-group-id
+      --kafka-security-protocol SASL_PLAINTEXT
       --input-kafka-topic ExternalLookupInputTopic
       --output-kafka-topic ExternalLookupOutputTopic
-      --output-kafka-bootstrap-servers kafka:19092
       --id-service-url http://id-service:80/
     environment:
       KAFKA_CLIENT_ID: ClientId

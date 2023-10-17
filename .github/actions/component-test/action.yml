@@ -27,6 +27,9 @@ inputs:
 runs:
   using: composite
   steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
     - name: "Build image"
       id: build
       uses: trifork/cheetah-infrastructure-utils-workflows/.github/actions/build-image@main

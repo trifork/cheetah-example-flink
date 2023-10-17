@@ -17,7 +17,7 @@ class ExternalLookupOutputEventTest {
      */
     @Test
     void isSerializedAsPojo() {
-        assertSerializedAsPojo(ExternalLookupOutputEvent.class);
-        assertSerializedAsPojoWithoutKryo(ExternalLookupOutputEvent.class);
+        assertSerializedAsPojo(OutputEvent.class);
+        assertSerializedAsPojoWithoutKryo(OutputEvent.class);
     }
 }

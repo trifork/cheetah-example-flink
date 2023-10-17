@@ -3,7 +3,7 @@
 namespace ExternalLookup.ComponentTest.Models;
 
 // Rename and implement a model that fits the one you expect your job to produce
-public class ExternalLookupOutputEvent
+public class OutputEvent
 {
     [JsonPropertyName("deviceId")]
     public string DeviceId { get; set; }

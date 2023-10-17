@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Cheetah.ComponentTest.Kafka;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
@@ -30,35 +31,33 @@ public class ComponentTest
     }
 
     [Fact]
-    public void Should_BeImplemented_When_ServiceIsCreated()
+    public async Task Should_BeImplemented_When_ServiceIsCreated()
     {
         // Arrange
         // Here you'll set up one or more writers and readers, which connect to the topic(s) that your job consumes
         // from and publishes to. 
-        var writer = KafkaWriterBuilder.Create<string, ExternalLookupInputEvent>()
-            .WithKafkaConfigurationPrefix(string.Empty, _configuration)
+        var writer = KafkaWriterBuilder.Create<string, InputEvent>(_configuration)
             .WithTopic("ExternalLookupInputTopic") // The topic to consume from
             .WithKeyFunction(model => model.DeviceId) // Optional function to retrieve the message key.
                                                           // If no key is desired, use KafkaWriterBuilder.Create<Null, InputModel>
                                                           // and make this function return null
             .Build();
 
-        var reader = KafkaReaderBuilder.Create<string, ExternalLookupOutputEvent>()
-            .WithKafkaConfigurationPrefix(string.Empty, _configuration)
+        var reader = KafkaReaderBuilder.Create<string, OutputEvent>(_configuration)
             .WithTopic("ExternalLookupOutputTopic")
-            .WithGroupId("MyGroup")
+            .WithConsumerGroup("MyGroup")
             .Build();
         
         // Act
         // Write one or more messages to the writer
-        var inputEvent = new ExternalLookupInputEvent()
+        var inputEvent = new InputEvent()
         {
             DeviceId = "deviceId-1",
             Value = 12.34,
             Timestamp = DateTimeOffset.UnixEpoch.ToUnixTimeMilliseconds()
         };
         
-        writer.Write(inputEvent);
+        await writer.WriteAsync(inputEvent);
         
         // Assert
         // Then consume using the reader, supplying how many output messages your input messages expected to generate
