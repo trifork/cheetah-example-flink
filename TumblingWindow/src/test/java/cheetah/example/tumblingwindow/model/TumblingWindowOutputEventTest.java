@@ -1,6 +1,5 @@
 package cheetah.example.tumblingwindow.model;
 
-import cheetah.example.tumblingwindow.tumblingwindow.model.EventWindow;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.flink.types.PojoTestUtils.assertSerializedAsPojo;

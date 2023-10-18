@@ -1,4 +1,4 @@
-package cheetah.example.tumblingwindow.tumblingwindow.model;
+package cheetah.example.tumblingwindow.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

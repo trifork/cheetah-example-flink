@@ -1,6 +1,6 @@
-package cheetah.example.tumblingwindow.tumblingwindow.function;
+package cheetah.example.tumblingwindow.function;
 
-import cheetah.example.tumblingwindow.tumblingwindow.model.EventWindow;
+import cheetah.example.tumblingwindow.model.EventWindow;
 import org.apache.flink.streaming.api.functions.windowing.ProcessWindowFunction;
 import org.apache.flink.streaming.api.windowing.windows.TimeWindow;
 import org.apache.flink.util.Collector;

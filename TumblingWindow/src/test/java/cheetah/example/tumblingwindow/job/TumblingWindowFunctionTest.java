@@ -2,8 +2,8 @@ package cheetah.example.tumblingwindow.job;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import cheetah.example.tumblingwindow.tumblingwindow.function.TumblingWindowAggregate;
-import cheetah.example.tumblingwindow.tumblingwindow.model.InputEvent;
+import cheetah.example.tumblingwindow.function.TumblingWindowAggregate;
+import cheetah.example.tumblingwindow.model.InputEvent;
 
 import java.util.ArrayList;
 
