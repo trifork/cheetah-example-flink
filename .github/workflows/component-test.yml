@@ -48,7 +48,7 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        
+
       - name: Build Flink States example image and run component test
         uses: ./.github/actions/component-test
         with:
@@ -121,7 +121,7 @@ jobs:
           initial-kafka-topics: "TumblingWindowInputTopic"
 
   external-lookup-component-test:
-    name: "Tumbling Window component test"
+    name: "External Lookup component test"
     needs: should-run
     runs-on: ubuntu-latest
     if: ${{ needs.should-run.outputs.event-name-check == 'true' || needs.should-run.outputs.tag-check == 'true' }}
@@ -129,7 +129,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Build Tumbling Window example image and run component test
+      - name: Build External Lookup example image and run component test
         uses: ./.github/actions/component-test
         with:
           context-path: ./ExternalLookup/
