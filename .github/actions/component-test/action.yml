@@ -32,7 +32,7 @@ runs:
     - name: "Build images"
       working-directory: ${{ inputs.context-path }}
       shell: bash
-      run: docker compose build --quiet-pull
+      run: docker compose build --quiet
       env:
         GITHUB_ACTOR: ${{ github.actor }}
         GITHUB_TOKEN: ${{ inputs.access-token }}
