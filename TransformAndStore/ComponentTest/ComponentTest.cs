@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Cheetah.ComponentTest.Kafka;
+using Cheetah.ComponentTest.OpenSearch;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Xunit;
@@ -21,7 +23,13 @@ public class ComponentTest
             {"KAFKA:AUTHENDPOINT", "http://localhost:1752/oauth2/token"},
             {"KAFKA:CLIENTID", "ClientId" },
             {"KAFKA:CLIENTSECRET", "1234" },
-            {"KAFKA:URL", "localhost:9092"}
+            {"KAFKA:URL", "localhost:9092"},
+            {"OPENSEARCH:URL", "http://localhost:9200"},
+            {"OPENSEARCH:CLIENTID", "opensearch"},
+            {"OPENSEARCH:CLIENTSECRET", "1234"},
+            {"OPENSEARCH:OAUTHSCOPE", "SASL_PLAINTEXT"},
+            {"OPENSEARCH:AUTHENDPOINT", "http://localhost:1752/oauth2/token"}
+            
         };
         _configuration = new ConfigurationBuilder()
             .AddInMemoryCollection(conf)
@@ -30,20 +38,20 @@ public class ComponentTest
     }
 
     [Fact]
-    public void Should_BeImplemented_When_ServiceIsCreated()
+    public async Task Should_BeImplemented_When_ServiceIsCreated()
     {
         // Arrange
-        // Here you'll set up one or more writers and readers, which connect to the topic(s) that your job consumes
-        // from and publishes to. 
+        // Setting up the writer (Kafka producer), to produce messages on topic "InputTopic"
         var writer = KafkaWriterBuilder.Create<string, InputEvent>(_configuration)
             .WithTopic("InputTopic") // The topic to consume from
-            .WithKeyFunction(model => model.DeviceId) // Optional function to retrieve the message key.
-                                                          // If no key is desired, use KafkaWriterBuilder.Create<Null, InputModel>
-                                                          // and make this function return null
+            .WithKeyFunction(model => model.DeviceId)
             .Build();
+        
+        const string indexName = "transformandstore-index_*";
+        var openSearchClient = OpenSearchClientFactory.Create(_configuration);
 
         // Act
-        // Write one or more messages to the writer
+        // Write three messages to the writer
         var inputEventTooLow = new InputEvent()
         {
             DeviceId = "deviceId-1",
@@ -55,18 +63,25 @@ public class ComponentTest
         {
             DeviceId = "deviceId-1",
             Value = 74.88,
-            Timestamp = DateTimeOffset.UnixEpoch.ToUnixTimeMilliseconds()
+            Timestamp = DateTimeOffset.UnixEpoch.AddSeconds(1).ToUnixTimeMilliseconds()
         };
         
         var inputEventTooHigh = new InputEvent()
         {
             DeviceId = "deviceId-1",
             Value = 120.60,
-            Timestamp = DateTimeOffset.UnixEpoch.ToUnixTimeMilliseconds()
+            Timestamp = DateTimeOffset.UnixEpoch.AddSeconds(2).ToUnixTimeMilliseconds()
         };
         
-        writer.Write(inputEventTooLow);
-        writer.Write(inputEventGood);
-        writer.Write(inputEventTooHigh);
+        await writer.WriteAsync(inputEventTooLow);
+        await writer.WriteAsync(inputEventGood);
+        await writer.WriteAsync(inputEventTooHigh);
+        
+        // Add delay to make sure the Job have add time to store data in OpenSearch
+        await Task.Delay(TimeSpan.FromSeconds(5));
+        
+        // Refresh and count of objects with specified index name
+        openSearchClient.RefreshIndex(indexName);
+        openSearchClient.Count(indexName).Should().Be(3);
     }
 }

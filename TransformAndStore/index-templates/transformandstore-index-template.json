@@ -1,6 +1,6 @@
 {
   "index_patterns": [
-    "my-index"
+    "transformandstore-index_*"
   ],
   "template": {
     "settings": {

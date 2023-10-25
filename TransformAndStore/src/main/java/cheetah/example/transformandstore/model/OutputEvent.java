@@ -27,7 +27,7 @@ public class OutputEvent {
 
     public String parseTimestampToString()
     {
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
         return df.format(new Date(getTimestamp()));
     }
 }

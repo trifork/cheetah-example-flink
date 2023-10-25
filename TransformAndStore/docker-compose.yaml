@@ -12,6 +12,10 @@ services:
       KAFKA__CLIENTID: ClientId
       KAFKA__CLIENTSECRET: 1234
       KAFKA__AUTHENDPOINT: http://cheetahoauthsimulator/oauth2/token
+      OPENSEARCH__URL: http://opensearch:9200
+      OPENSEARCH__CLIENTID: ClientId
+      OPENSEARCH__CLIENTSECRET: 1234
+      OPENSEARCH__AUTHENDPOINT: http://cheetahoauthsimulator/oauth2/token
     depends_on:
       transformandstore-jobmanager:
         condition: service_healthy
@@ -32,15 +36,17 @@ services:
       --kafka-bootstrap-servers kafka:19092
       --input-kafka-topic InputTopic
       --kafka-group-id transform-and-store-group-id
+      --kafka-security-protocol SASL_PLAINTEXT
       --opensearch-hosts http://opensearch:9200
       --opensearch-security-protocol SASL_PLAINTEXT
+      --index-base-name transformandstore-index_
     environment:
       KAFKA_CLIENT_ID: ClientId
       KAFKA_CLIENT_SECRET: 1234
       KAFKA_TOKEN_URL: http://cheetahoauthsimulator/oauth2/token
-      OPENSEARCH_ID: ClientId
-      OPENSEARCH_SECRET: 1234
-      OPENSEARCH_URL: http://cheetahoauthsimulator/oauth2/token
+      OPENSEARCH_CLIENT_ID: ClientId
+      OPENSEARCH_CLIENT_SECRET: 1234
+      OPENSEARCH_TOKEN_URL: http://cheetahoauthsimulator/oauth2/token
       FLINK_PROPERTIES: |
         jobmanager.rpc.address: transformandstore-jobmanager
         scheduler-mode: reactive
