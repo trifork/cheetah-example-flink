@@ -198,3 +198,18 @@ jobs:
           access-token: ${{ secrets.PACKAGE_PAT }}
           initial-kafka-topics: "ExternalLookupInputTopic"
 
+  transform-and-store-component-test:
+    name: "Transform And Store component test"
+    needs: should-run
+    runs-on: ubuntu-latest
+    if: ${{ needs.should-run.outputs.event-name-check == 'true' || needs.should-run.outputs.tag-check == 'true' }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build Transfrom And Store example image and run component test
+        uses: ./.github/actions/component-test
+        with:
+          context-path: ./TransfromAndStore/
+          access-token: ${{ secrets.PACKAGE_PAT }}
+          initial-kafka-topics: "TransfromAndStoreInputTopic"

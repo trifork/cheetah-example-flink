@@ -91,3 +91,16 @@ jobs:
         with: 
           settings-path: ./ExternalLookup/
           access-token: ${{ secrets.PACKAGE_PAT }}
+  
+  transform-and-store-build-and-test:
+    name: "Transform And Store - Build and Test"
+    runs-on: ubuntu-latest
+    steps: 
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Transform And Store - Build and Test
+        uses: ./.github/actions/maven-build-and-test
+        with: 
+          settings-path: ./TransformAndStore/
+          access-token: ${{ secrets.PACKAGE_PAT }}
