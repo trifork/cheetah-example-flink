@@ -1,7 +1,7 @@
-FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:7.0@sha256:1e25f7a67a65dcd2962bfb271338264b23e052d0677e71337450a6f5be62b899 AS base
 WORKDIR /app
 
-FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:7.0@sha256:4d9f2a7141eadcaf9b096103ad407ce374a9bb06f831fe306e03ed63786b8d68 AS build
 
 WORKDIR /src
 COPY "NuGet-CI.Config" "NuGet.Config"
