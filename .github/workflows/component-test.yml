@@ -210,6 +210,6 @@ jobs:
       - name: Build Transfrom And Store example image and run component test
         uses: ./.github/actions/component-test
         with:
-          context-path: ./TransfromAndStore/
+          context-path: ./TransformAndStore/
           access-token: ${{ secrets.PACKAGE_PAT }}
           initial-kafka-topics: "TransfromAndStoreInputTopic"
