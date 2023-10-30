@@ -12,6 +12,9 @@ services:
       KAFKA__CLIENTID: ClientId
       KAFKA__CLIENTSECRET: 1234
       KAFKA__AUTHENDPOINT: http://cheetahoauthsimulator/oauth2/token
+    depends_on:
+      flinkstates-jobmanager:
+        condition: service_healthy
 
   flinkstates-jobmanager:
     image: ${DOCKER_REGISTRY-}flinkstates-job
@@ -50,6 +53,11 @@ services:
       - flinkstates-taskmanager
     volumes:
       - flink:/checkpoints
+    healthcheck:
+      test: curl localhost:8081/jobs | grep -q '"status":"RUNNING"' || exit -1
+      interval: 1s
+      timeout: 1s
+      retries: 30
 
   flinkstates-taskmanager:
     image: ${DOCKER_REGISTRY-}flinkstates-job

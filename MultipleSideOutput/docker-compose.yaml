@@ -47,6 +47,11 @@ services:
       - multiplesideoutputexample-job-taskmanager
     volumes:
       - flink:/checkpoints
+    healthcheck:
+      test: curl localhost:8081/jobs | grep -q '"status":"RUNNING"' || exit -1
+      interval: 1s
+      timeout: 1s
+      retries: 30
 
   multiplesideoutputexample-job-taskmanager:
     image: ${DOCKER_REGISTRY-}multiplesideoutputexample-job
