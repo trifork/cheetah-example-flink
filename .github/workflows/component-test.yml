@@ -44,11 +44,7 @@ jobs:
         uses: tj-actions/changed-files@v40
         id: changed-files
         with: 
-          files: |
-            'FlinkStates/src/*'
-            'FlinkStates/ComponentTest/*'
-            'FlinkStates/docker-compose.yaml'
-            'FlinkStates/Dockerfile'
+          files: FlinkStates/*
 
       - name: Build Flink States example image and run component test
         uses: ./.github/actions/component-test
