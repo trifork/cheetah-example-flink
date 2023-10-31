@@ -29,7 +29,7 @@ jobs:
     steps:
       - name: E2E should run
         id: should-run
-        uses: trifork/cheetah-infrastructure-utils/.github/actions/testing/e2e-should-run@main
+        uses: trifork/cheetah-infrastructure-utils-workflows/.github/actions/testing/e2e-should-run@main
 
   flink-state-component-test:
     name: "Flink States example component test"
