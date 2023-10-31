@@ -44,7 +44,7 @@ jobs:
         uses: tj-actions/changed-files@v40
         id: changed-files
         with: 
-          files: ./FlinkStates/*
+          files: ./FlinkStates/**
 
       - name: Build Flink States example image and run component test
         uses: ./.github/actions/component-test
