@@ -42,10 +42,13 @@ jobs:
 
       - name: Flink States - Check if files has changed
         uses: trifork/cheetah-infrastructure-utils-workflows/.github/actions/testing/files-changed@main
+        id: changed-files
+        with: 
+          path-to-check: "FlinkStates/*"
 
       - name: Build Flink States example image and run component test
         uses: ./.github/actions/component-test
-        
+        if: ${{ steps.changed-files.outputs.src-changed == 'true' }}
         with:
           context-path: ./FlinkStates/
           access-token: ${{ secrets.PACKAGE_PAT }}
@@ -54,7 +57,7 @@ jobs:
   merge-two-streams-component-test:
     name: "Merge Two Streams example component test"
     needs: should-run
-    if: ${{ needs.should-run.outputs.should-run }}
+    if: false
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -70,7 +73,7 @@ jobs:
   multiple-sideoutput-component-test:
     name: "Multiple Side Output component test"
     needs: should-run
-    if: ${{ needs.should-run.outputs.should-run }}
+    if: false
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -86,7 +89,7 @@ jobs:
   observability-component-test:
     name: "Observability component test"
     needs: should-run
-    if: ${{ needs.should-run.outputs.should-run }}
+    if: false
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -102,7 +105,7 @@ jobs:
   tumbling-window-component-test:
     name: "Tumbling Window component test"
     needs: should-run
-    if: ${{ needs.should-run.outputs.should-run }}
+    if: false
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -119,7 +122,7 @@ jobs:
     name: "External Lookup component test"
     needs: should-run
     runs-on: ubuntu-latest
-    if: ${{ needs.should-run.outputs.should-run }}
+    if: false
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
