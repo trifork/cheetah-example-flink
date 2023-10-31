@@ -44,7 +44,7 @@ jobs:
         uses: trifork/cheetah-infrastructure-utils-workflows/.github/actions/testing/files-changed@main
         id: changed-files
         with: 
-          path-to-check: "[FlinkStates/src/*, ComponentTest/*, pom.xml, docker-compose.yaml, Dockerfile]"
+          path-to-check: "[./FlinkStates/src/*, ./FlinkStates/ComponentTest/*, ./FlinkStates/pom.xml, ./FlinkStates/docker-compose.yaml, ./FlinkStates/Dockerfile]"
 
       - name: Build Flink States example image and run component test
         uses: ./.github/actions/component-test
