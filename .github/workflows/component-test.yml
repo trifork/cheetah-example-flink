@@ -45,14 +45,14 @@ jobs:
         id: changed-files
         with: 
           files: |
-            "FlinkStates/src/*"
-            "FlinkStates/ComponentTest/*"
-            "FlinkStates/docker-compose.yaml"
-            "FlinkStates/Dockerfile"
+            'FlinkStates/src/*'
+            'FlinkStates/ComponentTest/*'
+            'FlinkStates/docker-compose.yaml'
+            'FlinkStates/Dockerfile'
 
       - name: Build Flink States example image and run component test
         uses: ./.github/actions/component-test
-        if: ${{ steps.changed-files.outputs.check-files-changed == 'true' }}
+        if: ${{ steps.changed-files.outputs.any_changed == 'true' }}
         with:
           context-path: ./FlinkStates/
           access-token: ${{ secrets.PACKAGE_PAT }}
