@@ -24,33 +24,28 @@ jobs:
   should-run: # seperate step to support ci/cd status checks
     runs-on: ubuntu-latest
     outputs:
-      tag-check: ${{ steps.tag-check.outputs.value }}
-      event-name-check: ${{ steps.event-name-check.outputs.value }}
+      should-run: ${{ steps.should-run.outputs.should-run }}
 
     steps:
-      # the pull request contains the 'e2e-test' label
-      - name: Tag check
-        id: tag-check
-        if: ${{ contains(github.event.pull_request.labels.*.name, 'e2e-test') && !contains(github.event.pull_request.labels.*.name, 'blocked') }}
-        run: echo "value=true" >> "$GITHUB_OUTPUT"
-
-      # not started from a pull-request
-      - name: Check for specific label
-        id: event-name-check
-        if: ${{github.event_name != 'pull_request'}}
-        run: echo "value=true" >> "$GITHUB_OUTPUT"
+      - name: E2E should run
+        id: should-run
+        uses: trifork/cheetah-infrastructure-utils/.github/actions/testing/e2e-should-run@main
 
   flink-state-component-test:
     name: "Flink States example component test"
     needs: should-run
     runs-on: ubuntu-latest
-    if: ${{ needs.should-run.outputs.event-name-check == 'true' || needs.should-run.outputs.tag-check == 'true' }}
+    if: ${{ needs.should-run.outputs.should-run }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Flink States - Check if files has changed
+        uses: trifork/cheetah-infrastructure-utils-workflows/.github/actions/testing/files-changed@main
+
       - name: Build Flink States example image and run component test
         uses: ./.github/actions/component-test
+        
         with:
           context-path: ./FlinkStates/
           access-token: ${{ secrets.PACKAGE_PAT }}
@@ -59,7 +54,7 @@ jobs:
   merge-two-streams-component-test:
     name: "Merge Two Streams example component test"
     needs: should-run
-    if: ${{ needs.should-run.outputs.event-name-check == 'true' || needs.should-run.outputs.tag-check == 'true' }}
+    if: ${{ needs.should-run.outputs.should-run }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -75,7 +70,7 @@ jobs:
   multiple-sideoutput-component-test:
     name: "Multiple Side Output component test"
     needs: should-run
-    if: ${{ needs.should-run.outputs.event-name-check == 'true' || needs.should-run.outputs.tag-check == 'true' }}
+    if: ${{ needs.should-run.outputs.should-run }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -91,7 +86,7 @@ jobs:
   observability-component-test:
     name: "Observability component test"
     needs: should-run
-    if: ${{ needs.should-run.outputs.event-name-check == 'true' || needs.should-run.outputs.tag-check == 'true' }}
+    if: ${{ needs.should-run.outputs.should-run }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -107,7 +102,7 @@ jobs:
   tumbling-window-component-test:
     name: "Tumbling Window component test"
     needs: should-run
-    if: ${{ needs.should-run.outputs.event-name-check == 'true' || needs.should-run.outputs.tag-check == 'true' }}
+    if: ${{ needs.should-run.outputs.should-run }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -124,7 +119,7 @@ jobs:
     name: "External Lookup component test"
     needs: should-run
     runs-on: ubuntu-latest
-    if: ${{ needs.should-run.outputs.event-name-check == 'true' || needs.should-run.outputs.tag-check == 'true' }}
+    if: ${{ needs.should-run.outputs.should-run }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
