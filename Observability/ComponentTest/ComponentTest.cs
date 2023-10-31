@@ -33,7 +33,7 @@ public class ComponentTest
     }
 
     [Fact]
-    public async Task Should_BeImplemented_When_ServiceIsCreatedAsync()
+    public async Task Observability_Component_Test()
     {
         // Arrange
         // Here you'll set up one or more writers and readers, which connect to the topic(s) that your job consumes

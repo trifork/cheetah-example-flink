@@ -32,7 +32,7 @@ public class ComponentTest
     }
 
     [Fact]
-    public async Task TestFirstMessageOnAllTopics(){
+    public async Task Multiple_Side_Output_Component_Test(){
         // Arrange
         // Setting up the writer (Kafka producer), not using a message key.
         var writer = KafkaWriterBuilder.Create<string, InputEvent>(_configuration)

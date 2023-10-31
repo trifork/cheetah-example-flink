@@ -32,7 +32,7 @@ public class ComponentTest
     }
 
     [Fact] 
-    public async Task Should_ProduceOneWindow_When_ProvidedMultipleMessagesInWindowAndOneAfter()
+    public async Task Tumbling_Window_Component_Test()
     {
         // Arrange
         // Here you'll set up one or more writers and readers, which connect to the topic(s) that your job consumes

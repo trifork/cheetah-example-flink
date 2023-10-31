@@ -31,7 +31,7 @@ public class ComponentTest
     }
 
     [Fact]
-    public async Task Should_BeImplemented_When_ServiceIsCreated()
+    public async Task Flink_States_Component_Test()
     {
         // Arrange
         // Here you'll set up one or more writers and readers, which connect to the topic(s) that your job consumes
