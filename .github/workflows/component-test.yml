@@ -41,10 +41,14 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Flink States - Check if files has changed
-        uses: trifork/cheetah-infrastructure-utils-workflows/.github/actions/testing/files-changed@main
+        uses: tj-actions/changed-files@v40
         id: changed-files
         with: 
-          path-to-check: "[./FlinkStates/src/*, ./FlinkStates/ComponentTest/*, ./FlinkStates/pom.xml, ./FlinkStates/docker-compose.yaml, ./FlinkStates/Dockerfile]"
+          files: |
+            "FlinkStates/src/*"
+            "FlinkStates/ComponentTest/*"
+            "FlinkStates/docker-compose.yaml"
+            "FlinkStates/Dockerfile"
 
       - name: Build Flink States example image and run component test
         uses: ./.github/actions/component-test
