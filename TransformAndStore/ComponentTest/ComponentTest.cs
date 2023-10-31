@@ -78,7 +78,7 @@ public class ComponentTest
         await writer.WriteAsync(inputEventTooHigh);
         
         // Add delay to make sure the Job have add time to store data in OpenSearch
-        await Task.Delay(TimeSpan.FromSeconds(20));
+        await Task.Delay(TimeSpan.FromSeconds(2));
         
         // Refresh and count of objects with specified index name
         openSearchClient.RefreshIndex(indexName);

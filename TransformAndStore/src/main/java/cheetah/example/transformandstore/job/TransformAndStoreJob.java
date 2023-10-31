@@ -2,8 +2,7 @@ package cheetah.example.transformandstore.job;
 
 import cheetah.example.transformandstore.model.InputEvent;
 import cheetah.example.transformandstore.model.OutputEvent;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.trifork.cheetah.processing.connector.opensearch.serde.SimpleEmitter;
 import com.trifork.cheetah.processing.job.Job;
 import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.connector.kafka.source.KafkaSource;
@@ -11,9 +10,7 @@ import com.trifork.cheetah.processing.connector.kafka.CheetahKafkaSource;
 import org.apache.flink.connector.opensearch.sink.OpensearchSink;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
-import org.opensearch.action.index.IndexRequest;
 
-import com.trifork.cheetah.processing.connector.opensearch.serde.OpensearchRequests;
 import com.trifork.cheetah.processing.connector.opensearch.CheetahOpensearchSink;
 import java.io.Serializable;
 import java.util.Objects;
@@ -47,17 +44,12 @@ public class TransformAndStoreJob extends Job implements Serializable {
         // Store the transformed object in OpenSearch using the OpenSearchSink.
         // In this process, the output is serialized to JSON. The index name is constructed using the indexBaseName
         // from the parameters, combined with the timestamp from the transformed object.
-        // Meanwhile, the deviceId field of the transformed object serves as the index ID.
+        // Additionally, the deviceId field is intentionally set to null through the SimpleEmitter Class, which prompts
+        // OpenSearch to assign a unique identifier to the stored element.
+        // Lastly the OpenSearch database is set to flush every 200ms.
         final OpensearchSink<OutputEvent> openSearchSink = CheetahOpensearchSink.builder(OutputEvent.class,this)
-                .setEmitter((element, context, indexer) -> {
-                    IndexRequest indexRequest = null;
-                    try {
-                        indexRequest = OpensearchRequests.createIndexRequest(new ObjectMapper().writeValueAsString(element), indexBaseName +  element.parseTimestampToString(), element.getDeviceId());
-                    } catch (JsonProcessingException e) {
-                        throw new RuntimeException(e);
-                    }
-                    indexer.add(indexRequest);
-                })
+                .setEmitter((SimpleEmitter<OutputEvent>) element -> indexBaseName + element.parseTimestampToString())
+                .setBulkFlushInterval(200)
                 .build();
 
         // Connect transformed stream to openSearchSink
