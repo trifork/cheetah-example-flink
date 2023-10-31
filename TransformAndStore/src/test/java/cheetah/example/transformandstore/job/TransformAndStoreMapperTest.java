@@ -3,8 +3,6 @@ package cheetah.example.transformandstore.job;
 import cheetah.example.transformandstore.model.InputEvent;
 import org.junit.jupiter.api.Test;
 
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -24,6 +22,6 @@ class TransformAndStoreMapperTest {
         assertEquals(deviceId, actual.getDeviceId());
         assertEquals(value, actual.getValue());
         assertEquals(timestamp, actual.getTimestamp());
-        assertEquals("Value is good", actual.getStatus());
+        assertEquals("Value is acceptable", actual.getStatus());
     }
 }
