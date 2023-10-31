@@ -17,7 +17,7 @@ class ObservabilityInputEventTest {
      */
     @Test
     void isSerializedAsPojo() {
-        assertSerializedAsPojo(ObservabilityInputEvent.class);
-        assertSerializedAsPojoWithoutKryo(ObservabilityInputEvent.class);
+        assertSerializedAsPojo(InputEvent.class);
+        assertSerializedAsPojoWithoutKryo(InputEvent.class);
     }
 }

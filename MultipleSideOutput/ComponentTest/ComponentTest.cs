@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Cheetah.ComponentTest.Kafka;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
@@ -31,33 +32,33 @@ public class ComponentTest
     }
 
     [Fact]
-    public void TestFirstMessageOnAllTopics(){
+    public async Task Multiple_Side_Output_Component_Test(){
         // Arrange
         // Setting up the writer (Kafka producer), not using a message key.
-        var writer = KafkaWriterBuilder.Create<string, MultipleSideOutputExampleInputEvent>(_configuration)
+        var writer = KafkaWriterBuilder.Create<string, InputEvent>(_configuration)
             .WithTopic("MultipleSideOutputExampleInputTopic")
             .WithKeyFunction(model => model.DeviceId)
             .Build();
 
         // Setting up readers (Kafka consumer)
-        var reader_topicA = KafkaReaderBuilder.Create<string, MultipleSideOutputExampleOutputEvent>(_configuration)
+        var readerTopicA = KafkaReaderBuilder.Create<string, OutputEvent>(_configuration)
             .WithTopic("OutputA-events")
-            .WithGroupId("ComponentTest")
+            .WithConsumerGroup("ComponentTest")
             .Build();
 
-        var reader_topicB = KafkaReaderBuilder.Create<string, MultipleSideOutputExampleOutputEvent>(_configuration)
+        var readerTopicB = KafkaReaderBuilder.Create<string, OutputEvent>(_configuration)
             .WithTopic("OutputB-events")
-            .WithGroupId("ComponentTest")
+            .WithConsumerGroup("ComponentTest")
             .Build();
 
-        var reader_topicCD = KafkaReaderBuilder.Create<string, MultipleSideOutputExampleOutputEvent2>(_configuration)
+        var readerTopicCD = KafkaReaderBuilder.Create<string, OutputEvent2>(_configuration)
             .WithTopic("OutputCD-events")
-            .WithGroupId("ComponentTest")
+            .WithConsumerGroup("ComponentTest")
             .Build();
 
         // Act
         // Making an input event
-        var inputEvent = new MultipleSideOutputExampleInputEvent(){
+        var inputEvent = new InputEvent(){
             DeviceId = "ComponentTest",
             ValueA = 100,
             ValueB = 100,
@@ -66,35 +67,35 @@ public class ComponentTest
             Timestamp = DateTimeOffset.Now.ToUnixTimeMilliseconds()
         };
 
-        writer.Write(inputEvent);
-
+        await writer.WriteAsync(inputEvent);
+        
         // Assert
         // Assuming the job produce the message on each topic
-        var messages_topicA = reader_topicA.ReadMessages(1, TimeSpan.FromSeconds(20));
-        var messages_topicB = reader_topicB.ReadMessages(1, TimeSpan.FromSeconds(20));
-        var messages_topicCD = reader_topicCD.ReadMessages(1, TimeSpan.FromSeconds(20));
+        await Task.Delay(TimeSpan.FromSeconds(20));
+        var messagesTopicA = readerTopicA.ReadMessages(1, TimeSpan.FromSeconds(1));
+        var messagesTopicB = readerTopicB.ReadMessages(1, TimeSpan.FromSeconds(1));
+        var messagesTopicCd = readerTopicCD.ReadMessages(1, TimeSpan.FromSeconds(1));
 
-        messages_topicA.Should().ContainSingle(message =>
+        messagesTopicA.Should().ContainSingle(message =>
             message.DeviceId == inputEvent.DeviceId &&
             message.Value == inputEvent.ValueA &&
             message.Timestamp == inputEvent.Timestamp
         );
-        reader_topicA.VerifyNoMoreMessages(TimeSpan.FromSeconds(20)).Should().BeTrue();
+        readerTopicA.VerifyNoMoreMessages(TimeSpan.FromSeconds(5)).Should().BeTrue();
 
-        messages_topicB.Should().ContainSingle(message =>
+        messagesTopicB.Should().ContainSingle(message =>
             message.DeviceId == inputEvent.DeviceId &&
             message.Value == inputEvent.ValueB &&
             message.Timestamp == inputEvent.Timestamp
         );
-        reader_topicB.VerifyNoMoreMessages(TimeSpan.FromSeconds(20)).Should().BeTrue();
+        readerTopicB.VerifyNoMoreMessages(TimeSpan.FromSeconds(5)).Should().BeTrue();
 
-        messages_topicCD.Should().ContainSingle(message =>
+        messagesTopicCd.Should().ContainSingle(message =>
             message.DeviceId == inputEvent.DeviceId &&
             message.ValueC == inputEvent.ValueC &&
             message.ValueD == inputEvent.ValueD &&
             message.Timestamp == inputEvent.Timestamp
         );
-        reader_topicCD.VerifyNoMoreMessages(TimeSpan.FromSeconds(20)).Should().BeTrue();
+        readerTopicCD.VerifyNoMoreMessages(TimeSpan.FromSeconds(5)).Should().BeTrue();
     }
-    
 }

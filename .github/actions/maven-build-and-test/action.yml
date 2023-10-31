@@ -5,7 +5,7 @@ inputs:
   settings-path:
     description: Path of maven settings file
     required: true
-  PAT:
+  access-token:
     description: Personal access token to access external dependencies 
     required: true
 
@@ -27,4 +27,4 @@ runs:
     working-directory: ${{ inputs.settings-path }}
     run: mvn install -B -s settings.xml
     env:
-      GITHUB_TOKEN: ${{ inputs.PAT }}
+      GITHUB_TOKEN: ${{ inputs.access-token }}

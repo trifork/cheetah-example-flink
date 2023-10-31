@@ -33,12 +33,12 @@ public class ComponentTest
     }
 
     [Fact]
-    public async Task Should_BeImplemented_When_ServiceIsCreatedAsync()
+    public async Task Observability_Component_Test()
     {
         // Arrange
         // Here you'll set up one or more writers and readers, which connect to the topic(s) that your job consumes
         // from and publishes to. 
-        var writer = KafkaWriterBuilder.Create<string, ObservabilityInputEvent>(_configuration)
+        var writer = KafkaWriterBuilder.Create<string, InputEvent>(_configuration)
             .WithTopic("ObservabilityInputTopic") // The topic to consume from
             .WithKeyFunction(model => model.DeviceId) // Optional function to retrieve the message key.
                                                       // If no key is desired, use KafkaWriterBuilder.Create<Null, InputModel>
@@ -49,14 +49,14 @@ public class ComponentTest
 
         // Act
         // Write one or more messages to the writer
-        var inputEvent = new ObservabilityInputEvent()
+        var inputEvent = new InputEvent()
         {
             DeviceId = "deviceId-1",
             Value = 12.34,
             Timestamp = DateTimeOffset.UnixEpoch.ToUnixTimeMilliseconds()
         };
 
-        var inputEvent2 = new ObservabilityInputEvent()
+        var inputEvent2 = new InputEvent()
         {
             DeviceId = "deviceId-1",
             Value = 56.78,
@@ -69,7 +69,7 @@ public class ComponentTest
         await writer.WriteAsync(inputEvent);
 
         //Wait, to ensure processing is done
-        Thread.Sleep(2000);
+        await Task.Delay(TimeSpan.FromSeconds(20));
 
         //Assert
         //Read counter values.

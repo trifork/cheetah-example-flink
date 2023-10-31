@@ -5,7 +5,7 @@ using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Xunit;
 using MergeTwoStreams.ComponentTest.Models;
-using System.Threading;
+using System.Threading.Tasks;
 
 namespace MergeTwoStreams.ComponentTest;
 
@@ -31,64 +31,63 @@ public class ComponentTest
     }
 
     [Fact]
-    public void Should_BeImplemented_When_ServiceIsCreated()
+    public async Task Merge_Two_Streams_Component_Test()
     {
         // Arrange
         // Here you'll set up one or more writers and readers, which connect to the topic(s) that your job consumes
         // from and publishes to. 
-        var writerA = KafkaWriterBuilder.Create<string, MergeTwoStreamsInputEvent>(_configuration)
+        var writerA = KafkaWriterBuilder.Create<string, InputEvent>(_configuration)
             .WithTopic("MergeTwoStreamsInputTopicA") // The topic to consume from (Stream A) in the job
             .WithKeyFunction(model => model.DeviceId) // Optional function to retrieve the message key.
             .Build();
 
-        var writerB = KafkaWriterBuilder.Create<string, MergeTwoStreamsInputEvent>(_configuration)
+        var writerB = KafkaWriterBuilder.Create<string, InputEvent>(_configuration)
             .WithTopic("MergeTwoStreamsInputTopicB") // The topic to consume from (Stream B) in the job
             .WithKeyFunction(model => model.DeviceId) // Optional function to retrieve the message key.
             .Build();
 
-        var reader = KafkaReaderBuilder.Create<string, MergeTwoStreamsOutputEvent>(_configuration)
+        var reader = KafkaReaderBuilder.Create<string, OutputEvent>(_configuration)
             .WithTopic("MergeTwoStreamsOutputTopic")    // The topic being published to from the job
-            .WithGroupId("MyGroup")                     // The consumer group used for reading from the topic
+            .WithConsumerGroup("MyGroup")                     // The consumer group used for reading from the topic
             .Build();
 
         // Act
-
         // Write two messages with different deviceIds to stream A
-        var inputEventA = new MergeTwoStreamsInputEvent()
+        var inputEventA = new InputEvent()
         {
             DeviceId = "deviceId-1",
             Value = 12.34,
             Timestamp = DateTimeOffset.UnixEpoch.ToUnixTimeMilliseconds()
         };
-        var inputEventD = new MergeTwoStreamsInputEvent()
+        var inputEventD = new InputEvent()
         {
             DeviceId = "deviceId-2",
             Value = 90.12,
             Timestamp = DateTimeOffset.UnixEpoch.ToUnixTimeMilliseconds()
         };
-
-        writerA.Write(inputEventA);
-        writerA.Write(inputEventD);
+        
+        await writerA.WriteAsync(inputEventA);
+        await writerA.WriteAsync(inputEventD);
 
         // Wait to make sure the elements on stream A have been processed before writing to stream B
-        Thread.Sleep(500);
+        await Task.Delay(500);
 
         // Write two messages to stream B - one with a deviceIds which has been processed on stream A, and one which hasn't. Resulting in one message on the output topic
-        var inputEventC = new MergeTwoStreamsInputEvent()
+        var inputEventC = new InputEvent()
         {
             DeviceId = "deviceId-3",
             Value = 32.10,
             Timestamp = DateTimeOffset.UnixEpoch.ToUnixTimeMilliseconds()
         };
-        var inputEventB = new MergeTwoStreamsInputEvent()
+        var inputEventB = new InputEvent()
         {
             DeviceId = "deviceId-1",
             Value = 56.78,
             Timestamp = DateTimeOffset.UnixEpoch.ToUnixTimeMilliseconds()
         };
 
-        writerB.Write(inputEventC);
-        writerB.Write(inputEventB);
+        await writerB.WriteAsync(inputEventC);
+        await writerB.WriteAsync(inputEventB);
 
         // Assert
         // Then consume using the reader, supplying how many output messages your input messages expected to generate
@@ -101,6 +100,5 @@ public class ComponentTest
             message.ValueA == inputEventA.Value &&
             message.ValueB == inputEventB.Value);
         reader.VerifyNoMoreMessages(TimeSpan.FromSeconds(5)).Should().BeTrue();
-
     }
 }

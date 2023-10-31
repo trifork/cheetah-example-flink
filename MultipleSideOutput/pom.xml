@@ -21,8 +21,8 @@ under the License.
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>sideOutputExample</groupId>
-    <artifactId>MultipleSideOutput</artifactId>
+    <groupId>cheetah.example</groupId>
+    <artifactId>multiplesideoutput</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
@@ -78,7 +78,7 @@ under the License.
         <dependency>
             <groupId>com.trifork.cheetah.processing</groupId>
             <artifactId>cheetah-lib-processing</artifactId>
-            <version>3.0.0</version>
+            <version>3.3.2</version>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>

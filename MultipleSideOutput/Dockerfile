@@ -49,7 +49,7 @@ RUN \
 FROM flink:1.16.1-scala_2.12-java11 as runtime
 
 COPY --from=build /app/target/lib/*.jar /opt/flink/usrlib/artifacts/
-COPY --from=build /app/target/MultipleSideOutput*.jar /opt/flink/usrlib/artifacts/
+COPY --from=build /app/target/multiplesideoutput*.jar /opt/flink/usrlib/artifacts/
 
 RUN mkdir /opt/flink/plugins/s3-fs-hadoop/; \
     mkdir /opt/flink/plugins/s3-fs-presto/; \
