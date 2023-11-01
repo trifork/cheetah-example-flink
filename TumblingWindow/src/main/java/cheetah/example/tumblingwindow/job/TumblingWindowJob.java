@@ -31,7 +31,7 @@ public class TumblingWindowJob extends Job implements Serializable {
 
     @Override
     protected void setup() {
-        int testnumber = 2;
+
         // Transform stream
         WatermarkStrategy<InputEvent> watermarkStrategy = WatermarkStrategyBuilder
                 .builder(InputEvent.class)
