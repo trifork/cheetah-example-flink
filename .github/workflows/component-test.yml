@@ -63,14 +63,27 @@ jobs:
   merge-two-streams-component-test:
     name: "Merge Two Streams example component test"
     needs: should-run
-    if: false
+    if: ${{ needs.should-run.outputs.should-run }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Merge Two Streams - Check if files has changed
+        uses: tj-actions/changed-files@v40
+        id: changed-files
+        with: 
+          files: |
+            MergeTwoStreams/ComponentTest/**
+            MergeTwoStreams/src/**
+            MergeTwoStreams/.ignore
+            MergeTwoStreams/*.yaml
+            MergeTwoStreams/Dockerfile
+            MergeTwoStreams/*.xml
+
       - name: Build Merge Two Streams example image and run component test
         uses: ./.github/actions/component-test
+        if: ${{ steps.changed-files.outputs.any_changed == 'true' }}
         with:
           context-path: ./MergeTwoStreams/
           access-token: ${{ secrets.PACKAGE_PAT }}
@@ -79,14 +92,27 @@ jobs:
   multiple-sideoutput-component-test:
     name: "Multiple Side Output component test"
     needs: should-run
-    if: false
+    if: ${{ needs.should-run.outputs.should-run }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Multiple Side Output - Check if files has changed
+        uses: tj-actions/changed-files@v40
+        id: changed-files
+        with: 
+          files: |
+            MultipleSideOutput/ComponentTest/**
+            MultipleSideOutput/src/**
+            MultipleSideOutput/.ignore
+            MultipleSideOutput/*.yaml
+            MultipleSideOutput/Dockerfile
+            MultipleSideOutput/*.xml
+
       - name: Build Multiple Side Output example image and run component test
         uses: ./.github/actions/component-test
+        if: ${{ steps.changed-files.outputs.any_changed == 'true' }}
         with:
           context-path: ./MultipleSideOutput/
           access-token: ${{ secrets.PACKAGE_PAT }}
@@ -95,14 +121,27 @@ jobs:
   observability-component-test:
     name: "Observability component test"
     needs: should-run
-    if: false
+    if: ${{ needs.should-run.outputs.should-run }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+      
+      - name: Observability - Check if files has changed
+        uses: tj-actions/changed-files@v40
+        id: changed-files
+        with: 
+          files: |
+            Observability/ComponentTest/**
+            Observability/src/**
+            Observability/.ignore
+            Observability/*.yaml
+            Observability/Dockerfile
+            Observability/*.xml
 
       - name: Build Observability example image and run component test
         uses: ./.github/actions/component-test
+        if: ${{ steps.changed-files.outputs.any_changed == 'true' }}
         with:
           context-path: ./Observability/
           access-token: ${{ secrets.PACKAGE_PAT }}
@@ -111,14 +150,27 @@ jobs:
   tumbling-window-component-test:
     name: "Tumbling Window component test"
     needs: should-run
-    if: false
+    if: ${{ needs.should-run.outputs.should-run }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Tumbling Window - Check if files has changed
+        uses: tj-actions/changed-files@v40
+        id: changed-files
+        with: 
+          files: |
+            TumblingWindow/ComponentTest/**
+            TumblingWindow/src/**
+            TumblingWindow/.ignore
+            TumblingWindow/*.yaml
+            TumblingWindow/Dockerfile
+            TumblingWindow/*.xml
+
       - name: Build Tumbling Window example image and run component test
         uses: ./.github/actions/component-test
+        if: ${{ steps.changed-files.outputs.any_changed == 'true' }}
         with:
           context-path: ./TumblingWindow/
           access-token: ${{ secrets.PACKAGE_PAT }}
@@ -128,13 +180,26 @@ jobs:
     name: "External Lookup component test"
     needs: should-run
     runs-on: ubuntu-latest
-    if: false
+    if: ${{ needs.should-run.outputs.should-run }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: External Lookup - Check if files has changed
+        uses: tj-actions/changed-files@v40
+        id: changed-files
+        with: 
+          files: |
+            ExternalLookup/ComponentTest/**
+            ExternalLookup/src/**
+            ExternalLookup/.ignore
+            ExternalLookup/*.yaml
+            ExternalLookup/Dockerfile
+            ExternalLookup/*.xml
+
       - name: Build External Lookup example image and run component test
         uses: ./.github/actions/component-test
+        if: ${{ steps.changed-files.outputs.any_changed == 'true' }}
         with:
           context-path: ./ExternalLookup/
           access-token: ${{ secrets.PACKAGE_PAT }}

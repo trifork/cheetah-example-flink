@@ -69,7 +69,7 @@ public class ComponentTest
         var inputEvent = new InputEvent()
         {
             DeviceId = "deviceId-1",
-            Value = 12.66,
+            Value = 12.34,
             Timestamp = DateTimeOffset.UnixEpoch.ToUnixTimeMilliseconds()
         };
 
@@ -96,15 +96,15 @@ public class ComponentTest
         // Then evaluate whether your messages are as expected, and that there are only as many as you expected 
         valueMessages.Should().ContainSingle(message => message == 34.56);
 
-        reducingMessages.Should().ContainSingle(message => message == 12.66);
+        reducingMessages.Should().ContainSingle(message => message == 12.34);
         reducingMessages.Should().ContainSingle(message => message == 69.12);
 
-        aggregatingMessages.Should().ContainSingle(message => message == 12.66);
+        aggregatingMessages.Should().ContainSingle(message => message == 12.34);
         aggregatingMessages.Should().ContainSingle(message => message == 69.12);
 
-        listMessages.Should().ContainSingle(message => message.Length == 2 && message[0] == 12.66 && message[1] == 56.78);
+        listMessages.Should().ContainSingle(message => message.Length == 2 && message[0] == 12.34 && message[1] == 56.78);
 
-        mapMessages.Should().ContainSingle(message => message == 12.66);
+        mapMessages.Should().ContainSingle(message => message == 12.34);
         mapMessages.Should().ContainSingle(message => message == 69.12);
         
         valueReader.VerifyNoMoreMessages(TimeSpan.FromSeconds(1)).Should().BeTrue();
