@@ -45,8 +45,12 @@ jobs:
         id: changed-files
         with: 
           files: |
-            FlinkStates/**
-            FlinkStates/!*.md
+            FlinkStates/ComponentTest/**
+            FlinkStates/src/**
+            FlinkStates/.ignore
+            FlinkStates/*.yaml
+            FlinkStates/Dockerfile
+            FlinkStates/*.xml
 
       - name: Build Flink States example image and run component test
         uses: ./.github/actions/component-test
