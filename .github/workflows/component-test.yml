@@ -51,10 +51,10 @@ jobs:
         with:
           context-path: ./FlinkStates/
           access-token: ${{ secrets.PACKAGE_PAT }}
-          initial-kafka-topics: "MergeTwoStreamsInputTopicA MergeTwoStreamsInputTopicB"
+          initial-kafka-topics: "FlinkStatesInputTopic"
 
-  merge-two-streams-component-test:
-    name: "Merge Two Streams example component test"
+  enrich-stream-component-test:
+    name: "Enrich Stream example component test"
     needs: should-run
     if: ${{ needs.should-run.outputs.should-run }}
     runs-on: ubuntu-latest
@@ -62,25 +62,25 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Merge Two Streams - Check if files has changed
+      - name: Enrich Stream - Check if files has changed
         uses: tj-actions/changed-files@v40
         id: changed-files
         with: 
           files: |
-            MergeTwoStreams/ComponentTest/**
-            MergeTwoStreams/src/**
-            MergeTwoStreams/.ignore
-            MergeTwoStreams/*.yaml
-            MergeTwoStreams/Dockerfile
-            MergeTwoStreams/*.xml
+            EnrichStream/ComponentTest/**
+            EnrichStream/src/**
+            EnrichStream/.ignore
+            EnrichStream/*.yaml
+            EnrichStream/Dockerfile
+            EnrichStream/*.xml
 
-      - name: Build Merge Two Streams example image and run component test
+      - name: Build Enrich Stream example image and run component test
         uses: ./.github/actions/component-test
         if: ${{ steps.changed-files.outputs.any_changed == 'true' }}
         with:
-          context-path: ./MergeTwoStreams/
+          context-path: ./EnrichStream/
           access-token: ${{ secrets.PACKAGE_PAT }}
-          initial-kafka-topics: "MergeTwoStreamsInputTopicA MergeTwoStreamsInputTopicB"
+          initial-kafka-topics: "InputEnrichingTopic InputTopic"
 
   multiple-sideoutput-component-test:
     name: "Multiple Side Output component test"
