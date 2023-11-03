@@ -2,7 +2,6 @@ package cheetah.example.transformandstore.model;
 
 import org.junit.jupiter.api.Test;
 
-import static org.apache.flink.types.PojoTestUtils.assertSerializedAsPojo;
 import static org.apache.flink.types.PojoTestUtils.assertSerializedAsPojoWithoutKryo;
 
 class InputEventTest {
@@ -17,7 +16,6 @@ class InputEventTest {
      */
     @Test
     void isSerializedAsPojo() {
-        assertSerializedAsPojo(InputEvent.class);
         assertSerializedAsPojoWithoutKryo(InputEvent.class);
     }
 }

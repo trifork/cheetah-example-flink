@@ -46,9 +46,11 @@ public class ComponentTest
             .WithTopic("TransfromAndStoreInputTopic") // The topic to consume from
             .WithKeyFunction(model => model.DeviceId)
             .Build();
-        
+
+
         const string indexName = "transformandstore-index_*";
         var openSearchClient = OpenSearchClientFactory.Create(_configuration);
+        var initialDocCount = openSearchClient.Count(indexName);
 
         // Act
         // Write three messages to the writer
@@ -82,6 +84,6 @@ public class ComponentTest
         
         // Refresh and count of objects with specified index name
         openSearchClient.RefreshIndex(indexName);
-        openSearchClient.Count(indexName).Should().Be(3);
+        openSearchClient.Count(indexName).Should().Be(3 + initialDocCount);
     }
 }

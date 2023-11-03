@@ -48,7 +48,7 @@ public class TransformAndStoreJob extends Job implements Serializable {
         // OpenSearch to assign a unique identifier to the stored element.
         // Lastly the OpenSearch database is set to flush every 200ms.
         final OpensearchSink<OutputEvent> openSearchSink = CheetahOpensearchSink.builder(OutputEvent.class,this)
-                .setEmitter((SimpleEmitter<OutputEvent>) element -> indexBaseName + element.parseTimestampToString())
+                .setEmitter((SimpleEmitter<OutputEvent>) element -> indexBaseName + element.getYearStringFromTimestamp())
                 .setBulkFlushInterval(200)
                 .build();
 

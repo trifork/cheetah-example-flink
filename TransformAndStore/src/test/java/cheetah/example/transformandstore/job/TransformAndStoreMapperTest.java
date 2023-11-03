@@ -1,6 +1,7 @@
 package cheetah.example.transformandstore.job;
 
 import cheetah.example.transformandstore.model.InputEvent;
+import cheetah.example.transformandstore.model.OutputEvent;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
@@ -15,9 +16,9 @@ class TransformAndStoreMapperTest {
         final String deviceId = UUID.randomUUID().toString();
         final double value = 55;
         final long timestamp = 0;
-        final var input = new InputEvent(deviceId, value, timestamp);
+        final InputEvent input = new InputEvent(deviceId, value, timestamp);
 
-        final var actual = mapper.map(input);
+        final OutputEvent actual = mapper.map(input);
 
         assertEquals(deviceId, actual.getDeviceId());
         assertEquals(value, actual.getValue());
