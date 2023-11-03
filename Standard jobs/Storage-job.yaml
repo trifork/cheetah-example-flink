@@ -1,3 +1,4 @@
+---
 services:
   storage-job-jobmanager:
     image: ghcr.io/trifork/cheetah-app-jobs:release-v2.1
