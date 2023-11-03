@@ -20,12 +20,13 @@ public class EventMerger extends KeyedCoProcessFunction<String, InputEventA, Inp
 
     /**
      * Stores StateA for further processing.
+     *
      * @param value The stream element
-     * @param ctx A {@link Context} that allows querying the timestamp of the element, querying the
-     *     {@link TimeDomain} of the firing timer and getting a {@link TimerService} for registering
-     *     timers and querying the time. The context is only valid during the invocation of this
-     *     method, do not store it.
-     * @param out The collector to emit resulting elements to
+     * @param ctx   A {@link Context} that allows querying the timestamp of the element, querying the
+     *              {@link TimeDomain} of the firing timer and getting a {@link TimerService} for registering
+     *              timers and querying the time. The context is only valid during the invocation of this
+     *              method, do not store it.
+     * @param out   The collector to emit resulting elements to
      */
     @Override
     public void processElement1(InputEventA value, KeyedCoProcessFunction<String, InputEventA, InputEventB, OutputEvent>.Context ctx, Collector<OutputEvent> out) throws Exception {
@@ -35,24 +36,26 @@ public class EventMerger extends KeyedCoProcessFunction<String, InputEventA, Inp
 
     /**
      * Checks whether we have a StateA for the given deviceId, if so, combines the two states and outputs them.
+     *
      * @param value The stream element
-     * @param ctx A {@link Context} that allows querying the timestamp of the element, querying the
-     *     {@link TimeDomain} of the firing timer and getting a {@link TimerService} for registering
-     *     timers and querying the time. The context is only valid during the invocation of this
-     *     method, do not store it.
-     * @param out The collector to emit resulting elements to
+     * @param ctx   A {@link Context} that allows querying the timestamp of the element, querying the
+     *              {@link TimeDomain} of the firing timer and getting a {@link TimerService} for registering
+     *              timers and querying the time. The context is only valid during the invocation of this
+     *              method, do not store it.
+     * @param out   The collector to emit resulting elements to
      */
     @Override
     public void processElement2(InputEventB value, KeyedCoProcessFunction<String, InputEventA, InputEventB, OutputEvent>.Context ctx, Collector<OutputEvent> out) throws Exception {
         OutputEvent output = outputEventState.value();
-        if(output != null) {
+        if (output != null) {
             output.setValueB(value.getValue());
             out.collect(output);
         }
     }
 
     /**
-     * Sets up state storage for the given device
+     * Sets up state storage for the given device.
+     *
      * @param parameters The configuration containing the parameters attached to the contract.
      */
     @Override

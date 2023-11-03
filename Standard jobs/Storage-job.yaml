@@ -1,3 +1,4 @@
+---
 services:
   storage-job-jobmanager:
     image: ghcr.io/trifork/cheetah-app-jobs:release-v2.1
@@ -9,7 +10,7 @@ services:
       --job-classname com.trifork.cheetah.apps.jobs.storage.OpensearchStorageJob
       --kafka-bootstrap-servers kafka:19092
       --kafka-group-id storage-job-group
-      --input-kafka-topic your-topic-name
+      --input-kafka-topic InputTopic
 
       --index-base-name your-index-name
 

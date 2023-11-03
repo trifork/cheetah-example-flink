@@ -1,3 +1,4 @@
+---
 version: "3"
 services:
   tumblingwindow-test:
@@ -29,7 +30,7 @@ services:
     command: |
       standalone-job
       --job-classname cheetah.example.tumblingwindow.job.TumblingWindowJob
-      --kafka-bootstrap-servers kafka:19092      
+      --kafka-bootstrap-servers kafka:19092
       --kafka-group-id MergeTwoStreams-group-id
       --kafka-security-protocol SASL_PLAINTEXT
       --input-kafka-topic TumblingWindowInputTopic

@@ -1,6 +1,5 @@
 package cheetah.example.flinkstates.job;
 
-
 import cheetah.example.flinkstates.function.FlinkValueStatesMapper;
 import cheetah.example.flinkstates.model.InputEvent;
 import org.apache.flink.api.common.typeinfo.Types;
@@ -19,7 +18,7 @@ class FlinkValueStatesMapperTest {
     @BeforeEach
     public void setup() throws Exception {
         var sut = new FlinkValueStatesMapper();
-        harness = new KeyedOneInputStreamOperatorTestHarness<>((new StreamFlatMap<>(sut)), InputEvent::getDeviceId, Types.STRING);
+        harness = new KeyedOneInputStreamOperatorTestHarness<>(new StreamFlatMap<>(sut), InputEvent::getDeviceId, Types.STRING);
         harness.setup();
         harness.open();
     }

@@ -6,7 +6,7 @@ import org.apache.flink.configuration.Configuration;
 import org.apache.flink.metrics.Counter;
 
 /**
- * The purpose of the CounterMappper is to count the number of messages passing through
+ * The purpose of the CounterMappper is to count the number of messages passing through.
  */
 public class CounterMapper extends RichMapFunction<InputEvent, InputEvent> {
 
