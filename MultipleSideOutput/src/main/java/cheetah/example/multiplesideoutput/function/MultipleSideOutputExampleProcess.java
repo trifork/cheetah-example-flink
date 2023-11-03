@@ -47,7 +47,7 @@ public class MultipleSideOutputExampleProcess extends KeyedProcessFunction<Strin
                     inputEvent.getValueA(),
                     inputEvent.getTimestamp()
             );
-            context.output(MultipleSideOutputExampleJob.outputA, outputEvent);
+            context.output(MultipleSideOutputExampleJob.OUTPUT_A, outputEvent);
             stateA.update(outputEvent);
         }
 
@@ -58,7 +58,7 @@ public class MultipleSideOutputExampleProcess extends KeyedProcessFunction<Strin
                     inputEvent.getValueB(),
                     inputEvent.getTimestamp()
             );
-            context.output(MultipleSideOutputExampleJob.outputB, outputEvent);
+            context.output(MultipleSideOutputExampleJob.OUTPUT_B, outputEvent);
             stateB.update(outputEvent);
         }
 
@@ -71,7 +71,7 @@ public class MultipleSideOutputExampleProcess extends KeyedProcessFunction<Strin
                     inputEvent.getValueD(),
                     inputEvent.getTimestamp()
             );
-            context.output(MultipleSideOutputExampleJob.outputCD, outputEvent2);
+            context.output(MultipleSideOutputExampleJob.OUTPUT_CD, outputEvent2);
             stateCD.update(outputEvent2);
         }
 

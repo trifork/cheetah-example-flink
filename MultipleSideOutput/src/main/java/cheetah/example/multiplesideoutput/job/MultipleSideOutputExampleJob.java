@@ -31,9 +31,9 @@ public class MultipleSideOutputExampleJob extends Job implements Serializable {
     }
 
     // The 3 different kind of output produces by this job
-    public static final OutputTag<OutputEvent> outputA = new OutputTag<>("output-a"){};
-    public static final OutputTag<OutputEvent> outputB = new OutputTag<>("output-b"){};
-    public static final OutputTag<OutputEvent2> outputCD = new OutputTag<>("output-cd"){};
+    public static final OutputTag<OutputEvent> OUTPUT_A = new OutputTag<>("output-a"){};
+    public static final OutputTag<OutputEvent> OUTPUT_B = new OutputTag<>("output-b"){};
+    public static final OutputTag<OutputEvent2> OUTPUT_CD = new OutputTag<>("output-cd"){};
 
     @Override
     protected void setup() {
@@ -51,20 +51,20 @@ public class MultipleSideOutputExampleJob extends Job implements Serializable {
                 .build();
 
         // Taking the side output from the data stream that has be put on to side output A
-        dataStream.getSideOutput(outputA).sinkTo(kafkaSinkA);
+        dataStream.getSideOutput(OUTPUT_A).sinkTo(kafkaSinkA);
 
         // Output sink for output B
         final KafkaSink<OutputEvent> kafkaSinkB = CheetahKafkaSink.builder(OutputEvent.class, CheetahKafkaSinkConfig.defaultConfig(this, "b"))
                 .build();
 
         // Taking the side output from the data stream that has be put on to side output B
-        dataStream.getSideOutput(outputB).sinkTo(kafkaSinkB);
+        dataStream.getSideOutput(OUTPUT_B).sinkTo(kafkaSinkB);
 
         // Output sink for output CD
         final KafkaSink<OutputEvent2> kafkaSinkCD = CheetahKafkaSink.builder(OutputEvent2.class, CheetahKafkaSinkConfig.defaultConfig(this, "cd"))
                 .build();
 
         // Taking the side output from the data stream that has be put on to side output CD
-        dataStream.getSideOutput(outputCD).sinkTo(kafkaSinkCD);
+        dataStream.getSideOutput(OUTPUT_CD).sinkTo(kafkaSinkCD);
     }
 }
