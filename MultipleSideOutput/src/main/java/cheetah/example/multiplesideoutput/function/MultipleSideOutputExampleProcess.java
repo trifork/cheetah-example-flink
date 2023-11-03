@@ -25,12 +25,13 @@ public class MultipleSideOutputExampleProcess extends KeyedProcessFunction<Strin
 
     /**
      * Stores state A, B and CD - these are based on the values of the same name.
+     *
      * @param inputEvent The incoming event.
-     * @param context A {@link Context} that allows querying the timestamp of the element, querying the
-     *            {@link TimeDomain} of the firing timer and getting a {@link TimerService} for registering
-     *            timers and querying the time. The context is only valid during the invocation of this
-     *            method, do not store it.
-     * @param collector The main output - it's not used in this example.
+     * @param context    A {@link Context} that allows querying the timestamp of the element, querying the
+     *                   {@link TimeDomain} of the firing timer and getting a {@link TimerService} for registering
+     *                   timers and querying the time. The context is only valid during the invocation of this
+     *                   method, do not store it.
+     * @param collector  The main output - it's not used in this example.
      * @throws Exception
      */
     @Override
@@ -38,9 +39,9 @@ public class MultipleSideOutputExampleProcess extends KeyedProcessFunction<Strin
         /* Update the states if the event id hasn't been seen before.
          * Or if the state is different from the last known state.
          * Then output the given event onto its corresponding side output
-        */
-        if(stateA.value() == null ||
-                stateA.value().getValue() != inputEvent.getValueA()){
+         */
+        if (stateA.value() == null ||
+                stateA.value().getValue() != inputEvent.getValueA()) {
             OutputEvent outputEvent = new OutputEvent(
                     inputEvent.getDeviceId(),
                     inputEvent.getValueA(),
@@ -50,8 +51,8 @@ public class MultipleSideOutputExampleProcess extends KeyedProcessFunction<Strin
             stateA.update(outputEvent);
         }
 
-        if(stateB.value() == null ||
-                stateB.value().getValue() != inputEvent.getValueB()){
+        if (stateB.value() == null ||
+                stateB.value().getValue() != inputEvent.getValueB()) {
             OutputEvent outputEvent = new OutputEvent(
                     inputEvent.getDeviceId(),
                     inputEvent.getValueB(),
@@ -61,9 +62,9 @@ public class MultipleSideOutputExampleProcess extends KeyedProcessFunction<Strin
             stateB.update(outputEvent);
         }
 
-        if(stateCD.value() == null ||
+        if (stateCD.value() == null ||
                 stateCD.value().valueC != inputEvent.getValueC() ||
-                stateCD.value().valueD != inputEvent.getValueD()){
+                stateCD.value().valueD != inputEvent.getValueD()) {
             OutputEvent2 outputEvent2 = new OutputEvent2(
                     inputEvent.getDeviceId(),
                     inputEvent.getValueC(),
@@ -77,7 +78,8 @@ public class MultipleSideOutputExampleProcess extends KeyedProcessFunction<Strin
     }
 
     /**
-     * Set up all the states store for the given values
+     * Set up all the states store for the given values.
+     *
      * @param parameters The configuration containing the parameters attached to the contract.
      * @throws Exception
      */

@@ -17,7 +17,7 @@ public class FlinkMapStatesMapper extends RichFlatMapFunction<InputEvent, Double
     private transient MapState<String, Double> sumPerDevice;
 
     /**
-     * Outputs the sum of values for the given device
+     * Outputs the sum of values for the given device.
      * @param value The input value.
      * @param out The collector for returning result values.
      */

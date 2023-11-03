@@ -7,20 +7,18 @@ import cheetah.example.tumblingwindow.model.InputEvent;
 
 import java.util.ArrayList;
 
-import static org.junit.jupiter.api.Assertions.*;
-
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 class TumblingWindowFunctionTest {
-
     private TumblingWindowAggregate aggregate;
 
     @BeforeEach
-    public void setup() throws Exception {
+    public void setup() {
         aggregate = new TumblingWindowAggregate();
     }
 
     @Test
-    public void testAggregation() throws Exception {
+    public void testAggregation() {
         ArrayList<Double> inputEvents = new ArrayList<>();
         aggregate.add(new InputEvent("test_device", 0, 1.0), inputEvents);
         aggregate.add(new InputEvent("test_device", 0, 2.0), inputEvents);

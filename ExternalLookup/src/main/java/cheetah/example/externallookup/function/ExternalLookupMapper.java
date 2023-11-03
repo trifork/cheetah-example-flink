@@ -16,7 +16,9 @@ import java.util.Collections;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
-/** ExternalLookupMapper converts from ExternalLookupInputEvent to ExternalLookupOutputEvent. */
+/**
+ * ExternalLookupMapper converts from ExternalLookupInputEvent to ExternalLookupOutputEvent.
+ */
 public class ExternalLookupMapper extends RichAsyncFunction<InputEvent, OutputEvent> {
 
     private ObjectMapper mapper;
@@ -24,7 +26,7 @@ public class ExternalLookupMapper extends RichAsyncFunction<InputEvent, OutputEv
     private HttpClient client;
 
     @Override
-    public void asyncInvoke(InputEvent externalLookupInputEvent, ResultFuture<OutputEvent> resultFuture) throws Exception {
+    public void asyncInvoke(InputEvent externalLookupInputEvent, ResultFuture<OutputEvent> resultFuture) {
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(idServiceHost + "ExternalLookup"))
@@ -36,7 +38,6 @@ public class ExternalLookupMapper extends RichAsyncFunction<InputEvent, OutputEv
         CompletableFuture<HttpResponse<String>> response = client.sendAsync(request,
                 HttpResponse.BodyHandlers.ofString());
 
-
         CompletableFuture.supplyAsync(() -> {
             try {
                 return response.get().body();
@@ -44,11 +45,11 @@ public class ExternalLookupMapper extends RichAsyncFunction<InputEvent, OutputEv
                 // Normally handled explicitly.
                 return null;
             }
-        }).thenAccept( (String body) -> resultFuture.complete(Collections.singleton(new OutputEvent(externalLookupInputEvent, body))));
+        }).thenAccept((String body) -> resultFuture.complete(Collections.singleton(new OutputEvent(externalLookupInputEvent, body))));
     }
 
     @Override
-    public void open(Configuration parameters) throws Exception {
+    public void open(Configuration parameters) {
         client = HttpClient.newHttpClient();
 
         mapper = new ObjectMapper();
@@ -60,10 +61,4 @@ public class ExternalLookupMapper extends RichAsyncFunction<InputEvent, OutputEv
             idServiceHost += "/";
         }
     }
-
-    @Override
-    public void close() throws Exception {
-
-    }
-
 }

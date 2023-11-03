@@ -9,12 +9,12 @@ import org.apache.flink.api.common.functions.MapFunction;
  */
 public class TransformAndStoreMapper implements MapFunction<InputEvent, OutputEvent> {
     @Override
-    public OutputEvent map(final InputEvent InputEvent) {
-        if (InputEvent.getValue() <= 50) {
-            return new OutputEvent(InputEvent, "Value is too low");
-        } else if (InputEvent.getValue() > 50 && InputEvent.getValue() <= 100) {
-            return new OutputEvent(InputEvent, "Value is acceptable");
+    public OutputEvent map(final InputEvent inputEvent) {
+        if (inputEvent.getValue() <= 50) {
+            return new OutputEvent(inputEvent, "Value is too low");
+        } else if (inputEvent.getValue() > 50 && inputEvent.getValue() <= 100) {
+            return new OutputEvent(inputEvent, "Value is acceptable");
         }
-        return new OutputEvent(InputEvent, "Value is too high");
+        return new OutputEvent(inputEvent, "Value is too high");
     }
 }

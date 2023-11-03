@@ -1,6 +1,5 @@
 package cheetah.example.flinkstates.job;
 
-
 import cheetah.example.flinkstates.function.FlinkMapStatesMapper;
 import cheetah.example.flinkstates.model.InputEvent;
 import org.apache.flink.api.common.typeinfo.Types;
