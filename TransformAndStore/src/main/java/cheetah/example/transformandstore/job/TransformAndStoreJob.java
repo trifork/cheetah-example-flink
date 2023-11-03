@@ -12,6 +12,7 @@ import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 
 import com.trifork.cheetah.processing.connector.opensearch.CheetahOpensearchSink;
+
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -19,7 +20,8 @@ import java.util.Objects;
  * The TransformAndStoreJob serves as an example for simple transformation and storing data in OpenSearch.
  * The Job subscribes to a Kafka topic and performs a straightforward transformation on the incoming data,
  * appending a status based on the object's value field. After this transformation, the data is stored in
- * OpenSearch using an OpenSearch Connector. */
+ * OpenSearch using an OpenSearch Connector.
+ */
 public class TransformAndStoreJob extends Job implements Serializable {
 
     @SuppressWarnings("PMD.SignatureDeclareThrowsException") // Fix once lib-processing is fixed
@@ -34,7 +36,8 @@ public class TransformAndStoreJob extends Job implements Serializable {
         String indexBaseName = Objects.requireNonNull(parameters.get("index-base-name"), "--index-base-name is required");
 
         // Setup reading from input stream
-        final KafkaSource<InputEvent> kafkaSource = CheetahKafkaSource.builder(InputEvent.class, this).build();
+        final KafkaSource<InputEvent> kafkaSource = CheetahKafkaSource.builder(InputEvent.class, this)
+                .build();
         final DataStream<InputEvent> inputStream = CheetahKafkaSource.toDataStream(this, kafkaSource, "transform-and-store-source");
 
         // Transform stream
@@ -47,7 +50,7 @@ public class TransformAndStoreJob extends Job implements Serializable {
         // Additionally, the deviceId field is intentionally set to null through the SimpleEmitter Class, which prompts
         // OpenSearch to assign a unique identifier to the stored element.
         // Lastly the OpenSearch database is set to flush every 200ms.
-        final OpensearchSink<OutputEvent> openSearchSink = CheetahOpensearchSink.builder(OutputEvent.class,this)
+        final OpensearchSink<OutputEvent> openSearchSink = CheetahOpensearchSink.builder(OutputEvent.class, this)
                 .setEmitter((SimpleEmitter<OutputEvent>) element -> indexBaseName + element.getYearStringFromTimestamp())
                 .setBulkFlushInterval(200)
                 .build();

@@ -12,7 +12,8 @@ public class TransformAndStoreMapper implements MapFunction<InputEvent, OutputEv
     public OutputEvent map(final InputEvent inputEvent) {
         if (inputEvent.getValue() <= 50) {
             return new OutputEvent(inputEvent, "Value is too low");
-        } else if (inputEvent.getValue() > 50 && inputEvent.getValue() <= 100) {
+        }
+        if (inputEvent.getValue() <= 100) {
             return new OutputEvent(inputEvent, "Value is acceptable");
         }
         return new OutputEvent(inputEvent, "Value is too high");
