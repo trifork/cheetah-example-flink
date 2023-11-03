@@ -41,9 +41,9 @@ public class ComponentTest
     public async Task Should_BeImplemented_When_ServiceIsCreated()
     {
         // Arrange
-        // Setting up the writer (Kafka producer), to produce messages on topic "TransfromAndStoreInputTopic"
+        // Setting up the writer (Kafka producer), to produce messages on topic "TransformAndStoreInputTopic"
         var writer = KafkaWriterBuilder.Create<string, InputEvent>(_configuration)
-            .WithTopic("TransfromAndStoreInputTopic") // The topic to consume from
+            .WithTopic("TransformAndStoreInputTopic") // The topic to consume from
             .WithKeyFunction(model => model.DeviceId)
             .Build();
 

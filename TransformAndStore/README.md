@@ -48,16 +48,17 @@ For local development, you will need to clone the [cheetah-development-infrastru
 You'll then be able to run necessary infrastructure with the following command from within that repository:
 
 ```bash
-docker compose up kafka cheetah.oauth.simulator redpanda -d
+docker compose --profile=kafka --profile=oauth --profile=opensearch up -d
 ```
 
-This will start `kafka`, an `oauth` simulator and `redpanda`, which can be used to inspect what topics and messages exist in `kafka`. 
+This will start the required infrastructure to run the job, as well as some development tools. 
 
 Redpanda can be accessed on [http://localhost:9898](http://localhost:9898).
+Opensearch Dashboard can be accessed on [http://localhost:5602](http://localhost:5602).
 
-You need to create the source topics which the flink job reads from. This is done by setting the `INITIAL_KAFKA_TOPICS` to `TransformAndStoreInputTopic TransformAndStoreOutputTopic` before running the `kafka-setup` container in `cheetah-development-infrastructure`:
+You need to create the source topics which the flink job reads from. This is done by setting the `INITIAL_KAFKA_TOPICS` to `TransformAndStoreInputTopic` before running the `kafka-setup` container in `cheetah-development-infrastructure`:
 ```powershell
-$env:INITIAL_KAFKA_TOPICS="TransformAndStoreInputTopic TransformAndStoreOutputTopic"; docker compose up kafka-setup -d
+$env:INITIAL_KAFKA_TOPICS="TransformAndStoreInputTopic"; docker compose up kafka-setup -d
 ```
 The `kafka-setup` service is also run when starting kafka using the above command, but running it seperately enables you to create the topics with an already running Kafka.
 Alternatively you can create the topics manually in Redpanda.
@@ -97,8 +98,10 @@ When developing your job you can run/debug it like any other Java application by
   ```
   --kafka-bootstrap-servers localhost:9092
   --input-kafka-topic TransformAndStoreInputTopic
-  --output-kafka-topic TransformAndStoreOutputTopic
   --kafka-group-id TransformAndStore-group-id
+  --opensearch-hosts http://localhost:9200
+  --opensearch-security-protocol SASL_PLAINTEXT
+  --index-base-name transformandstore-index_
   ```
 
   And add the following Environment variables:
@@ -108,13 +111,16 @@ When developing your job you can run/debug it like any other Java application by
   - KAFKA_CLIENT_SECRET=testsecret
   - KAFKA_TOKEN_URL=http://localhost:1752/oauth2/token
   - KAFKA_SECURITY_PROTOCOL=SASL_PLAINTEXT
+  - OPENSEARCH_CLIENT_ID=ClientId
+  - OPENSEARCH_CLIENT_SECRET=1234
+  - OPENSEARCH_TOKEN_URL=http://localhost:1752/oauth2/token
   ```
   You can insert the following string in the `Environment variables` field:
 
   ```text
-  KAFKA_CLIENT_ID=flink;KAFKA_CLIENT_SECRET=testsecret;KAFKA_TOKEN_URL=http://localhost:1752/oauth2/token;KAFKA_SECURITY_PROTOCOL=SASL_PLAINTEXT
+  KAFKA_CLIENT_ID=flink;KAFKA_CLIENT_SECRET=testsecret;KAFKA_TOKEN_URL=http://localhost:1752/oauth2/token;KAFKA_SECURITY_PROTOCOL=SASL_PLAINTEXT;OPENSEARCH_CLIENT_ID=ClientId;OPENSEARCH_CLIENT_SECRET=1234;OPENSEARCH_TOKEN_URL=http://localhost:1752/oauth2/token
   ```
-1. Notice how the job is configured to consume events from topic `TransformAndStoreInputTopic` and output to `TransformAndStoreOutputTopic`
+1. Notice how the job is configured to consume events from topic `TransformAndStoreInputTopic` and output to index with base name of `transformandstore-index_`
 1. Save configuration by clicking OK
   > [!IMPORTANT]
   > When running the job you might see a warning in the console informing that *An illegal reflective access operation has occurred*, which can be ignored.
@@ -147,8 +153,8 @@ docker compose up transformandstore-test --build
 
 If doing so, make sure to run your job locally from Intellij before starting the component test.
 
-The component test is producing a single message to `TransformAndStoreInputTopic`, and listening for any messages published to `TransformAndStoreOutputTopic`. It expects the flink job to publish the same message, enriched with a new field, on `TransformAndStoreOutputTopic`.
-You can observe the topics and produced messages at [http://localhost:9898](http://localhost:9898).
+The component test is producing a single message to `TransformAndStoreInputTopic`, and listening for any documents created at `transformandstore-index_*`. It expects the flink job to create 3 documents in OpenSearch.
+You can observe the topics and produced messages at [http://localhost:9898](http://localhost:9898) and the indices and documents at [http://localhost:5602](http://localhost:5602).
 
 #### Persisted data during development
 
