@@ -21,7 +21,6 @@ import java.util.concurrent.ExecutionException;
  */
 public class ExternalLookupMapper extends RichAsyncFunction<InputEvent, OutputEvent> {
 
-    private ObjectMapper mapper;
     private String idServiceHost;
     private HttpClient client;
 
@@ -51,8 +50,6 @@ public class ExternalLookupMapper extends RichAsyncFunction<InputEvent, OutputEv
     @Override
     public void open(Configuration parameters) {
         client = HttpClient.newHttpClient();
-
-        mapper = new ObjectMapper();
 
         ParameterTool parameterTool = (ParameterTool)
                 getRuntimeContext().getExecutionConfig().getGlobalJobParameters();

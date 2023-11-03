@@ -7,6 +7,7 @@ import org.apache.flink.api.common.state.ReducingState;
 import org.apache.flink.api.common.state.ReducingStateDescriptor;
 import org.apache.flink.api.common.typeinfo.TypeHint;
 import org.apache.flink.api.common.typeinfo.TypeInformation;
+import org.apache.flink.api.common.typeinfo.Types;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.util.Collector;
 
@@ -28,11 +29,10 @@ public class FlinkReducingStatesMapper extends RichFlatMapFunction<InputEvent, D
     @Override
     public void open(Configuration config) {
         ReducingStateDescriptor<Double> descriptor =
-                new ReducingStateDescriptor<Double>(
+                new ReducingStateDescriptor<>(
                         "values", // the state name
                         getReduceFunction(),
-                        TypeInformation.of(new TypeHint<>() {
-                        }));
+                        Types.DOUBLE);
         sum = getRuntimeContext().getReducingState(descriptor);
     }
 

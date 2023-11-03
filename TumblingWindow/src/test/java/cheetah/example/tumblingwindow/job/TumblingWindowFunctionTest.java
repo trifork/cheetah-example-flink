@@ -23,7 +23,7 @@ class TumblingWindowFunctionTest {
         aggregate.add(new InputEvent("test_device", 0, 1.0), inputEvents);
         aggregate.add(new InputEvent("test_device", 0, 2.0), inputEvents);
         aggregate.add(new InputEvent("test_device", 0, 3.0), inputEvents);
-        Double[] doublesArray = new Double[]{1.0, 2.0, 3.0};
+        Double[] doublesArray = {1.0, 2.0, 3.0};
 
         assertArrayEquals(doublesArray, aggregate.getResult(inputEvents));
     }

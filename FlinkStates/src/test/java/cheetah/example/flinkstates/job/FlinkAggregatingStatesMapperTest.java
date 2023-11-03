@@ -18,7 +18,7 @@ class FlinkAggregatingStatesMapperTest {
     @BeforeEach
     public void setup() throws Exception {
         var sut = new FlinkAggregatingStatesMapper();
-        harness = new KeyedOneInputStreamOperatorTestHarness<>((new StreamFlatMap<>(sut)), InputEvent::getDeviceId, Types.STRING);
+        harness = new KeyedOneInputStreamOperatorTestHarness<>(new StreamFlatMap<>(sut), InputEvent::getDeviceId, Types.STRING);
         harness.setup();
         harness.open();
     }

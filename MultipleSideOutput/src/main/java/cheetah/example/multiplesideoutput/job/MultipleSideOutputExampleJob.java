@@ -31,9 +31,9 @@ public class MultipleSideOutputExampleJob extends Job implements Serializable {
     }
 
     // The 3 different kind of output produces by this job
-    public static OutputTag<OutputEvent> outputA = new OutputTag<>("output-a"){};
-    public static OutputTag<OutputEvent> outputB = new OutputTag<>("output-b"){};
-    public static OutputTag<OutputEvent2> outputCD = new OutputTag<>("output-cd"){};
+    public static final OutputTag<OutputEvent> outputA = new OutputTag<>("output-a"){};
+    public static final OutputTag<OutputEvent> outputB = new OutputTag<>("output-b"){};
+    public static final OutputTag<OutputEvent2> outputCD = new OutputTag<>("output-cd"){};
 
     @Override
     protected void setup() {
