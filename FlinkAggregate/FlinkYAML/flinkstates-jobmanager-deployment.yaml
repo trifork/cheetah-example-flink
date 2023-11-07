@@ -1,0 +1,77 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose --file=docker-compose-copy.yaml convert
+    kompose.version: 1.26.0 (40646f47)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: flinkstates-jobmanager
+  name: flinkstates-jobmanager
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: flinkstates-jobmanager
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose --file=docker-compose-copy.yaml convert
+        kompose.version: 1.26.0 (40646f47)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: flinkstates-jobmanager
+    spec:
+      containers:
+        - args:
+            - standalone-job
+            - --job-classname
+            - cheetah.example.flinkstates.job.FlinkStatesJob
+            - --kafka-bootstrap-servers
+            - kafka:19092
+            - --kafka-group-id
+            - FlinkStates-group-id
+            - --kafka-security-protocol
+            - SASL_PLAINTEXT
+            - --input-kafka-topic
+            - FlinkStatesInputTopic
+            - --output-kafka-topic-aggregating
+            - FlinkStatesOutputTopic-aggregating
+          env:
+            - name: FLINK_PROPERTIES
+              value: |
+                jobmanager.rpc.address: flinkstates-jobmanager
+                scheduler-mode: reactive
+                rest.flamegraph.enabled: true
+                state.backend: rocksdb
+                state.checkpoints.dir: file:///checkpoints/processing
+                state.savepoints.dir: file:///checkpoints/processing
+                execution.checkpointing.interval: 300 seconds
+                execution.checkpointing.min-pause: 240 seconds
+            - name: KAFKA_CLIENT_ID
+              value: ClientId
+            - name: KAFKA_CLIENT_SECRET
+              value: "1234"
+            - name: KAFKA_TOKEN_URL
+              value: http://cheetahoauthsimulator/oauth2/token
+          image: flinkstates-job
+          livenessProbe:
+            exec:
+              command:
+                - curl localhost:8081/jobs | grep -q '"status":"RUNNING"' || exit -1
+            failureThreshold: 30
+            periodSeconds: 1
+            timeoutSeconds: 1
+          name: flinkstates-jobmanager
+          resources: {}
+          volumeMounts:
+            - mountPath: /checkpoints
+              name: flink
+      restartPolicy: Always
+      volumes:
+        - name: flink
+          persistentVolumeClaim:
+            claimName: flink
+status: {}

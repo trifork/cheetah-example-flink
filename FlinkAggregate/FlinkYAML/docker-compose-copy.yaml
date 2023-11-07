@@ -12,9 +12,6 @@ services:
       KAFKA__CLIENTID: ClientId
       KAFKA__CLIENTSECRET: 1234
       KAFKA__AUTHENDPOINT: http://cheetahoauthsimulator/oauth2/token
-    depends_on:
-      flinkstates-jobmanager:
-        condition: service_healthy
 
   flinkstates-jobmanager:
     image: ${DOCKER_REGISTRY-}flinkstates-job
@@ -26,9 +23,14 @@ services:
       secrets:
         - GITHUB_TOKEN
         - GITHUB_ACTOR
-    ports:
-      - "8082:8081"
-    command: jobmanager
+    command: |
+      standalone-job
+      --job-classname cheetah.example.flinkstates.job.FlinkStatesJob
+      --kafka-bootstrap-servers kafka:19092
+      --kafka-group-id FlinkStates-group-id
+      --kafka-security-protocol SASL_PLAINTEXT
+      --input-kafka-topic FlinkStatesInputTopic
+      --output-kafka-topic-aggregating FlinkStatesOutputTopic-aggregating
     environment:
       KAFKA_CLIENT_ID: ClientId
       KAFKA_CLIENT_SECRET: 1234

@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose --file=docker-compose-copy.yaml convert
+    kompose.version: 1.26.0 (40646f47)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: flinkstates-taskmanager
+  name: flinkstates-taskmanager
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: flinkstates-taskmanager
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose --file=docker-compose-copy.yaml convert
+        kompose.version: 1.26.0 (40646f47)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: flinkstates-taskmanager
+    spec:
+      containers:
+        - args:
+            - taskmanager
+          env:
+            - name: FLINK_PROPERTIES
+              value: |2
+
+                jobmanager.rpc.address: flinkstates-jobmanager
+                taskmanager.memory.process.size: 4gb
+                taskmanager.numberOfTaskSlots: 2
+          image: flinkstates-job
+          name: flinkstates-taskmanager
+          resources: {}
+          volumeMounts:
+            - mountPath: /checkpoints
+              name: flink
+      restartPolicy: Always
+      volumes:
+        - name: flink
+          persistentVolumeClaim:
+            claimName: flink
+status: {}
