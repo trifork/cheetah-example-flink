@@ -12,9 +12,6 @@ services:
       KAFKA__CLIENTID: ClientId
       KAFKA__CLIENTSECRET: 1234
       KAFKA__AUTHENDPOINT: http://cheetahoauthsimulator/oauth2/token
-    depends_on:
-      flinkstates-jobmanager:
-        condition: service_healthy
 
   flinkstates-jobmanager:
     image: ${DOCKER_REGISTRY-}flinkstates-job
@@ -35,7 +32,6 @@ services:
       KAFKA_TOKEN_URL: http://cheetahoauthsimulator/oauth2/token
       FLINK_PROPERTIES: |
         jobmanager.rpc.address: flinkstates-jobmanager
-        scheduler-mode: reactive
         rest.flamegraph.enabled: true
         state.backend: rocksdb
         state.checkpoints.dir: file:///checkpoints/processing
@@ -46,12 +42,6 @@ services:
       - flinkstates-taskmanager
     volumes:
       - flink:/checkpoints
-    healthcheck:
-      test: curl localhost:8081/jobs | grep -q '"status":"RUNNING"' || exit -1
-      interval: 1s
-      timeout: 1s
-      retries: 30
-
   flinkstates-taskmanager:
     image: ${DOCKER_REGISTRY-}flinkstates-job
     build:
