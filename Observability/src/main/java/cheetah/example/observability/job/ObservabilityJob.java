@@ -1,5 +1,6 @@
 package cheetah.example.observability.job;
 
+import cheetah.example.observability.function.CheetahHistogramMapper;
 import cheetah.example.observability.function.CounterMapper;
 import cheetah.example.observability.function.GaugeMapper;
 import cheetah.example.observability.function.HistogramMapper;
@@ -35,7 +36,9 @@ public class ObservabilityJob extends Job implements Serializable {
                 countedStream.map(new GaugeMapper());
         final SingleOutputStreamOperator<InputEvent> histogramStream =
                 gaugedStream.map(new HistogramMapper());
+        final SingleOutputStreamOperator<InputEvent> cheetahHistogramStream =
+                histogramStream.map(new CheetahHistogramMapper());
 
-        histogramStream.name(ObservabilityJob.class.getSimpleName());
+        cheetahHistogramStream.name(ObservabilityJob.class.getSimpleName());
     }
 }
