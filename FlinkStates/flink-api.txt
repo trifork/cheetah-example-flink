@@ -1,11 +1,11 @@
-C:/Users/wille\OneDrive/Skrivebord/Trifork/Code/cheetah-example-flink/FlinkStates/target/flinkstates-0.0.1.jar
+C:/Users/wille/OneDrive/Skrivebord/Trifork/Code/cheetah-example-flink/FlinkStates/target/flinkstates-0.0.1-shaded.jar
 
 
 UPLOAD
-curl -X POST "Expect:" -F "jarfile=@C:/Users/wille/OneDrive/Skrivebord/Trifork/Code/cheetah-example-flink/FlinkStates/target/flinkstates-0.0.1.jar" http://localhost:8082/jars/upload
+curl -X POST "Expect:" -F "jarfile=@C:/Users/wille/OneDrive/Skrivebord/Trifork/Code/cheetah-example-flink/FlinkStates/target/flinkstates-0.0.1-shaded.jar" http://localhost:8082/jars/upload?entry-class=cheetah.example.flinkstates.job.FlinkStatesJob
 
 UPLOAD
-curl -X POST -H "Content-Type: application/x-java-archive" -F jarfile=@"C:/Users/wille/OneDrive/Skrivebord/Trifork/Code/cheetah-example-flink/FlinkStates/target/flinkstates-0.0.1.jar" http://localhost:8082/jars/upload
+curl -X POST -H "Content-Type: application/x-java-archive" -F jarfile=@"C:/Users/wille/OneDrive/Skrivebord/Trifork/Code/cheetah-example-flink/FlinkStates/target/flinkstates-0.0.1-shaded.jar" http://localhost:8082/jars/upload
 
 
 RUN
@@ -13,11 +13,11 @@ curl -X POST http://localhost:8082/jars/a7b97223-3163-4398-a5ba-1d7083e90c40_fli
 
 
 RUN W/ ENTRY
-curl -X POST http://localhost:8082/jars/29b5872d-1f4d-446b-bdd7-aac9f2c563af_flinkstates-0.0.1-shaded.jar/run?entry-class=cheetah.example.flinkstates.job.FlinkStatesJob
+curl -X POST http://localhost:8082/jars/527a0c45-0f38-4340-adaa-230e1075fec1_flinkstates-0.0.1-shaded.jar/run?entry-class=cheetah.example.flinkstates.job.FlinkStatesJob
 
 RUN W/ ENTRY+ARG
-curl -X POST "http://localhost:8082/jars/:jarid/run?entry-class=com.example.MyFlinkJob&program-args=arg1,arg2"
+curl -X POST "http://jobmanager-host:8081/jars/:jarid/run?entry-class=com.example.MyFlinkJob&programArg=arg1&programArg=arg2&programArg=arg3"
 
-
+curl -X POST "http://localhost:8082/jars/527a0c45-0f38-4340-adaa-230e1075fec1_flinkstates-0.0.1-shaded.jar/run?entry-class=cheetah.example.flinkstates.job.FlinkStatesJob&kafka-bootstrap-servers=kafka:19092&kafka-group-id=FlinkStates-group-id&kafka-security-protocol=SASL_PLAINTEXT&input-kafka-topic=FlinkStatesInputTopic&output-kafka-topic-value=FlinkStatesOutputTopic-value"
 
 

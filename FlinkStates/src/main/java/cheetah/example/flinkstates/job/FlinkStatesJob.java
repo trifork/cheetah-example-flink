@@ -21,6 +21,7 @@ public class FlinkStatesJob extends Job implements Serializable {
 
     @SuppressWarnings("PMD.SignatureDeclareThrowsException") // Fix once lib-processing is fixed
     public static void main(final String[] args) throws Exception {
+        System.out.println("ey");
         new FlinkStatesJob().start(args);
     }
 
