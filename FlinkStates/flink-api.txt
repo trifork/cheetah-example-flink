@@ -1,0 +1,23 @@
+C:/Users/wille\OneDrive/Skrivebord/Trifork/Code/cheetah-example-flink/FlinkStates/target/flinkstates-0.0.1.jar
+
+
+UPLOAD
+curl -X POST "Expect:" -F "jarfile=@C:/Users/wille/OneDrive/Skrivebord/Trifork/Code/cheetah-example-flink/FlinkStates/target/flinkstates-0.0.1.jar" http://localhost:8082/jars/upload
+
+UPLOAD
+curl -X POST -H "Content-Type: application/x-java-archive" -F jarfile=@"C:/Users/wille/OneDrive/Skrivebord/Trifork/Code/cheetah-example-flink/FlinkStates/target/flinkstates-0.0.1.jar" http://localhost:8082/jars/upload
+
+
+RUN
+curl -X POST http://localhost:8082/jars/a7b97223-3163-4398-a5ba-1d7083e90c40_flinkstates-0.0.1.jar/run
+
+
+RUN W/ ENTRY
+curl -X POST http://localhost:8082/jars/29b5872d-1f4d-446b-bdd7-aac9f2c563af_flinkstates-0.0.1-shaded.jar/run?entry-class=cheetah.example.flinkstates.job.FlinkStatesJob
+
+RUN W/ ENTRY+ARG
+curl -X POST "http://localhost:8082/jars/:jarid/run?entry-class=com.example.MyFlinkJob&program-args=arg1,arg2"
+
+
+
+
