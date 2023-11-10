@@ -1,7 +1,7 @@
 ---
-version: "3"
+version: "3.8"
 services:
-  tumblingwindow-test:
+  enrichstream-test:
     build:
       context: ComponentTest
       dockerfile: Dockerfile
@@ -14,11 +14,11 @@ services:
       KAFKA__CLIENTSECRET: 1234
       KAFKA__AUTHENDPOINT: http://cheetahoauthsimulator/oauth2/token
     depends_on:
-      tumblingwindow-job:
+      enrichstream-jobmanager:
         condition: service_healthy
 
-  tumblingwindow-job:
-    image: ${DOCKER_REGISTRY-}tumblingwindow-job
+  enrichstream-jobmanager:
+    image: ${DOCKER_REGISTRY-}enrichstream-job
     build:
       context: .
       dockerfile: Dockerfile
@@ -29,18 +29,19 @@ services:
         - GITHUB_ACTOR
     command: |
       standalone-job
-      --job-classname cheetah.example.tumblingwindow.job.TumblingWindowJob
+      --job-classname cheetah.example.enrichstream.job.EnrichStreamJob
       --kafka-bootstrap-servers kafka:19092
-      --kafka-group-id tumbling-window-group
+      --kafka-group-id EnrichStream-group-id
       --kafka-security-protocol SASL_PLAINTEXT
-      --input-kafka-topic TumblingWindowInputTopic
-      --output-kafka-topic TumblingWindowOutputTopic
+      --input-kafka-topic-enriching EnrichStreamEnrichTopic
+      --input-kafka-topic-main EnrichStreamInputTopic
+      --output-kafka-topic EnrichStreamOutputTopic
     environment:
       KAFKA_CLIENT_ID: ClientId
       KAFKA_CLIENT_SECRET: 1234
       KAFKA_TOKEN_URL: http://cheetahoauthsimulator/oauth2/token
       FLINK_PROPERTIES: |
-        jobmanager.rpc.address: tumblingwindow-job
+        jobmanager.rpc.address: enrichstream-jobmanager
         scheduler-mode: reactive
         rest.flamegraph.enabled: true
         state.backend: rocksdb
@@ -49,7 +50,7 @@ services:
         execution.checkpointing.interval: 300 seconds
         execution.checkpointing.min-pause: 240 seconds
     depends_on:
-      - tumblingwindow-job-taskmanager
+      - enrichstream-taskmanager
     volumes:
       - flink:/checkpoints
     healthcheck:
@@ -58,8 +59,8 @@ services:
       timeout: 1s
       retries: 30
 
-  tumblingwindow-job-taskmanager:
-    image: ${DOCKER_REGISTRY-}tumblingwindow-job
+  enrichstream-taskmanager:
+    image: ${DOCKER_REGISTRY-}enrichstream-job
     build:
       context: .
       dockerfile: Dockerfile
@@ -72,7 +73,7 @@ services:
     environment:
       - |
         FLINK_PROPERTIES=
-        jobmanager.rpc.address: tumblingwindow-job
+        jobmanager.rpc.address: enrichstream-jobmanager
         taskmanager.memory.process.size: 4gb
         taskmanager.numberOfTaskSlots: 2
     volumes:

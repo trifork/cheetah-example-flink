@@ -27,17 +27,17 @@ jobs:
           settings-path: ./FlinkStates/
           access-token: ${{ secrets.PACKAGE_PAT }}
   
-  merge-two-streams-build-and-test:
-    name: "Merge Two Streams - Build and Test"
+  enrich-stream-build-and-test:
+    name: "Enrich Stream - Build and Test"
     runs-on: ubuntu-latest
     steps: 
       - name: Checkout repository
         uses: actions/checkout@v4
       
-      - name: Merge Two Streams - Build and Test
+      - name: Enrich Stream - Build and Test
         uses: ./.github/actions/maven-build-and-test
         with: 
-          settings-path: ./MergeTwoStreams/
+          settings-path: ./EnrichStream/
           access-token: ${{ secrets.PACKAGE_PAT }}
 
   multiple-side-output-build-and-test:
