@@ -71,14 +71,14 @@ services:
         - GITHUB_ACTOR
     command: taskmanager
     environment:
-        SERVICE_TOKEN_ENDPOINT: "http://cheetahoauthsimulator/oauth2/token"
-        SERVICE_CLIENT_ID: "testId"
-        SERVICE_CLIENT_SECRET: "testSecret"
-        SERVICE_SCOPE: "testScope"
-        FLINK_PROPERTIES: |
-          jobmanager.rpc.address: externallookup-job
-          taskmanager.memory.process.size: 4gb
-          taskmanager.numberOfTaskSlots: 2
+      SERVICE_TOKEN_ENDPOINT: "http://cheetahoauthsimulator/oauth2/token"
+      SERVICE_CLIENT_ID: "testId"
+      SERVICE_CLIENT_SECRET: "testSecret"
+      SERVICE_SCOPE: "testScope"
+      FLINK_PROPERTIES: |
+        jobmanager.rpc.address: externallookup-job
+        taskmanager.memory.process.size: 4gb
+        taskmanager.numberOfTaskSlots: 2
     volumes:
       - flink:/checkpoints
 
