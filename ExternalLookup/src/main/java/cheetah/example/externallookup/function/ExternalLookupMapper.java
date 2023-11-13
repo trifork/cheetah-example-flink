@@ -27,17 +27,23 @@ public class ExternalLookupMapper extends RichAsyncFunction<InputEvent, OutputEv
     private HttpClient client;
     private KeyedTokenProvider tokenProvider;
     private final static String TOKEN_ID = "ServiceToken";
+    private HttpRequest.Builder requestBuilder;
+    private final String tokenEndpoint;
+    private final String clientId;
+    private final String clientSecret;
+    private final String scope;
+
+    public ExternalLookupMapper(String tokenEndpoint, String clientId, String clientSecret, String scope) {
+        this.tokenEndpoint = tokenEndpoint;
+        this.clientId = clientId;
+        this.clientSecret = clientSecret;
+        this.scope = scope;
+    }
 
     @Override
     public void asyncInvoke(InputEvent externalLookupInputEvent, ResultFuture<OutputEvent> resultFuture) {
 
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(idServiceHost + "ExternalLookup"))
-                .GET()
-                .header("Authorization", tokenProvider.getToken(TOKEN_ID))
-                .header("Content-Type", "application/json")
-                .header("Accept", "text/plain")
-                .build();
+        HttpRequest request = requestBuilder.copy().header("Authorization", tokenProvider.getToken(TOKEN_ID)).build();
 
         CompletableFuture<HttpResponse<String>> response = client.sendAsync(request,
                 HttpResponse.BodyHandlers.ofString());
@@ -56,14 +62,16 @@ public class ExternalLookupMapper extends RichAsyncFunction<InputEvent, OutputEv
     public void open(Configuration parameters) {
         client = HttpClient.newHttpClient();
 
+
+        requestBuilder = HttpRequest.newBuilder()
+                .uri(URI.create(idServiceHost + "ExternalLookup"))
+                .GET()
+                .header("Content-Type", "application/json")
+                .header("Accept", "text/plain");
+
+
         tokenProvider = KeyedTokenProvider.getInstance();
-        tokenProvider.registerTokenProviderIfAbsent(TOKEN_ID,
-                () -> new CachedTokenProvider(
-                        new OAuthTokenProvider(
-                                System.getenv("SERVICE_TOKEN_ENDPOINT"),
-                                System.getenv("SERVICE_CLIENT_ID"),
-                                System.getenv("SERVICE_CLIENT_SECRET"),
-                                System.getenv("SERVICE_SCOPE"))));
+        tokenProvider.registerTokenProviderIfAbsent(TOKEN_ID, () -> new CachedTokenProvider(new OAuthTokenProvider(tokenEndpoint, clientId, clientSecret, scope)));
 
         ParameterTool parameterTool = (ParameterTool)
                 getRuntimeContext().getExecutionConfig().getGlobalJobParameters();
