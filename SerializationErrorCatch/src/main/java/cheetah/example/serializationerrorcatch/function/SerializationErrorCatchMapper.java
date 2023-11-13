@@ -6,7 +6,7 @@ import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.common.functions.RichFilterFunction;
 import org.apache.flink.metrics.Gauge;
 
-/** SerializationErrorCatchMapper converts from InputEvent to OutputEvent. */
+/** SerializationErrorCatchMapper is a simple MapFunction that converts from InputEvent to OutputEvent. */
 public class SerializationErrorCatchMapper implements MapFunction<InputEvent, OutputEvent> {
     private final String extraField;
 

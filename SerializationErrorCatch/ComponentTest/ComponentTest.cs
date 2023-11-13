@@ -32,34 +32,32 @@ public class ComponentTest
     }
 
     [Fact]
-    public async Task Should_BeImplemented_When_ServiceIsCreated()
+    public async Task SerializationErrorCatchJob_ComponentTest()
     {
         // Arrange
-        // Here you'll set up one or more writers and readers, which connect to the topic(s) that your job consumes
-        // from and publishes to. 
+        // writer is used to write messages to the SerializationErrorCatchInputTopic topic. 
         var writer = KafkaWriterBuilder.Create<string, InputEvent>(_configuration)
-            .WithTopic("SerializationErrorCatchInputTopic") // The topic to consume from
-            .WithKeyFunction(model => model.DeviceId) // Optional function to retrieve the message key.
-                                                          // If no key is desired, use KafkaWriterBuilder.Create<Null, InputModel>
-                                                          // and make this function return null
+            .WithTopic("SerializationErrorCatchInputTopic")
+            .WithKeyFunction(model => model.DeviceId) 
             .Build();
 
+        // badWriter is used to write messages to the SerializationErrorCatchInputTopic topic to trigger deserialization error.
         var badWriter = KafkaWriterBuilder.Create<string, BadEvent>(_configuration)
-            .WithTopic("SerializationErrorCatchInputTopic") // The topic to consume from
-            .WithKeyFunction(model => model.DeviceId) // Optional function to retrieve the message key.
-            // If no key is desired, use KafkaWriterBuilder.Create<Null, InputModel>
-            // and make this function return null
+            .WithTopic("SerializationErrorCatchInputTopic")
+            .WithKeyFunction(model => model.DeviceId) 
             .Build();
         
+        // reader is used to read messages from the SerializationErrorCatchOutputTopic topic.
         var reader = KafkaReaderBuilder.Create<string, OutputEvent>(_configuration)
             .WithTopic("SerializationErrorCatchOutputTopic")     // The topic being published to from the job
             .WithConsumerGroup("MyGroup")           // The consumer group used for reading from the topic
             .Build();
         
+        // metricsReader is used to read metrics from the job
         var metricsReader = new PrometheusMetricsReader("serializationerrorcatch-taskmanager", 9249);
         
         // Act
-        // Write one or more messages to the writer
+        // Create an InputEvent
         var inputEvent = new InputEvent()
         {
             DeviceId = "deviceId-1",
@@ -67,6 +65,7 @@ public class ComponentTest
             Timestamp = DateTimeOffset.UnixEpoch.ToUnixTimeMilliseconds()
         };
         
+        // Create a BadEvent
         var badInputEvent = new BadEvent()
         {
             DeviceId = "deviceId-1",
@@ -75,21 +74,21 @@ public class ComponentTest
             BadField = "BadFieldValue"
         };
         
+        // Write the InputEvent and BadEvent to the SerializationErrorCatchInputTopic topic
+        await badWriter.WriteAsync(badInputEvent);
         await writer.WriteAsync(inputEvent);
+        await badWriter.WriteAsync(badInputEvent);
         await badWriter.WriteAsync(badInputEvent);
         
         //Wait, to ensure processing is done
-        await Task.Delay(TimeSpan.FromSeconds(20));
+        await Task.Delay(TimeSpan.FromSeconds(5));
         
+        // Assert that the FailedMessagesProcessed metric is 3
         var gauge = await metricsReader.GetCounterValueAsync("FailedMessagesProcessed");
-        Assert.Equal(1, gauge);
+        Assert.Equal(3, gauge);
         
-        // Assert 
-        // Then consume using the reader, supplying how many output messages your input messages expected to generate
-        // as well as the maximum duration it is allowed to take for those messages to be produced
-        var messages = reader.ReadMessages(1, TimeSpan.FromSeconds(20));
-        
-        // Then evaluate whether your messages are as expected, and that there are only as many as you expected 
+        // Assert 1 message was written to the SerializationErrorCatchOutputTopic topic
+        var messages = reader.ReadMessages(1, TimeSpan.FromSeconds(5));
         messages.Should().ContainSingle(message => 
             message.DeviceId == inputEvent.DeviceId && 
             message.Value == inputEvent.Value &&

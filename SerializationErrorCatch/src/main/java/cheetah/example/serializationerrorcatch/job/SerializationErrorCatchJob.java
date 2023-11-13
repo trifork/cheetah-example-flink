@@ -15,7 +15,9 @@ import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 
 import java.io.Serializable;
 
-/** SerializationErrorCatchJob sets up the data processing job. */
+/** The SerializationErrorCatchJob exemplifies the creation of a custom deserialization method,
+ * its integration with the KafkaSource, and the handling of deserialization errors in a tailored manner.
+ * In this demonstration, an error log message is displayed also accompanied by the incrementation of a metric counter. */
 public class SerializationErrorCatchJob extends Job implements Serializable {
 
     @SuppressWarnings("PMD.SignatureDeclareThrowsException") // Fix once lib-processing is fixed
