@@ -35,15 +35,15 @@ services:
       --kafka-security-protocol SASL_PLAINTEXT
       --input-kafka-topic ExternalLookupInputTopic
       --output-kafka-topic ExternalLookupOutputTopic
-      --id-service-url http://id-service:80/
     environment:
       KAFKA_CLIENT_ID: ClientId
       KAFKA_CLIENT_SECRET: 1234
       KAFKA_TOKEN_URL: http://cheetahoauthsimulator/oauth2/token
-      SERVICE_TOKEN_URL: http://cheetahoauthsimulator/oauth2/token
-      SERVICE_CLIENT_ID: testId
-      SERVICE_CLIENT_SECRET: testSecret
-      SERVICE_SCOPE: testScope
+      ID_SERVICE_URL: http://id-service:80/
+      ID_SERVICE_TOKEN_URL: http://cheetahoauthsimulator/oauth2/token
+      ID_SERVICE_CLIENT_ID: testId
+      ID_SERVICE_CLIENT_SECRET: testSecret
+      ID_SERVICE_SCOPE: testScope
       FLINK_PROPERTIES: |
         jobmanager.rpc.address: externallookup-job
         scheduler-mode: reactive

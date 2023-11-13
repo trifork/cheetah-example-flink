@@ -5,7 +5,6 @@ import cheetah.example.externallookup.model.OutputEvent;
 import com.trifork.cheetah.processing.auth.CachedTokenProvider;
 import com.trifork.cheetah.processing.auth.KeyedTokenProvider;
 import com.trifork.cheetah.processing.auth.OAuthTokenProvider;
-import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.streaming.api.functions.async.ResultFuture;
 import org.apache.flink.streaming.api.functions.async.RichAsyncFunction;
@@ -23,6 +22,7 @@ import java.util.concurrent.ExecutionException;
  */
 public class ExternalLookupMapper extends RichAsyncFunction<InputEvent, OutputEvent> {
 
+    private final String idServiceHost;
     private HttpClient client;
     private KeyedTokenProvider tokenProvider;
     private final static String TOKEN_ID = "ServiceToken";
@@ -32,7 +32,11 @@ public class ExternalLookupMapper extends RichAsyncFunction<InputEvent, OutputEv
     private final String clientSecret;
     private final String scope;
 
-    public ExternalLookupMapper(String tokenUrl, String clientId, String clientSecret, String scope) {
+    public ExternalLookupMapper(String idServiceHost, String tokenUrl, String clientId, String clientSecret, String scope) {
+        if (!idServiceHost.endsWith("/")) {
+            idServiceHost += "/";
+        }
+        this.idServiceHost = idServiceHost;
         this.tokenUrl = tokenUrl;
         this.clientId = clientId;
         this.clientSecret = clientSecret;
@@ -63,13 +67,6 @@ public class ExternalLookupMapper extends RichAsyncFunction<InputEvent, OutputEv
 
         tokenProvider = KeyedTokenProvider.getInstance();
         tokenProvider.registerTokenProviderIfAbsent(TOKEN_ID, () -> new CachedTokenProvider(new OAuthTokenProvider(tokenUrl, clientId, clientSecret, scope)));
-
-        ParameterTool parameterTool = (ParameterTool)
-                getRuntimeContext().getExecutionConfig().getGlobalJobParameters();
-        String idServiceHost = parameterTool.get("id-service-url");
-        if (!idServiceHost.endsWith("/")) {
-            idServiceHost += "/";
-        }
 
         requestBuilder = HttpRequest.newBuilder()
                 .uri(URI.create(idServiceHost + "ExternalLookup"))
