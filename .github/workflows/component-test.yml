@@ -1,24 +1,19 @@
-name: Component tests of all examples in Cheetah Platform Examples 
-on:
-  workflow_dispatch:
-  
-  push:
-    branches: ["main"]
+name: Component Test
 
-  pull_request:
-    branches: ["main"]
-    types:
-      - labeled
-      - opened
-      - edited
-      - ready_for_review
-      - auto_merge_enabled
-      - synchronize
-      - reopened
-      
+on:
+  workflow_call:
+  workflow_dispatch:
   schedule:
-  # * is a special character in YAML so you have to quote this string
-  - cron: '30 0 * * *'
+    - cron: "0 3 * * *"
+  push:
+    branches: [ 'main', 'release/v**' ]
+  pull_request:
+    branches: [ 'main', 'release/v**' ]
+    types: [ opened, synchronize, reopened, labeled ]
+
+concurrency:
+  group: ${{ github.ref }}-${{ github.workflow }}
+  cancel-in-progress: true
 
 jobs:
   should-run: # seperate step to support ci/cd status checks
