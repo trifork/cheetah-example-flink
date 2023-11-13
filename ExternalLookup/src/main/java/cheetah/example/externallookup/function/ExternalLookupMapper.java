@@ -62,13 +62,11 @@ public class ExternalLookupMapper extends RichAsyncFunction<InputEvent, OutputEv
     public void open(Configuration parameters) {
         client = HttpClient.newHttpClient();
 
-
         requestBuilder = HttpRequest.newBuilder()
                 .uri(URI.create(idServiceHost + "ExternalLookup"))
                 .GET()
                 .header("Content-Type", "application/json")
                 .header("Accept", "text/plain");
-
 
         tokenProvider = KeyedTokenProvider.getInstance();
         tokenProvider.registerTokenProviderIfAbsent(TOKEN_ID, () -> new CachedTokenProvider(new OAuthTokenProvider(tokenEndpoint, clientId, clientSecret, scope)));
