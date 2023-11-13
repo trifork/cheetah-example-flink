@@ -202,10 +202,22 @@ jobs:
     name: "Transform And Store component test"
     needs: should-run
     runs-on: ubuntu-latest
-    if: ${{ needs.should-run.outputs.event-name-check == 'true' || needs.should-run.outputs.tag-check == 'true' }}
+    if: ${{ needs.should-run.outputs.should-run }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Transform and Store - Check if files has changed
+        uses: tj-actions/changed-files@v40
+        id: changed-files
+        with: 
+          files: |
+            TransformAndStore/ComponentTest/**
+            TransformAndStore/src/**
+            TransformAndStore/.ignore
+            TransformAndStore/*.yaml
+            TransformAndStore/Dockerfile
+            TransformAndStore/*.xml
 
       - name: Build Transfrom And Store example image and run component test
         uses: ./.github/actions/component-test
