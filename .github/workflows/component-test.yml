@@ -213,3 +213,19 @@ jobs:
           context-path: ./TransformAndStore/
           access-token: ${{ secrets.PACKAGE_PAT }}
           initial-kafka-topics: "TransfromAndStoreInputTopic"
+
+  serilization-error-catch-component-test:
+    name: "Serilization Error Catch component test"
+    needs: should-run
+    runs-on: ubuntu-latest
+    if: ${{ needs.should-run.outputs.event-name-check == 'true' || needs.should-run.outputs.tag-check == 'true' }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build Serilization Error Catch example image and run component test
+        uses: ./.github/actions/component-test
+        with:
+          context-path: ./SerilizationErrorCatch/
+          access-token: ${{ secrets.PACKAGE_PAT }}
+          initial-kafka-topics: "SerializationErrorCatchInputTopic"
