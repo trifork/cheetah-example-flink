@@ -14,6 +14,7 @@ public class DeserializationSchema<T> extends JsonDeserializationSchema<T> {
     public DeserializationSchema(Class<T> clazz) {
         super(clazz);
     }
+
     @Override
     public T deserialize(byte[] message) {
         try {
@@ -23,6 +24,7 @@ public class DeserializationSchema<T> extends JsonDeserializationSchema<T> {
             return null;
         }
     }
+
     @Override
     public void deserialize(byte[] message, Collector<T> out)  {
         T deserialize = deserialize(message);

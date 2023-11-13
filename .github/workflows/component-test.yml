@@ -202,13 +202,26 @@ jobs:
     name: "Transform And Store component test"
     needs: should-run
     runs-on: ubuntu-latest
-    if: ${{ needs.should-run.outputs.event-name-check == 'true' || needs.should-run.outputs.tag-check == 'true' }}
+    if: ${{ needs.should-run.outputs.should-run }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Build Transfrom And Store example image and run component test
+      - name: Transform And Store - Check if files has changed
+        uses: tj-actions/changed-files@v40
+        id: changed-files
+        with: 
+          files: |
+            TransformAndStore/ComponentTest/**
+            TransformAndStore/src/**
+            TransformAndStore/.ignore
+            TransformAndStore/*.yaml
+            TransformAndStore/Dockerfile
+            TransformAndStore/*.xml
+
+      - name: Build Transform And Store example image and run component test
         uses: ./.github/actions/component-test
+        if: ${{ steps.changed-files.outputs.any_changed == 'true' }}
         with:
           context-path: ./TransformAndStore/
           access-token: ${{ secrets.PACKAGE_PAT }}
@@ -218,13 +231,26 @@ jobs:
     name: "Serialization Error Catch component test"
     needs: should-run
     runs-on: ubuntu-latest
-    if: ${{ needs.should-run.outputs.event-name-check == 'true' || needs.should-run.outputs.tag-check == 'true' }}
+    if: ${{ needs.should-run.outputs.should-run }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Serialization Error Catch - Check if files has changed
+        uses: tj-actions/changed-files@v40
+        id: changed-files
+        with: 
+          files: |
+            SerializationErrorCatch/ComponentTest/**
+            SerializationErrorCatch/src/**
+            SerializationErrorCatch/.ignore
+            SerializationErrorCatch/*.yaml
+            SerializationErrorCatch/Dockerfile
+            SerializationErrorCatch/*.xml
+
       - name: Build Serialization Error Catch example image and run component test
         uses: ./.github/actions/component-test
+        if: ${{ steps.changed-files.outputs.any_changed == 'true' }}
         with:
           context-path: ./SerializationErrorCatch/
           access-token: ${{ secrets.PACKAGE_PAT }}
