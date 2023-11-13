@@ -2,11 +2,13 @@ package cheetah.example.externallookup.function;
 
 import cheetah.example.externallookup.model.InputEvent;
 import cheetah.example.externallookup.model.OutputEvent;
+import com.trifork.cheetah.processing.auth.CachedTokenProvider;
+import com.trifork.cheetah.processing.auth.KeyedTokenProvider;
+import com.trifork.cheetah.processing.auth.OAuthTokenProvider;
 import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.streaming.api.functions.async.ResultFuture;
 import org.apache.flink.streaming.api.functions.async.RichAsyncFunction;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -23,6 +25,8 @@ public class ExternalLookupMapper extends RichAsyncFunction<InputEvent, OutputEv
 
     private String idServiceHost;
     private HttpClient client;
+    private KeyedTokenProvider tokenProvider;
+    private final static String TOKEN_ID = "ServiceToken";
 
     @Override
     public void asyncInvoke(InputEvent externalLookupInputEvent, ResultFuture<OutputEvent> resultFuture) {
@@ -30,6 +34,7 @@ public class ExternalLookupMapper extends RichAsyncFunction<InputEvent, OutputEv
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(idServiceHost + "ExternalLookup"))
                 .GET()
+                .header("Authorization", tokenProvider.getToken(TOKEN_ID))
                 .header("Content-Type", "application/json")
                 .header("Accept", "text/plain")
                 .build();
@@ -50,6 +55,15 @@ public class ExternalLookupMapper extends RichAsyncFunction<InputEvent, OutputEv
     @Override
     public void open(Configuration parameters) {
         client = HttpClient.newHttpClient();
+
+        tokenProvider = KeyedTokenProvider.getInstance();
+        tokenProvider.registerTokenProviderIfAbsent(TOKEN_ID,
+                () -> new CachedTokenProvider(
+                        new OAuthTokenProvider(
+                                System.getenv("SERVICE_TOKEN_ENDPOINT"),
+                                System.getenv("SERVICE_CLIENT_ID"),
+                                System.getenv("SERVICE_CLIENT_SECRET"),
+                                System.getenv("SERVICE_SCOPE"))));
 
         ParameterTool parameterTool = (ParameterTool)
                 getRuntimeContext().getExecutionConfig().getGlobalJobParameters();

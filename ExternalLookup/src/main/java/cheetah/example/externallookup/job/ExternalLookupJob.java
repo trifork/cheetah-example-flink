@@ -42,7 +42,7 @@ public class ExternalLookupJob extends Job implements Serializable {
 
         // Output sink
         final KafkaSink<OutputEvent> kafkaSink =
-                CheetahKafkaSinkConfig.builder(this).toSinkBuilder(OutputEvent.class).build();
+                CheetahKafkaSinkConfig.builder(this).toKafkaSinkBuilder(OutputEvent.class).build();
 
         // Connect transformed stream to sink
         outputStream.sinkTo(kafkaSink).name(ExternalLookupJob.class.getSimpleName());
