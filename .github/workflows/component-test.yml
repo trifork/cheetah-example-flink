@@ -20,7 +20,7 @@ jobs:
     uses: trifork/cheetah-infrastructure-utils-workflows/.github/workflows/e2e-should-run.yml@main
 
   flink-state-component-test:
-    name: "Flink States example component test"
+    name: Flink States
     needs: should-run
     runs-on: ubuntu-latest
     if: ${{ needs.should-run.outputs.should-run }}
@@ -49,7 +49,7 @@ jobs:
           initial-kafka-topics: "MergeTwoStreamsInputTopicA MergeTwoStreamsInputTopicB"
 
   merge-two-streams-component-test:
-    name: "Merge Two Streams example component test"
+    name: Merge Two Streams
     needs: should-run
     if: ${{ needs.should-run.outputs.should-run }}
     runs-on: ubuntu-latest
@@ -78,7 +78,7 @@ jobs:
           initial-kafka-topics: "MergeTwoStreamsInputTopicA MergeTwoStreamsInputTopicB"
 
   multiple-sideoutput-component-test:
-    name: "Multiple Side Output component test"
+    name: Multiple Side Output
     needs: should-run
     if: ${{ needs.should-run.outputs.should-run }}
     runs-on: ubuntu-latest
@@ -107,7 +107,7 @@ jobs:
           initial-kafka-topics: "MultipleSideOutputExampleInputTopic"
 
   observability-component-test:
-    name: "Observability component test"
+    name: Observability
     needs: should-run
     if: ${{ needs.should-run.outputs.should-run }}
     runs-on: ubuntu-latest
@@ -136,7 +136,7 @@ jobs:
           initial-kafka-topics: "ObservabilityInputTopic"
   
   tumbling-window-component-test:
-    name: "Tumbling Window component test"
+    name: Tumbling Window
     needs: should-run
     if: ${{ needs.should-run.outputs.should-run }}
     runs-on: ubuntu-latest
@@ -165,7 +165,7 @@ jobs:
           initial-kafka-topics: "TumblingWindowInputTopic"
 
   external-lookup-component-test:
-    name: "External Lookup component test"
+    name: External Lookup
     needs: should-run
     runs-on: ubuntu-latest
     if: ${{ needs.should-run.outputs.should-run }}
@@ -194,7 +194,7 @@ jobs:
           initial-kafka-topics: "ExternalLookupInputTopic"
 
   transform-and-store-component-test:
-    name: "Transform And Store component test"
+    name: Transform and Store
     needs: should-run
     runs-on: ubuntu-latest
     if: ${{ needs.should-run.outputs.should-run }}
