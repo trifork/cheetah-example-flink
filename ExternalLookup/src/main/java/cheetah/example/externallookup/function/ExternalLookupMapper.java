@@ -23,18 +23,17 @@ import java.util.concurrent.ExecutionException;
  */
 public class ExternalLookupMapper extends RichAsyncFunction<InputEvent, OutputEvent> {
 
-    private String idServiceHost;
     private HttpClient client;
     private KeyedTokenProvider tokenProvider;
     private final static String TOKEN_ID = "ServiceToken";
     private HttpRequest.Builder requestBuilder;
-    private final String tokenEndpoint;
+    private final String tokenUrl;
     private final String clientId;
     private final String clientSecret;
     private final String scope;
 
-    public ExternalLookupMapper(String tokenEndpoint, String clientId, String clientSecret, String scope) {
-        this.tokenEndpoint = tokenEndpoint;
+    public ExternalLookupMapper(String tokenUrl, String clientId, String clientSecret, String scope) {
+        this.tokenUrl = tokenUrl;
         this.clientId = clientId;
         this.clientSecret = clientSecret;
         this.scope = scope;
@@ -62,20 +61,20 @@ public class ExternalLookupMapper extends RichAsyncFunction<InputEvent, OutputEv
     public void open(Configuration parameters) {
         client = HttpClient.newHttpClient();
 
+        tokenProvider = KeyedTokenProvider.getInstance();
+        tokenProvider.registerTokenProviderIfAbsent(TOKEN_ID, () -> new CachedTokenProvider(new OAuthTokenProvider(tokenUrl, clientId, clientSecret, scope)));
+
+        ParameterTool parameterTool = (ParameterTool)
+                getRuntimeContext().getExecutionConfig().getGlobalJobParameters();
+        String idServiceHost = parameterTool.get("id-service-url");
+        if (!idServiceHost.endsWith("/")) {
+            idServiceHost += "/";
+        }
+
         requestBuilder = HttpRequest.newBuilder()
                 .uri(URI.create(idServiceHost + "ExternalLookup"))
                 .GET()
                 .header("Content-Type", "application/json")
                 .header("Accept", "text/plain");
-
-        tokenProvider = KeyedTokenProvider.getInstance();
-        tokenProvider.registerTokenProviderIfAbsent(TOKEN_ID, () -> new CachedTokenProvider(new OAuthTokenProvider(tokenEndpoint, clientId, clientSecret, scope)));
-
-        ParameterTool parameterTool = (ParameterTool)
-                getRuntimeContext().getExecutionConfig().getGlobalJobParameters();
-        idServiceHost = parameterTool.get("id-service-url");
-        if (!idServiceHost.endsWith("/")) {
-            idServiceHost += "/";
-        }
     }
 }

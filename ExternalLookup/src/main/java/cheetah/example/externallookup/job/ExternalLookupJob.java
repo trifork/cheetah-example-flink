@@ -39,14 +39,14 @@ public class ExternalLookupJob extends Job implements Serializable {
         final DataStream<InputEvent> inputStream = CheetahKafkaSource.toDataStream(this, kafkaSource, "Event Input Source");
 
         // Get configuration from ENV
-        final String tokenEndpoint = System.getenv("SERVICE_TOKEN_ENDPOINT");
+        final String tokenUrl = System.getenv("SERVICE_TOKEN_URL");
         final String clientId = System.getenv("SERVICE_CLIENT_ID");
         final String clientSecret = System.getenv("SERVICE_CLIENT_SECRET");
         final String scope = System.getenv("SERVICE_SCOPE");
 
         // Transform stream
         final SingleOutputStreamOperator<OutputEvent> outputStream =
-                AsyncDataStream.unorderedWait(inputStream, new ExternalLookupMapper(tokenEndpoint, clientId, clientSecret, scope), 1000, TimeUnit.MILLISECONDS, 100);
+                AsyncDataStream.unorderedWait(inputStream, new ExternalLookupMapper(tokenUrl, clientId, clientSecret, scope), 1000, TimeUnit.MILLISECONDS, 100);
 
         // Output sink
         final KafkaSink<OutputEvent> kafkaSink =
