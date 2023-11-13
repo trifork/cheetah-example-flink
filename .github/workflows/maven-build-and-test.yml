@@ -105,15 +105,15 @@ jobs:
           settings-path: ./TransformAndStore/
           access-token: ${{ secrets.PACKAGE_PAT }}
   
-  serilization-error-catch-build-and-test:
-    name: "Serilization Error Catch - Build and Test"
+  serialization-error-catch-build-and-test:
+    name: "Serialization Error Catch - Build and Test"
     runs-on: ubuntu-latest
     steps: 
       - name: Checkout repository
         uses: actions/checkout@v4
       
-      - name: Serilization Error Catch - Build and Test
+      - name: Serialization Error Catch - Build and Test
         uses: ./.github/actions/maven-build-and-test
         with: 
-          settings-path: ./SerilizationErrorCatch/
+          settings-path: ./SerializationErrorCatch/
           access-token: ${{ secrets.PACKAGE_PAT }}
