@@ -17,7 +17,6 @@ class OutputEventTest {
      */
     @Test
     void isSerializedAsPojo() {
-        assertSerializedAsPojo(OutputEvent.class);
         assertSerializedAsPojoWithoutKryo(OutputEvent.class);
     }
 }

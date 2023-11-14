@@ -1,8 +1,10 @@
-package cheetah.example.serializationerrorcatch.function;
+package cheetah.example.serializationerrorcatch.serde;
 
 import cheetah.example.serializationerrorcatch.model.InputEvent;
 import org.apache.flink.formats.json.JsonDeserializationSchema;
 import org.apache.flink.util.Collector;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
@@ -10,7 +12,7 @@ import java.io.IOException;
  * It is used to catch deserialization errors and handle them in a tailored manner.
  * In this case, it returns null if the deserialization fails and logs an error message. */
 public class DeserializationSchema<T> extends JsonDeserializationSchema<T> {
-
+    private final Logger logger = LoggerFactory.getLogger(getClass());
     public DeserializationSchema(Class<T> clazz) {
         super(clazz);
     }
@@ -20,7 +22,7 @@ public class DeserializationSchema<T> extends JsonDeserializationSchema<T> {
         try {
             return super.deserialize(message);
         } catch (IOException e) {
-            System.out.println("The message failed to be serialized with error message => " + e);
+            logger.warn("The message failed to be serialized with error message => " + e);
             return null;
         }
     }

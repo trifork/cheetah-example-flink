@@ -4,7 +4,7 @@ import cheetah.example.serializationerrorcatch.function.FilterAndCountFailedSeri
 import cheetah.example.serializationerrorcatch.function.SerializationErrorCatchMapper;
 import cheetah.example.serializationerrorcatch.model.InputEvent;
 import cheetah.example.serializationerrorcatch.model.OutputEvent;
-import cheetah.example.serializationerrorcatch.function.DeserializationSchema;
+import cheetah.example.serializationerrorcatch.serde.DeserializationSchema;
 import com.trifork.cheetah.processing.job.Job;
 import org.apache.flink.connector.kafka.sink.KafkaSink;
 import org.apache.flink.connector.kafka.source.KafkaSource;
@@ -35,8 +35,9 @@ public class SerializationErrorCatchJob extends Job implements Serializable {
         final DataStream<InputEvent> inputStream = CheetahKafkaSource.toDataStream(this, kafkaSource, "SerializationErrorCatch-source");
 
         // Transform stream
-        final SingleOutputStreamOperator<OutputEvent> outputStream =
-                inputStream.filter(new FilterAndCountFailedSerializations()).map(new SerializationErrorCatchMapper("ExtraFieldValue"));
+        final SingleOutputStreamOperator<OutputEvent> outputStream = inputStream
+                .filter(new FilterAndCountFailedSerializations())
+                .map(new SerializationErrorCatchMapper("ExtraFieldValue"));
 
         // Output sink
         KafkaSink<OutputEvent> kafkaSink = CheetahKafkaSink.builder(OutputEvent.class, this)
