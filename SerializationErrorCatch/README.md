@@ -1,8 +1,8 @@
- # TumblingWindow
+ # SerializationErrorCatch
 
-This respository contains a templated flink job. Processing is handled by Apache Flink which is a statefull scalable stream processing framework. You can find more information about Apache Flink [here](https://flink.apache.org/).
+This repository contains a templated flink job. Processing is handled by Apache Flink which is a statefull scalable stream processing framework. You can find more information about Apache Flink [here](https://flink.apache.org/).
 
-The flink job consumes a kafka topic with simple messages, enriches this message and published the enriched message on another kafka topic.
+The flink job consumes messages from a kafka topic with simple messages, enriches these messages and publishes the enriched messages on another kafka topic.
 
 ## Project structure
 
@@ -51,13 +51,13 @@ You'll then be able to run necessary infrastructure with the following command f
 docker compose up kafka cheetah.oauth.simulator redpanda -d
 ```
 
-This will start `kafka`, an `oauth` simulator, `schema-registry` (used for AVRO schemas) and `redpanda`, which can be used to inspect what topics and messages exist in `kafka`. 
+This will start `kafka`, an `oauth` simulator and `redpanda`, which can be used to inspect what topics and messages exist in `kafka`. 
 
 Redpanda can be accessed on [http://localhost:9898](http://localhost:9898).
 
-You need to create the source topics which the flink job reads from. This is done by setting the `INITIAL_KAFKA_TOPICS` to `TumblingWindowInputTopic` before running the `kafka-setup` container in `cheetah-development-infrastructure`:
+You need to create the source topics which the flink job reads from. This is done by setting the `INITIAL_KAFKA_TOPICS` to `SerializationErrorCatchInputTopic SerializationErrorCatchOutputTopic` before running the `kafka-setup` container in `cheetah-development-infrastructure`:
 ```powershell
-$env:INITIAL_KAFKA_TOPICS="TumblingWindowInputTopic"; docker compose up kafka-setup -d
+$env:INITIAL_KAFKA_TOPICS="SerializationErrorCatchInputTopic SerializationErrorCatchOutputTopic"; docker compose up kafka-setup -d
 ```
 The `kafka-setup` service is also run when starting kafka using the above command, but running it seperately enables you to create the topics with an already running Kafka.
 Alternatively you can create the topics manually in Redpanda.
@@ -66,56 +66,80 @@ Alternatively you can create the topics manually in Redpanda.
 
 If you need to run other services like OpenSearch, please see the documentation in the `development-infrastructure` repository.
 
-## Run/debug job (IntelliJ)
+## Inspect and modify using Intellij
 
-When developing your job you can run/debug it like any other Java application by running the `main` method in TumblingWindowJob.
+When developing your job you can run/debug it like any other Java application by running the `main` method in SerializationErrorCatchJob.
 
-### Create intellij run profile for TumblingWindowJob.java with parameters
+1. Configure the project to use JDK 11: File > Project Structure: Project > Project SDK: 11
 
-Program arguments:
-```
---input-kafka-topic TumblingWindowInputTopic
---input-kafka-bootstrap-servers localhost:9092
---output-kafka-topic TumblingWindowOutputTopic
---output-kafka-bootstrap-servers localhost:9092
-```
-Environment variables:
-```
-- INPUT_KAFKA_CLIENT_ID=flink
-- INPUT_KAFKA_CLIENT_SECRET=testsecret
-- INPUT_KAFKA_TOKEN_URL=http://localhost:1752/oauth2/token
-- OUTPUT_KAFKA_CLIENT_ID=flink
-- OUTPUT_KAFKA_CLIENT_SECRET=testsecret
-- OUTPUT_KAFKA_TOKEN_URL=http://localhost:1752/oauth2/token
-```
+1. Verify that the project builds by pressing `Ctrl + F9`
+    > [!WARNING]
+    > If either the project does not build or your Intellij is showing errors in the file, try syncing your maven projects by unfolding the Maven window (by default the top tab in the small vertical bar on the right of the IDE) and pressing the "Reload All Maven Projects"-button in the top-left of that window, then, restart Intellij.
+    > The very first build can take a while, as maven builds up its cache.
 
+1. Navigate to the file `SerializationErrorCatchJob.java`, under the `src/main/java/cheetah/example/serializationerrorcatch/job/` folder.
+1. This file contains a job that performs a mapping on all incoming `InputEvents`. It consists of the following pieces:
+    <details>
+    <!-- Have an empty line after the <details> tag or markdown blocks will not render. -->
+
+    - A static main method, which is used to start the job itself.
+    - A setup method, which is where the main functionality resides. It sets up:
+      - A source - Determines which input source to use, in this case Kafka, and how to connect to it.
+      - An input stream - Specifies the datatype that is ingested from the source, which in this case is `InputEvent`
+      - An output stream - This is where we transform the incoming data - in this case we apply a basic mapping from `InputEvent` to `OutputEvent`. It also determines the output datatype, which in this case is `OutputEvent`
+      - A sink - Determines the destination to output the results of our job to, in this case Kafka
+      - A single call that connects the output stream to the sink
+    </details>
+
+1. Create Intellij run profile for SerializationErrorCatchJob.java with parameters, by right-clicking the file `SerializationErrorCatchJob` and select `Modify Run Configuration...`.
+1. Enter the following program arguments:
+
+  ```
+  --kafka-bootstrap-servers localhost:9092
+  --input-kafka-topic SerializationErrorCatchInputTopic
+  --output-kafka-topic SerializationErrorCatchOutputTopic
+  --kafka-group-id SerializationErrorCatch-group-id
+  ```
+
+  And add the following Environment variables:
+
+  ```
+  - KAFKA_CLIENT_ID=flink
+  - KAFKA_CLIENT_SECRET=testsecret
+  - KAFKA_TOKEN_URL=http://localhost:1752/oauth2/token
+  - KAFKA_SECURITY_PROTOCOL=SASL_PLAINTEXT
+  ```
+  
 ## Tests
 ### Unit tests
 
-This project contains a sample Unit test in `src/test/java/tumblingwindow/job/TumblingWindowMapperTest.java`, which utilizes JUnit5.
+This project contains a sample Unit test in `src/test/java/cheetah/example/serializationerrorcatch/job/SerializationErrorCatchMapperTest.java`, which utilizes JUnit5.
 
-Unit tests are automatically run as part of the build processing when building the Flink job through either `mvn`, IntelliJ or Docker.
+Unit tests are automatically run as part of the build processing when building the Flink job through either `mvn`, Intellij or Docker.
 
 ### Component test
 
 This project contains a .NET test project under `/ComponentTest`, which you can use to verify that your job acts as you expect it to.
 
-You can both these tests both from your preffered IDE using the `.sln` file, and through docker.
+You can run both these tests from your preferred IDE using the `.sln` file and through docker.
 
 In order to run both your job and the component tests at once, simply run `docker compose up --build` from the root directory of the repository.
 
 Alternatively, if you just want to run your job from docker compose and run the component tests manually through your IDE, run the following command:
 
 ```sh
-docker compose up tumblingwindow-job tumblingwindow-job-taskmanager --build
+docker compose up serializationerrorcatch-jobmanager serializationerrorcatch-taskmanager --build
 ```
 
 Similarly, you can run just the component test through docker compose using:
 ```sh
-docker compose up tumblingwindow-test --build
+docker compose up serializationerrorcatch-test --build
 ```
 
-If doing so, make sure to run your job locally from IntelliJ before starting the component test.
+If doing so, make sure to run your job locally from Intellij before starting the component test.
+
+The component test is producing a single message to `SerializationErrorCatchInputTopic`, and listening for any messages published to `SerializationErrorCatchOutputTopic`. It expects the flink job to publish the same message, enriched with a new field, on `SerializationErrorCatchOutputTopic`.
+You can observe the topics and produced messages at [http://localhost:9898](http://localhost:9898).
 
 #### Persisted data during development
 
@@ -161,4 +185,4 @@ An approach proven to be good, is to start by writing a unit test for the proces
 Then proceed in micro iterations, carefully assert expected output and behavior.
 The project includes several examples for JUnit tests.
 
-It is not recommended to use Mockto, since Flick is not happy about it and will produce unstable results.
+It is not recommended to use Mockto, since Flink is not happy about it and will produce unstable results.
