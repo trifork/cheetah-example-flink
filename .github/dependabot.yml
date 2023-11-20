@@ -23,7 +23,7 @@ updates:
     schedule:
       interval: "daily"
       time: "14:00"
-      timezone: Europe/Copenhagen
+      timezone: "Europe/Copenhagen"
   - package-ecosystem: "maven"
     directory: "/"
     registries:
@@ -31,7 +31,7 @@ updates:
     schedule:
       interval: "daily"
       time: "14:00"
-      timezone: Europe/Copenhagen
+      timezone: "Europe/Copenhagen"
   - package-ecosystem: "docker"
     directory: "/"
     registries:
@@ -39,4 +39,4 @@ updates:
     schedule:
       interval: "daily"
       time: "14:00"
-      timezone: Europe/Copenhagen
+      timezone: "Europe/Copenhagen"
