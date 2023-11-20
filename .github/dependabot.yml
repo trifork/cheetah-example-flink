@@ -25,6 +25,7 @@ updates:
       time: "14:00"
       timezone: "Europe/Copenhagen"
   - package-ecosystem: "maven"
+    directory: "/*"
     registries:
       - maven
     schedule:
