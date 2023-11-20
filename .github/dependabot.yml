@@ -25,7 +25,7 @@ updates:
       time: "14:00"
       timezone: "Europe/Copenhagen"
   - package-ecosystem: "maven"
-    directory: "/ExternalLookup"
+    directory: "/"
     registries:
       - maven
     schedule:
