@@ -10,33 +10,140 @@ registries:
     url: https://maven.pkg.github.com/trifork
     username: cheetahbot
     password: ${{secrets.CHEETAH_READ_TOKEN}}
-  docker:
-    type: docker-registry
-    url: ghcr.io
-    username: cheetahbot
-    password: ${{secrets.CHEETAH_READ_TOKEN}}
+
 updates:
   - package-ecosystem: "nuget"
-    directory: "/"
+    directory: "/ExternalLookup/ComponentTest"
     registries:
       - nuget # Allow version updates for dependencies in this registry
     schedule:
       interval: "daily"
-      time: "14:00"
+      time: "10:00"
       timezone: "Europe/Copenhagen"
   - package-ecosystem: "maven"
-    directory: "/*"
+    directory: "/ExternalLookup"
     registries:
       - maven
     schedule:
       interval: "daily"
-      time: "14:00"
+      time: "10:00"
       timezone: "Europe/Copenhagen"
-  - package-ecosystem: "docker"
-    directory: "/"
+
+  - package-ecosystem: "nuget"
+    directory: "/FlinkStates/ComponentTest"
     registries:
-      - docker
+      - nuget # Allow version updates for dependencies in this registry
     schedule:
       interval: "daily"
-      time: "14:00"
+      time: "10:00"
+      timezone: "Europe/Copenhagen"
+  - package-ecosystem: "maven"
+    directory: "/FlinkStates"
+    registries:
+      - maven
+    schedule:
+      interval: "daily"
+      time: "10:00"
+      timezone: "Europe/Copenhagen"
+
+  - package-ecosystem: "nuget"
+    directory: "/MergeTwoStreams/ComponentTest"
+    registries:
+      - nuget # Allow version updates for dependencies in this registry
+    schedule:
+      interval: "daily"
+      time: "10:00"
+      timezone: "Europe/Copenhagen"
+  - package-ecosystem: "maven"
+    directory: "/MergeTwoStreams"
+    registries:
+      - maven
+    schedule:
+      interval: "daily"
+      time: "10:00"
+      timezone: "Europe/Copenhagen"
+
+  - package-ecosystem: "nuget"
+    directory: "/MultipleSideOutput/ComponentTest"
+    registries:
+      - nuget # Allow version updates for dependencies in this registry
+    schedule:
+      interval: "daily"
+      time: "10:00"
+      timezone: "Europe/Copenhagen"
+  - package-ecosystem: "maven"
+    directory: "/MultipleSideOutput"
+    registries:
+      - maven
+    schedule:
+      interval: "daily"
+      time: "10:00"
+      timezone: "Europe/Copenhagen"
+
+  - package-ecosystem: "nuget"
+    directory: "/Observability/ComponentTest"
+    registries:
+      - nuget # Allow version updates for dependencies in this registry
+    schedule:
+      interval: "daily"
+      time: "10:00"
+      timezone: "Europe/Copenhagen"
+  - package-ecosystem: "maven"
+    directory: "/Observability"
+    registries:
+      - maven
+    schedule:
+      interval: "daily"
+      time: "10:00"
+      timezone: "Europe/Copenhagen"
+
+  - package-ecosystem: "nuget"
+    directory: "/SerializationErrorCatch/ComponentTest"
+    registries:
+      - nuget # Allow version updates for dependencies in this registry
+    schedule:
+      interval: "daily"
+      time: "10:00"
+      timezone: "Europe/Copenhagen"
+  - package-ecosystem: "maven"
+    directory: "/SerializationErrorCatch"
+    registries:
+      - maven
+    schedule:
+      interval: "daily"
+      time: "10:00"
+      timezone: "Europe/Copenhagen"
+
+  - package-ecosystem: "nuget"
+    directory: "/TransformAndStore/ComponentTest"
+    registries:
+      - nuget # Allow version updates for dependencies in this registry
+    schedule:
+      interval: "daily"
+      time: "10:00"
+      timezone: "Europe/Copenhagen"
+  - package-ecosystem: "maven"
+    directory: "/TransformAndStore"
+    registries:
+      - maven
+    schedule:
+      interval: "daily"
+      time: "10:00"
+      timezone: "Europe/Copenhagen"
+
+  - package-ecosystem: "nuget"
+    directory: "/TumblingWindow/ComponentTest"
+    registries:
+      - nuget # Allow version updates for dependencies in this registry
+    schedule:
+      interval: "daily"
+      time: "10:00"
+      timezone: "Europe/Copenhagen"
+  - package-ecosystem: "maven"
+    directory: "/TumblingWindow"
+    registries:
+      - maven
+    schedule:
+      interval: "daily"
+      time: "10:00"
       timezone: "Europe/Copenhagen"
