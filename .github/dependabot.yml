@@ -1,7 +1,7 @@
 version: 2
 registries:
   nuget: # Define access for a private registry
-    type: nuget-feed
+    type: nuget
     url: https://nuget.pkg.github.com/trifork
     username: cheetahbot
     password: ${{secrets.CHEETAH_READ_TOKEN}}
