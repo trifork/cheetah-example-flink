@@ -1,7 +1,7 @@
 version: 2
 registries:
   nuget: # Define access for a private registry
-    type: nuget
+    type: nuget-feed
     url: https://nuget.pkg.github.com/trifork/v3/index.json
     username: cheetahbot
     password: ${{secrets.CHEETAH_READ_TOKEN}}
@@ -12,7 +12,7 @@ registries:
     password: ${{secrets.CHEETAH_READ_TOKEN}}
 
 updates:
-  - package-ecosystem: "nuget-feed"
+  - package-ecosystem: "nuget"
     directory: "/ExternalLookup/ComponentTest"
     registries:
       - nuget # Allow version updates for dependencies in this registry
