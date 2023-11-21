@@ -12,7 +12,7 @@ registries:
     password: ${{secrets.CHEETAH_READ_TOKEN}}
 
 updates:
-  - package-ecosystem: "nuget"
+  - package-ecosystem: "nuget-feed"
     directory: "/ExternalLookup/ComponentTest"
     registries:
       - nuget # Allow version updates for dependencies in this registry
