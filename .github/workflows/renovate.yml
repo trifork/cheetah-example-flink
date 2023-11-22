@@ -1,7 +1,6 @@
 name: Renovate
 on:
-  schedule:
-    - cron: '*/2 * * * *'
+  workflow_dispatch:
 jobs:
   renovate:
     runs-on: ubuntu-latest
@@ -13,3 +12,7 @@ jobs:
         with:
           configurationFile: renovate.json5
           token: ${{ secrets.PACKAGE_PAT }}
+        env:
+          RENOVATE_AUTODISCOVER: true
+          RENOVATE_AUTODISCOVER_FILTER: "trifork/cheetah-example-flink"
+          LOG_LEVEL: 'debug'
