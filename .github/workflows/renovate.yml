@@ -16,3 +16,4 @@ jobs:
           RENOVATE_AUTODISCOVER: true
           RENOVATE_AUTODISCOVER_FILTER: "trifork/cheetah-example-flink"
           LOG_LEVEL: 'debug'
+          RENOVATE_DETECT_HOST_RULES_FROM_ENV: true
