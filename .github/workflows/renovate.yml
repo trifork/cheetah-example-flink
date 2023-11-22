@@ -13,5 +13,5 @@ jobs:
           configurationFile: renovate.json5
           token: ${{ secrets.PACKAGE_PAT }}
         env:
-          RENOVATE_AUTODISCOVER: true
+          RENOVATE_AUTODISCOVER_FILTER: "/Trifork/cheetah-example-flink"
           LOG_LEVEL: 'debug'
