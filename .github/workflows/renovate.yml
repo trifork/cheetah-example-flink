@@ -1,7 +1,6 @@
 name: Renovate
 on:
-  schedule:
-    - cron: '*/2 * * * *'
+  workflow_dispatch:
 jobs:
   renovate:
     runs-on: ubuntu-latest
