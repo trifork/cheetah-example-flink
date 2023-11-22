@@ -29,3 +29,7 @@ jobs:
           MAVEN_MAVEN_PKG_GITHUB_COM_USERNAME: cheetahbot
           MAVEN_MAVEN_PKG_GITHUB_COM_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
           MAVEN_MAVEN_PKG_GITHUB_COM_PASSWORD: ${{ secrets.RENOVATE_TOKEN }}
+
+          MAVEN_USERNAME: cheetahbot
+          MAVEN_PASSWORD: ${{ secrets.RENOVATE_TOKEN }}
+          MAVEN_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
