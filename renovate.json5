@@ -2,9 +2,7 @@
     "extends": [
         "github>trifork/cheetah-infrastructure-utils-workflows:default.json5"
     ],
-    "packageRules": {
-        "schedule": [
-            "at any time"
-        ]
-     }
+    "schedule": [
+        "at any time"
+     ]
 }
