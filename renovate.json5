@@ -11,17 +11,20 @@
     //-----------------------------------------------------------------------------------------//
     {
       "hostType": "docker",
-      "matchHost": "ghcr.io"
+      "matchHost": "ghcr.io",
+      "token": "{{ secrets.RENOVATE_TOKEN }}"
     },
     //For com.trifork.cheetah.processing:cheetah-lib-processing
     {
       "hostType": "maven",
-      "matchHost": "https://maven.pkg.github.com/trifork"
+      "matchHost": "https://maven.pkg.github.com/trifork".
+      "token": "{{ secrets.RENOVATE_TOKEN }}"
     },
     //For Cheetah.ComponentTest
     {
       "hostType": "nuget",
-      "matchHost": "https://nuget.pkg.github.com/trifork"
+      "matchHost": "https://nuget.pkg.github.com/trifork".
+      "token": "{{ secrets.RENOVATE_TOKEN }}"
     }
   ]
 }
