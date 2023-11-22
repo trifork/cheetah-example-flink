@@ -12,3 +12,5 @@ jobs:
         with:
           configurationFile: renovate.json5
           token: ${{ secrets.PACKAGE_PAT }}
+        env:
+          LOG_LEVEL: 'debug'
