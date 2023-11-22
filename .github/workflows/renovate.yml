@@ -18,4 +18,5 @@ jobs:
           LOG_LEVEL: 'debug'
           RENOVATE_DETECT_HOST_RULES_FROM_ENV: true
           NUGET_NUGET_PKG_GITHUB_COM_USERNAME: "cheetahbot"
-          NUGET_NUGET_PKG_GITHUB_COM_TOKEN: ${{secrets.PACKAGE_PAT}}
+          NUGET_NUGET_PKG_GITHUB_COM_TOKEN: ${{ secrets.PACKAGE_PAT }}
+          NUGET_NUGET_PKG_GITHUB_COM_PASSWORD: ${{ secrets.PACKAGE_PAT }}
