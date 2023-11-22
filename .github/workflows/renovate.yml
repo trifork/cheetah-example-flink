@@ -17,8 +17,6 @@ jobs:
           RENOVATE_AUTODISCOVER: true
           RENOVATE_AUTODISCOVER_FILTER: "trifork/cheetah-example-flink"
           LOG_LEVEL: 'debug'
-          RENOVATE_DETECT_HOST_RULES_FROM_ENV: true
-          RENOVATE_EXPOSE_ALL_ENV: true
           
           RENOVATE_NUGET_NUGET_PKG_GITHUB_COM_USERNAME: cheetahbot
           RENOVATE_NUGET_NUGET_PKG_GITHUB_COM_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
@@ -35,3 +33,6 @@ jobs:
           MAVEN_USERNAME: cheetahbot
           MAVEN_PASSWORD: ${{ secrets.RENOVATE_TOKEN }}
           MAVEN_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
+
+          RENOVATE_DETECT_HOST_RULES_FROM_ENV: true
+          RENOVATE_EXPOSE_ALL_ENV: true
