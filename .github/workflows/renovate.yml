@@ -14,5 +14,5 @@ jobs:
           token: ${{ secrets.PACKAGE_PAT }}
         env:
           RENOVATE_AUTODISCOVER: true
-          RENOVATE_AUTODISCOVER_FILTER: ".*cheetah-example-flink.*"
+          RENOVATE_AUTODISCOVER_FILTER: "trifork/cheetah-example-flink"
           LOG_LEVEL: 'debug'
