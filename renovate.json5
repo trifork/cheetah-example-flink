@@ -21,7 +21,8 @@
     //For Cheetah.ComponentTest
     {
       "hostType": "nuget",
-      "matchHost": "https://nuget.pkg.github.com/trifork"
+      "matchHost": "https://nuget.pkg.github.com/trifork",
+      "password": "{{ secrets.RENOVATE_TOKEN }}"
     }
   ]
 }
