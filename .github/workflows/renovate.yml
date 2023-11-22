@@ -11,20 +11,20 @@ jobs:
         uses: renovatebot/github-action@v39.1.3
         with:
           configurationFile: renovate.json5
-          token: ${{ secrets.PACKAGE_PAT }}
+          token: ${{ secrets.RENOVATE_TOKEN }}
         env:
           RENOVATE_AUTODISCOVER: true
           RENOVATE_AUTODISCOVER_FILTER: "trifork/cheetah-example-flink"
           LOG_LEVEL: 'debug'
           RENOVATE_DETECT_HOST_RULES_FROM_ENV: true
           NUGET_NUGET_PKG_GITHUB_COM_USERNAME: cheetahbot
-          NUGET_NUGET_PKG_GITHUB_COM_TOKEN: ${{ secrets.PACKAGE_PAT }}
-          NUGET_NUGET_PKG_GITHUB_COM_PASSWORD: ${{ secrets.PACKAGE_PAT }}
+          NUGET_NUGET_PKG_GITHUB_COM_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
+          NUGET_NUGET_PKG_GITHUB_COM_PASSWORD: ${{ secrets.RENOVATE_TOKEN }}
           
           NUGET_USERNAME: cheetahbot
-          NUGET_PASSWORD: ${{ secrets.PACKAGE_PAT }}
-          NUGET_TOKEN: ${{ secrets.PACKAGE_PAT }}
+          NUGET_PASSWORD: ${{ secrets.RENOVATE_TOKEN }}
+          NUGET_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
 
           MAVEN_MAVEN_PKG_GITHUB_COM_USERNAME: cheetahbot
-          MAVEN_MAVEN_PKG_GITHUB_COM_TOKEN: ${{ secrets.PACKAGE_PAT }}
-          MAVEN_MAVEN_PKG_GITHUB_COM_PASSWORD: ${{ secrets.PACKAGE_PAT }}
+          MAVEN_MAVEN_PKG_GITHUB_COM_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
+          MAVEN_MAVEN_PKG_GITHUB_COM_PASSWORD: ${{ secrets.RENOVATE_TOKEN }}
