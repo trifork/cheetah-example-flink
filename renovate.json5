@@ -12,18 +12,21 @@
     {
       "hostType": "docker",
       "matchHost": "ghcr.io",
+      "username": "cheetahbot",
       "token": "{{ secrets.RENOVATE_TOKEN }}"
     },
     //For com.trifork.cheetah.processing:cheetah-lib-processing
     {
       "hostType": "maven",
       "matchHost": "https://maven.pkg.github.com/trifork",
+      "username": "cheetahbot",
       "token": "{{ secrets.RENOVATE_TOKEN }}"
     },
     //For Cheetah.ComponentTest
     {
       "hostType": "nuget",
       "matchHost": "https://nuget.pkg.github.com/trifork",
+      "username": "cheetahbot",
       "token": "{{ secrets.RENOVATE_TOKEN }}"
     }
   ]
