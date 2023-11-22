@@ -4,5 +4,29 @@
     ],
     "schedule": [
         "at any time"
-     ]
+     ],
+    "hostRules": [
+    //-----------------------------------------------------------------------------------------//
+    //Selfhosted private dependencies
+    //-----------------------------------------------------------------------------------------//
+    {
+      "hostType": "docker",
+      "matchHost": "ghcr.io",
+      "username": "cheetahbot",
+      "token": "{{ secrets.PACKAGE_PAT }}"
+    },
+    //For com.trifork.cheetah.processing:cheetah-lib-processing
+    {
+      "hostType": "maven",
+      "matchHost": "https://maven.pkg.github.com/trifork",
+      "token": "{{ secrets.PACKAGE_PAT }}"
+    },
+    //For Cheetah.ComponentTest
+    {
+      "hostType": "nuget",
+      "matchHost": "https://nuget.pkg.github.com/trifork",
+      "username": "cheetahbot",
+      "token": "{{ secrets.PACKAGE_PAT }}"
+    }
+  ]
 }
