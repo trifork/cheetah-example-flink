@@ -18,13 +18,10 @@ jobs:
           RENOVATE_AUTODISCOVER_FILTER: "trifork/cheetah-example-flink"
           LOG_LEVEL: 'debug'
 
-          RENOVATE_USERNAME: "eama-trifork"
-          RENOVATE_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
-          RENOVATE_PASSWORD: ${{ secrets.RENOVATE_TOKEN }}
-          NUGET_PKG_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
-          NUGET_PKG_PASSWORD: ${{ secrets.RENOVATE_TOKEN }}
-          MAVEN_PASSWORD: ${{ secrets.RENOVATE_TOKEN }}
-          MAVEN_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
+          RENOVATE_NUGET_PKG_GITHUB_COM_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
+          RENOVATE_NUGET_PKG_GITHUB_COM_PASSWORD: ${{ secrets.RENOVATE_TOKEN }}
+          RENOVATE_MAVEN_MAVEN_PKG_GITHUB_COM_PASSWORD: ${{ secrets.RENOVATE_TOKEN }}
+          RENOVATE_MAVEN_MAVEN_PKG_GITHUB_COM_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
 
           
         
