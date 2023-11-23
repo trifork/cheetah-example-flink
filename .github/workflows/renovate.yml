@@ -21,7 +21,7 @@ jobs:
           
           RENOVATE_NUGET_PASSWORD: ${{ secrets.RENOVATE_TOKEN }}
 
-          RENOVATE_MAVEN_MAVEN_PKG_GITHUB_COM_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
+          GITHUB_MAVEN_PKG_GITHUB_COM_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
 
           RENOVATE_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
 
