@@ -5,6 +5,7 @@
     "schedule": [
         "at any time"
      ],
+    "platform": "github",
     "hostRules": [
     //For com.trifork.cheetah.processing:cheetah-lib-processing
     {
