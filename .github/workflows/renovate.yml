@@ -15,7 +15,7 @@ jobs:
         env:
           RENOVATE_AUTODISCOVER: true
           RENOVATE_DETECT_HOST_RULES_FROM_ENV: true
-          RENOVATE_AUTODISCOVER_FILTER: "/trifork/cheetah-example-flink"
+          RENOVATE_AUTODISCOVER_FILTER: "trifork/cheetah-example-flink"
           LOG_LEVEL: 'debug'
           
           NUGET_PKG_USERNAME: cheetahbot
