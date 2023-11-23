@@ -21,5 +21,9 @@ jobs:
           NUGET_PASSWORD: ${{ secrets.RENOVATE_TOKEN }}
           MAVEN_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
 
+          MAVEN_MAVEN_PKG_USERNAME: "cheetahbot"
+          MAVEN_MAVEN_PKG_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
+          MAVEN_MAVEN PKG_USERNAME: ${{ secrets.RENOVATE_TOKEN }}
+
           
         
