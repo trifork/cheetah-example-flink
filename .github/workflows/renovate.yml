@@ -20,23 +20,18 @@ jobs:
 
           TOKEN: ${{ secrets.RENOVATE_TOKEN }}
 
-          NUGET_PKG_USERNAME: cheetahbot
           NUGET_PKG_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
           NUGET_PKG_PASSWORD: ${{ secrets.RENOVATE_TOKEN }}
 
-          NUGET_PKG_GITHUB_COM_USERNAME: cheetahbot
           NUGET_PKG_GITHUB_COM_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
           NUGET_PKG_GITHUB_COM_PASSWORD: ${{ secrets.RENOVATE_TOKEN }}
           
-          RENOVATE_NUGET_USERNAME: cheetahbot
           RENOVATE_NUGET_PASSWORD: ${{ secrets.RENOVATE_TOKEN }}
           RENOVATE_NUGET_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
 
-          MAVEN_MAVEN_PKG_GITHUB_COM_USERNAME: cheetahbot
           MAVEN_MAVEN_PKG_GITHUB_COM_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
           MAVEN_MAVEN_PKG_GITHUB_COM_PASSWORD: ${{ secrets.RENOVATE_TOKEN }}
 
-          MAVEN_USERNAME: cheetahbot
           MAVEN_PASSWORD: ${{ secrets.RENOVATE_TOKEN }}
           MAVEN_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
 
