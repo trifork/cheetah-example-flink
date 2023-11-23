@@ -10,6 +10,7 @@
     {
       "hostType": "maven",
       "matchHost": "https://maven.pkg.github.com/trifork"
+      "token": "{{ process.env.GITHUB_MAVEN_PKG_GITHUB_COM_TOKEN }}"
     },
     //For Cheetah.ComponentTest
     {
