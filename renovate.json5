@@ -16,7 +16,7 @@
     {
       "hostType": "nuget",
       "matchHost": "https://nuget.pkg.github.com/trifork",
-      "username": "cheetahbot",
+      "username": "{{ process.env.MAVEN_USERNAME }}",
       "token": "{{ process.env.MAVEN_TOKEN }}"
     }
   ]
