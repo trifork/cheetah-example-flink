@@ -18,8 +18,9 @@ jobs:
           RENOVATE_AUTODISCOVER_FILTER: "trifork/cheetah-example-flink"
           LOG_LEVEL: 'debug'
 
-          RENOVATE_USERNAME: "cheetahbot"
+          RENOVATE_USERNAME: "eama-trifork"
           RENOVATE_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
+          RENOVATE_PASSWORD: ${{ secrets.RENOVATE_TOKEN }}
           NUGET_PKG_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
           NUGET_PKG_PASSWORD: ${{ secrets.RENOVATE_TOKEN }}
           MAVEN_PASSWORD: ${{ secrets.RENOVATE_TOKEN }}
