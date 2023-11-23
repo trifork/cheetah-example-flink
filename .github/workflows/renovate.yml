@@ -19,10 +19,12 @@ jobs:
           LOG_LEVEL: 'debug'
           NUGET_USERNAME: "cheetahbot"
           NUGET_PASSWORD: ${{ secrets.RENOVATE_TOKEN }}
-          MAVEN_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
 
           MAVEN_MAVEN_PKG_GITHUB_COM_USERNAME: "cheetahbot"
           MAVEN_MAVEN_PKG_GITHUB_COM_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
+
+          USERNAME: "cheetahbot"
+          TOKEN: ${{ secrets.RENOVATE_TOKEN }}
 
           
         
