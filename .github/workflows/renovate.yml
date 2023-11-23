@@ -14,6 +14,7 @@ jobs:
           token: ${{ secrets.RENOVATE_TOKEN }}
         env:
           RENOVATE_AUTODISCOVER: true
+          RENOVATE_DETECT_HOST_RULES_FROM_ENV: true
           RENOVATE_AUTODISCOVER_FILTER: "trifork/cheetah-example-flink"
           LOG_LEVEL: 'debug'
           
@@ -37,4 +38,4 @@ jobs:
           MAVEN_PASSWORD: ${{ secrets.RENOVATE_TOKEN }}
           MAVEN_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
 
-          RENOVATE_DETECT_HOST_RULES_FROM_ENV: true
+          
