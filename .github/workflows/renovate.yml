@@ -18,7 +18,6 @@ jobs:
           RENOVATE_AUTODISCOVER_FILTER: "trifork/cheetah-example-flink"
           LOG_LEVEL: 'debug'
 
-          TOKEN: ${{ secrets.RENOVATE_TOKEN }}
           NUGET_PKG_USERNAME: cheetahbot
           NUGET_PKG_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
           NUGET_PKG_PASSWORD: ${{ secrets.RENOVATE_TOKEN }}
