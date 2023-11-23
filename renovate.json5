@@ -4,5 +4,17 @@
     ],
     "schedule": [
         "at any time"
-     ]
+     ],
+    "hostRules": [
+    //For com.trifork.cheetah.processing:cheetah-lib-processing
+    {
+      "hostType": "maven",
+      "matchHost": "https://maven.pkg.github.com/trifork"
+    },
+    //For Cheetah.ComponentTest
+    {
+      "hostType": "nuget",
+      "matchHost": "https://nuget.pkg.github.com/trifork"
+    }
+  ]
 }
