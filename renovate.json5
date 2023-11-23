@@ -1,21 +1,19 @@
 {
-    "extends": [
-        "github>trifork/cheetah-infrastructure-utils-workflows:default.json5"
-    ],
-    "schedule": [
-        "at any time"
-     ],
-    "platform": [ "github" ],
-    "hostRules": [
-    //For com.trifork.cheetah.processing:cheetah-lib-processing
+  extends: [
+    'github>trifork/cheetah-infrastructure-utils-workflows:default.json5',
+  ],
+  schedule: [
+    'at any time',
+  ],
+  platform: 'github',
+  hostRules: [
     {
-      "hostType": "maven",
-      "matchHost": "https://maven.pkg.github.com/trifork"
+      hostType: 'maven',
+      matchHost: 'https://maven.pkg.github.com/trifork',
     },
-    //For Cheetah.ComponentTest
     {
-      "hostType": "nuget",
-      "matchHost": "https://nuget.pkg.github.com/trifork"
-    }
-  ]
+      hostType: 'nuget',
+      matchHost: 'https://nuget.pkg.github.com/trifork',
+    },
+  ],
 }
