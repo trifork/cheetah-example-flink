@@ -10,14 +10,14 @@
     {
       "hostType": "maven",
       "matchHost": "https://maven.pkg.github.com/trifork",
-      "token": "${{ process.env.RENOVATE_NUGET_TOKEN }}"
+      "token": "{{ process.env.RENOVATE_NUGET_TOKEN }}"
     },
     //For Cheetah.ComponentTest
     {
       "hostType": "nuget",
       "matchHost": "https://nuget.pkg.github.com/trifork",
       "username": "cheetahbot",
-      "token": "${{ process.env.MAVEN_TOKEN }}"
+      "token": "{{ process.env.MAVEN_TOKEN }}"
     }
   ]
 }
