@@ -20,6 +20,9 @@ updates:
       interval: "daily"
       time: "10:00"
       timezone: "Europe/Copenhagen"
+    labels:
+      - "private packages"
+      
   - package-ecosystem: "maven"
     directory: "/ExternalLookup"
     registries:
@@ -28,3 +31,5 @@ updates:
       interval: "daily"
       time: "10:00"
       timezone: "Europe/Copenhagen"
+    labels:
+      - "private packages"
