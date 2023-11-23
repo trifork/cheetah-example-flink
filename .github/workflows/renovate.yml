@@ -1,0 +1,30 @@
+name: Renovate
+on:
+  workflow_dispatch:
+jobs:
+  renovate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.1.1
+      - name: Self-hosted Renovate
+        uses: renovatebot/github-action@v39.1.3
+        with:
+          configurationFile: renovate.json5
+          token: ${{ secrets.RENOVATE_TOKEN }}
+        env:
+          RENOVATE_DETECT_HOST_RULES_FROM_ENV: true
+          RENOVATE_AUTODISCOVER: true
+          RENOVATE_AUTODISCOVER_FILTER: "trifork/cheetah-example-flink"
+          LOG_LEVEL: 'debug'
+
+          RENOVATE_USERNAME: "eama-trifork"
+          RENOVATE_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
+          RENOVATE_PASSWORD: ${{ secrets.RENOVATE_TOKEN }}
+          NUGET_PKG_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
+          NUGET_PKG_PASSWORD: ${{ secrets.RENOVATE_TOKEN }}
+          MAVEN_PASSWORD: ${{ secrets.RENOVATE_TOKEN }}
+          MAVEN_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
+
+          
+        
