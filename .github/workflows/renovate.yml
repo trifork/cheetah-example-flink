@@ -17,13 +17,12 @@ jobs:
           RENOVATE_AUTODISCOVER: true
           RENOVATE_AUTODISCOVER_FILTER: "trifork/cheetah-example-flink"
           LOG_LEVEL: 'debug'
-          RENOVATE_NUGET_USERNAME: "cheetahbot"
+          RENOVATE_UNICODE_EMOJI: true
+          
           RENOVATE_NUGET_PASSWORD: ${{ secrets.RENOVATE_TOKEN }}
 
-          RENOVATE_MAVEN_MAVEN_PKG_GITHUB_COM_USERNAME: "cheetahbot"
           RENOVATE_MAVEN_MAVEN_PKG_GITHUB_COM_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
 
-          RENOVATE_USERNAME: "renovate-bot"
           RENOVATE_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
 
           
