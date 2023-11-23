@@ -14,7 +14,7 @@ jobs:
           token: ${{ secrets.RENOVATE_TOKEN }}
         env:
           RENOVATE_AUTODISCOVER: true
-          RENOVATE_AUTODISCOVER_FILTER: "trifork/cheetah-example-flink"
+          RENOVATE_AUTODISCOVER_FILTER: "/trifork/{cheetah-example-flink}"
           LOG_LEVEL: 'debug'
           
           RENOVATE_NUGET_NUGET_PKG_GITHUB_COM_USERNAME: cheetahbot
