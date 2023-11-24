@@ -1,5 +1,6 @@
 # VSCode
 .vs
+.vscode/
 
 # IntelliJ
 *.iml
