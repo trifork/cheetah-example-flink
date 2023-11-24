@@ -20,6 +20,9 @@ updates:
       interval: "daily"
       time: "10:00"
       timezone: "Europe/Copenhagen"
+    labels:
+      - "private packages"
+      
   - package-ecosystem: "maven"
     directory: "/ExternalLookup"
     registries:
@@ -28,22 +31,5 @@ updates:
       interval: "daily"
       time: "10:00"
       timezone: "Europe/Copenhagen"
-
-  - package-ecosystem: "nuget"
-    directory: "/FlinkStates/ComponentTest"
-    registries:
-      - nuget # Allow version updates for dependencies in this registry
-    schedule:
-      interval: "daily"
-      time: "10:00"
-      timezone: "Europe/Copenhagen"
-  - package-ecosystem: "maven"
-    directory: "/FlinkStates"
-    registries:
-      - maven
-    schedule:
-      interval: "daily"
-      time: "10:00"
-      timezone: "Europe/Copenhagen"
-      time: "10:00"
-      timezone: "Europe/Copenhagen"
+    labels:
+      - "private packages"
