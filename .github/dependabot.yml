@@ -1,0 +1,35 @@
+version: 2
+registries:
+  nuget: # Define access for a private registry
+    type: nuget-feed
+    url: https://nuget.pkg.github.com/trifork/index.json
+    username: cheetahbot
+    password: ${{secrets.CHEETAH_READ_TOKEN}}
+  maven:
+    type: maven-repository
+    url: https://maven.pkg.github.com/trifork
+    username: cheetahbot
+    password: ${{secrets.CHEETAH_READ_TOKEN}}
+
+updates:
+  - package-ecosystem: "nuget"
+    directory: "/ExternalLookup/ComponentTest"
+    registries:
+      - nuget # Allow version updates for dependencies in this registry
+    schedule:
+      interval: "daily"
+      time: "10:00"
+      timezone: "Europe/Copenhagen"
+    labels:
+      - "private packages"
+      
+  - package-ecosystem: "maven"
+    directory: "/ExternalLookup"
+    registries:
+      - maven
+    schedule:
+      interval: "daily"
+      time: "10:00"
+      timezone: "Europe/Copenhagen"
+    labels:
+      - "private packages"

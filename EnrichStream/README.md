@@ -55,6 +55,13 @@ This will start `kafka`, an `oauth` simulator and `redpanda`, which can be used 
 
 Redpanda can be accessed on [http://localhost:9898](http://localhost:9898).
 
+You need to create the source topics which the flink job reads from. This is done by setting the `INITIAL_KAFKA_TOPICS` to `MergeTwoStreamsInputTopicA MergeTwoStreamsInputTopicB` before running the `kafka-setup` container in `cheetah-development-infrastructure`:
+```powershell
+$env:INITIAL_KAFKA_TOPICS="MergeTwoStreamsInputTopicA MergeTwoStreamsInputTopicB"; docker compose up kafka-setup -d
+```
+The `kafka-setup` service is also run when starting kafka using the above command, but running it seperately enables you to create the topics with an already running Kafka.
+Alternatively you can create the topics manually in Redpanda.
+
 `cheetah-development-infrastructure` contains more than just the services that the above command starts, but running the entire infrastructure setup takes up a fair amount of resources on your local system. 
 
 If you need to run other services like OpenSearch, please see the documentation in the `development-infrastructure` repository.

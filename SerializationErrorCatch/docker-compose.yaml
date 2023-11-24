@@ -1,0 +1,100 @@
+version: "3"
+services:
+  serializationerrorcatch-test:
+    build:
+      context: ComponentTest
+      dockerfile: Dockerfile
+      secrets:
+        - GITHUB_TOKEN
+        - GITHUB_ACTOR
+    environment:
+      KAFKA__URL: kafka:19092
+      KAFKA__CLIENTID: ClientId
+      KAFKA__CLIENTSECRET: 1234
+      KAFKA__AUTHENDPOINT: http://cheetahoauthsimulator/oauth2/token
+    depends_on:
+      serializationerrorcatch-jobmanager:
+        condition: service_healthy
+
+  serializationerrorcatch-jobmanager:
+    image: ${DOCKER_REGISTRY-}serializationerrorcatch-job
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - MAVEN_ARGS=${EXTRA_MAVEN_ARGS-}
+      secrets:
+        - GITHUB_TOKEN
+        - GITHUB_ACTOR
+    command: |
+      standalone-job
+      --job-classname cheetah.example.serializationerrorcatch.job.SerializationErrorCatchJob
+      --kafka-bootstrap-servers kafka:19092
+      --input-kafka-topic SerializationErrorCatchInputTopic
+      --output-kafka-topic SerializationErrorCatchOutputTopic
+      --kafka-group-id SerializationErrorCatch-group-id
+      --kafka-security-protocol SASL_PLAINTEXT
+    environment:
+      KAFKA_CLIENT_ID: ClientId
+      KAFKA_CLIENT_SECRET: 1234
+      KAFKA_TOKEN_URL: http://cheetahoauthsimulator/oauth2/token
+      FLINK_PROPERTIES: |
+        jobmanager.rpc.address: serializationerrorcatch-jobmanager
+        scheduler-mode: reactive
+        rest.flamegraph.enabled: true
+        state.backend: rocksdb
+        state.checkpoints.dir: file:///checkpoints/processing
+        state.savepoints.dir: file:///checkpoints/processing
+        execution.checkpointing.interval: 300 seconds
+        execution.checkpointing.min-pause: 240 seconds
+        metrics.reporters: prom
+        metrics.reporter.prom.factory.class: org.apache.flink.metrics.prometheus.PrometheusReporterFactory
+    depends_on:
+      - serializationerrorcatch-taskmanager
+    ports:
+      - "18081:8081"
+    volumes:
+      - flink:/checkpoints
+    healthcheck:
+      test: curl localhost:8081/jobs | grep -q '"status":"RUNNING"' || exit -1
+      interval: 1s
+      timeout: 1s
+      retries: 30
+
+  serializationerrorcatch-taskmanager:
+    image: ${DOCKER_REGISTRY-}serializationerrorcatch-job
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - MAVEN_ARGS=${EXTRA_MAVEN_ARGS-}
+      secrets:
+        - GITHUB_TOKEN
+        - GITHUB_ACTOR
+    command: taskmanager
+    environment:
+      - |
+        FLINK_PROPERTIES=
+        jobmanager.rpc.address: serializationerrorcatch-jobmanager
+        taskmanager.memory.process.size: 4gb
+        taskmanager.numberOfTaskSlots: 2
+        metrics.reporters: prom
+        metrics.reporter.prom.factory.class: org.apache.flink.metrics.prometheus.PrometheusReporterFactory
+    ports:
+      - "9249:9249"
+    volumes:
+      - flink:/checkpoints
+
+volumes:
+  flink:
+
+secrets:
+  GITHUB_TOKEN:
+    environment: GITHUB_TOKEN
+  GITHUB_ACTOR:
+    environment: GITHUB_ACTOR
+
+networks:
+  default:
+    name: "cheetah-infrastructure"
+    external: true
