@@ -5,6 +5,7 @@ using Cheetah.ComponentTest.Kafka;
 using Cheetah.ComponentTest.OpenSearch;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
+using OpenSearch.Client;
 using Xunit;
 using TransformAndStore.ComponentTest.Models;
 
@@ -20,15 +21,16 @@ public class ComponentTest
         // These will be overriden by environment variables from compose
         var conf = new Dictionary<string, string>()
         {
-            {"KAFKA:AUTHENDPOINT", "http://localhost:1752/oauth2/token"},
-            {"KAFKA:CLIENTID", "ClientId" },
-            {"KAFKA:CLIENTSECRET", "1234" },
+            {"KAFKA:AUTHENDPOINT", "http://localhost:8080/realms/local-development/protocol/openid-connect/token"},
+            {"KAFKA:CLIENTID", "default-access" },
+            {"KAFKA:CLIENTSECRET", "default-access-secret" },
             {"KAFKA:URL", "localhost:9092"},
+            {"KAFKA:AUTHSCOPE", "kafka opensearch"},
             {"OPENSEARCH:URL", "http://localhost:9200"},
-            {"OPENSEARCH:CLIENTID", "opensearch"},
-            {"OPENSEARCH:CLIENTSECRET", "1234"},
-            {"OPENSEARCH:OAUTHSCOPE", "SASL_PLAINTEXT"},
-            {"OPENSEARCH:AUTHENDPOINT", "http://localhost:1752/oauth2/token"}
+            {"OPENSEARCH:CLIENTID", "default-access"},
+            {"OPENSEARCH:CLIENTSECRET", "default-access-secret"},
+            {"OPENSEARCH:OAUTHSCOPE", "kafka opensearch"},
+            {"OPENSEARCH:AUTHENDPOINT", "http://localhost:8080/realms/local-development/protocol/openid-connect/token"}
             
         };
         _configuration = new ConfigurationBuilder()
@@ -50,7 +52,7 @@ public class ComponentTest
 
         const string indexName = "transformandstore-index_*";
         var openSearchClient = OpenSearchClientFactory.Create(_configuration);
-        var initialDocCount = openSearchClient.Count(indexName);
+        var initialDocCount = await openSearchClient.CountIndexedDocumentsAsync(indexName);
 
         // Act
         // Write three messages to the writer
@@ -83,7 +85,8 @@ public class ComponentTest
         await Task.Delay(TimeSpan.FromSeconds(2));
         
         // Refresh and count of objects with specified index name
-        openSearchClient.RefreshIndex(indexName);
-        openSearchClient.Count(indexName).Should().Be(3 + initialDocCount);
+        await openSearchClient.RefreshIndexAsync(indexName);
+        var count = await openSearchClient.CountIndexedDocumentsAsync(indexName);
+        count.Should().Be(3 + initialDocCount);
     }
 }
