@@ -27,6 +27,7 @@ jobs:
     uses: ./.github/workflows/component-test.yml
     with:
       folder: EnrichStream
+      initial-kafka-topics: "EnrichStreamEnrichTopic EnrichStreamInputTopic EnrichStreamOutputTopic"
     secrets:
       PAT: ${{ secrets.PACKAGE_PAT }}
 
@@ -38,6 +39,7 @@ jobs:
     uses: ./.github/workflows/component-test.yml
     with:
       folder: ExternalLookup
+      initial-kafka-topics: "ExternalLookupInputTopic ExternalLookupOutputTopic"
     secrets:
       PAT: ${{ secrets.PACKAGE_PAT }}
 
@@ -49,6 +51,7 @@ jobs:
     uses: ./.github/workflows/component-test.yml
     with:
       folder: FlinkStates
+      initial-kafka-topics: "FlinkStatesInputTopic FlinkStatesOutputTopic-value FlinkStatesOutputTopic-reducing FlinkStatesOutputTopic-aggregating FlinkStatesOutputTopic-list FlinkStatesOutputTopic-map"
     secrets:
       PAT: ${{ secrets.PACKAGE_PAT }}
 
@@ -60,6 +63,7 @@ jobs:
     uses: ./.github/workflows/component-test.yml
     with:
       folder: MultipleSideOutput
+      initial-kafka-topics: "MultipleSideOutputExampleInputTopic OutputA-events OutputB-events OutputCD-events"
     secrets:
       PAT: ${{ secrets.PACKAGE_PAT }}
 
@@ -71,6 +75,7 @@ jobs:
     uses: ./.github/workflows/component-test.yml
     with:
       folder: Observability
+      initial-kafka-topics: "ObservabilityInputTopic"
     secrets:
       PAT: ${{ secrets.PACKAGE_PAT }}
 
@@ -82,6 +87,7 @@ jobs:
     uses: ./.github/workflows/component-test.yml
     with:
       folder: SerializationErrorCatch
+      initial-kafka-topics: "SerializationErrorCatchInputTopic SerializationErrorCatchInputTopic SerializationErrorCatchOutputTopic"
     secrets:
       PAT: ${{ secrets.PACKAGE_PAT }}
 
@@ -93,6 +99,7 @@ jobs:
     uses: ./.github/workflows/component-test.yml
     with:
       folder: TransformAndStore
+      initial-kafka-topics: "TransformAndStoreInputTopic"
     secrets:
       PAT: ${{ secrets.PACKAGE_PAT }}
 
@@ -104,5 +111,6 @@ jobs:
     uses: ./.github/workflows/component-test.yml
     with:
       folder: TumblingWindow
+      initial-kafka-topics: "TumblingWindowInputTopic TumblingWindowOutputTopic"
     secrets:
       PAT: ${{ secrets.PACKAGE_PAT }}
