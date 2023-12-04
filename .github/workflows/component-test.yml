@@ -33,20 +33,16 @@ jobs:
         id: changed-files
         with: 
           files: |
-            FlinkStates/ComponentTest/**
-            FlinkStates/src/**
-            FlinkStates/.ignore
-            FlinkStates/*.yaml
-            FlinkStates/Dockerfile
-            FlinkStates/*.xml
+            FlinkStates/**
 
       - name: Build Flink States example image and run component test
         uses: ./.github/actions/component-test
         if: ${{ steps.changed-files.outputs.any_changed == 'true' }}
         with:
           context-path: ./FlinkStates/
+          folder: FlinkStates
           access-token: ${{ secrets.PACKAGE_PAT }}
-          initial-kafka-topics: "MergeTwoStreamsInputTopicA MergeTwoStreamsInputTopicB"
+          initial-kafka-topics: "FlinkStatesInputTopic FlinkStatesOutputTopic-value FlinkStatesOutputTopic-reducing FlinkStatesOutputTopic-aggregating FlinkStatesOutputTopic-list FlinkStatesOutputTopic-map"
 
   merge-two-streams-component-test:
     name: Merge Two Streams
@@ -62,20 +58,15 @@ jobs:
         id: changed-files
         with: 
           files: |
-            MergeTwoStreams/ComponentTest/**
-            MergeTwoStreams/src/**
-            MergeTwoStreams/.ignore
-            MergeTwoStreams/*.yaml
-            MergeTwoStreams/Dockerfile
-            MergeTwoStreams/*.xml
+            EnrichStream/**
 
       - name: Build Merge Two Streams example image and run component test
         uses: ./.github/actions/component-test
         if: ${{ steps.changed-files.outputs.any_changed == 'true' }}
         with:
-          context-path: ./MergeTwoStreams/
+          context-path: ./EnrichStream/
           access-token: ${{ secrets.PACKAGE_PAT }}
-          initial-kafka-topics: "MergeTwoStreamsInputTopicA MergeTwoStreamsInputTopicB"
+          initial-kafka-topics: "EnrichStreamEnrichTopic EnrichStreamInputTopic EnrichStreamOutputTopic"
 
   multiple-sideoutput-component-test:
     name: Multiple Side Outputs
@@ -91,12 +82,7 @@ jobs:
         id: changed-files
         with: 
           files: |
-            MultipleSideOutput/ComponentTest/**
-            MultipleSideOutput/src/**
-            MultipleSideOutput/.ignore
-            MultipleSideOutput/*.yaml
-            MultipleSideOutput/Dockerfile
-            MultipleSideOutput/*.xml
+            MultipleSideOutput/**
 
       - name: Build Multiple Side Output example image and run component test
         uses: ./.github/actions/component-test
@@ -120,12 +106,7 @@ jobs:
         id: changed-files
         with: 
           files: |
-            Observability/ComponentTest/**
-            Observability/src/**
-            Observability/.ignore
-            Observability/*.yaml
-            Observability/Dockerfile
-            Observability/*.xml
+            Observability/**
 
       - name: Build Observability example image and run component test
         uses: ./.github/actions/component-test
@@ -149,12 +130,7 @@ jobs:
         id: changed-files
         with: 
           files: |
-            TumblingWindow/ComponentTest/**
-            TumblingWindow/src/**
-            TumblingWindow/.ignore
-            TumblingWindow/*.yaml
-            TumblingWindow/Dockerfile
-            TumblingWindow/*.xml
+            TumblingWindow/**
 
       - name: Build Tumbling Window example image and run component test
         uses: ./.github/actions/component-test
@@ -178,12 +154,7 @@ jobs:
         id: changed-files
         with: 
           files: |
-            ExternalLookup/ComponentTest/**
-            ExternalLookup/src/**
-            ExternalLookup/.ignore
-            ExternalLookup/*.yaml
-            ExternalLookup/Dockerfile
-            ExternalLookup/*.xml
+            ExternalLookup/**
 
       - name: Build External Lookup example image and run component test
         uses: ./.github/actions/component-test
@@ -207,12 +178,7 @@ jobs:
         id: changed-files
         with: 
           files: |
-            TransformAndStore/ComponentTest/**
-            TransformAndStore/src/**
-            TransformAndStore/.ignore
-            TransformAndStore/*.yaml
-            TransformAndStore/Dockerfile
-            TransformAndStore/*.xml
+            TransformAndStore/**
 
       - name: Build Transform And Store example image and run component test
         uses: ./.github/actions/component-test
@@ -236,12 +202,7 @@ jobs:
         id: changed-files
         with: 
           files: |
-            SerializationErrorCatch/ComponentTest/**
-            SerializationErrorCatch/src/**
-            SerializationErrorCatch/.ignore
-            SerializationErrorCatch/*.yaml
-            SerializationErrorCatch/Dockerfile
-            SerializationErrorCatch/*.xml
+            SerializationErrorCatch/**
 
       - name: Build Serialization Error Catch example image and run component test
         uses: ./.github/actions/component-test
