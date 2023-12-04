@@ -1,252 +1,38 @@
-name: Component Test 
+name: Run Component Test
 
 on:
   workflow_call:
-  workflow_dispatch:
-  schedule:
-    - cron: "0 3 * * *"
-  push:
-    branches: [ 'main', 'release/v**' ]
-  pull_request:
-    branches: [ 'main', 'release/v**' ]
-    types: [ opened, synchronize, reopened, labeled ]
-
-concurrency:
-  group: ${{ github.ref }}-${{ github.workflow }}
-  cancel-in-progress: true
+    inputs:
+      folder:
+        description: The folder containing the project
+        required: true
+        type: string
+      initial-kafka-topics:
+        required: false
+        type: string
+    secrets:
+      PAT:
+        description: A personal access token for retrieving private packages
 
 jobs:
-  should-run:
-    uses: trifork/cheetah-infrastructure-utils-workflows/.github/workflows/e2e-should-run.yml@main
-
-  flink-state-component-test:
-    name: Flink States
-    needs: should-run
+  run-component-test:
+    name: Run
     runs-on: ubuntu-latest
-    if: ${{ needs.should-run.outputs.should-run }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Flink States - Check if files has changed
+      - name: Check if files have changed
         uses: tj-actions/changed-files@v40
         id: changed-files
         with: 
           files: |
-            FlinkStates/ComponentTest/**
-            FlinkStates/src/**
-            FlinkStates/.ignore
-            FlinkStates/*.yaml
-            FlinkStates/Dockerfile
-            FlinkStates/*.xml
+            ${{ inputs.folder }}/**
 
       - name: Build Flink States example image and run component test
         uses: ./.github/actions/component-test
         if: ${{ steps.changed-files.outputs.any_changed == 'true' }}
         with:
-          context-path: ./FlinkStates/
-          access-token: ${{ secrets.PACKAGE_PAT }}
-          initial-kafka-topics: "MergeTwoStreamsInputTopicA MergeTwoStreamsInputTopicB"
-
-  merge-two-streams-component-test:
-    name: Merge Two Streams
-    needs: should-run
-    if: ${{ needs.should-run.outputs.should-run }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Merge Two Streams - Check if files has changed
-        uses: tj-actions/changed-files@v40
-        id: changed-files
-        with: 
-          files: |
-            MergeTwoStreams/ComponentTest/**
-            MergeTwoStreams/src/**
-            MergeTwoStreams/.ignore
-            MergeTwoStreams/*.yaml
-            MergeTwoStreams/Dockerfile
-            MergeTwoStreams/*.xml
-
-      - name: Build Merge Two Streams example image and run component test
-        uses: ./.github/actions/component-test
-        if: ${{ steps.changed-files.outputs.any_changed == 'true' }}
-        with:
-          context-path: ./MergeTwoStreams/
-          access-token: ${{ secrets.PACKAGE_PAT }}
-          initial-kafka-topics: "MergeTwoStreamsInputTopicA MergeTwoStreamsInputTopicB"
-
-  multiple-sideoutput-component-test:
-    name: Multiple Side Outputs
-    needs: should-run
-    if: ${{ needs.should-run.outputs.should-run }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Multiple Side Output - Check if files has changed
-        uses: tj-actions/changed-files@v40
-        id: changed-files
-        with: 
-          files: |
-            MultipleSideOutput/ComponentTest/**
-            MultipleSideOutput/src/**
-            MultipleSideOutput/.ignore
-            MultipleSideOutput/*.yaml
-            MultipleSideOutput/Dockerfile
-            MultipleSideOutput/*.xml
-
-      - name: Build Multiple Side Output example image and run component test
-        uses: ./.github/actions/component-test
-        if: ${{ steps.changed-files.outputs.any_changed == 'true' }}
-        with:
-          context-path: ./MultipleSideOutput/
-          access-token: ${{ secrets.PACKAGE_PAT }}
-          initial-kafka-topics: "MultipleSideOutputExampleInputTopic"
-
-  observability-component-test:
-    name: Observability
-    needs: should-run
-    if: ${{ needs.should-run.outputs.should-run }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      
-      - name: Observability - Check if files has changed
-        uses: tj-actions/changed-files@v40
-        id: changed-files
-        with: 
-          files: |
-            Observability/ComponentTest/**
-            Observability/src/**
-            Observability/.ignore
-            Observability/*.yaml
-            Observability/Dockerfile
-            Observability/*.xml
-
-      - name: Build Observability example image and run component test
-        uses: ./.github/actions/component-test
-        if: ${{ steps.changed-files.outputs.any_changed == 'true' }}
-        with:
-          context-path: ./Observability/
-          access-token: ${{ secrets.PACKAGE_PAT }}
-          initial-kafka-topics: "ObservabilityInputTopic"
-  
-  tumbling-window-component-test:
-    name: Tumbling Window
-    needs: should-run
-    if: ${{ needs.should-run.outputs.should-run }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Tumbling Window - Check if files has changed
-        uses: tj-actions/changed-files@v40
-        id: changed-files
-        with: 
-          files: |
-            TumblingWindow/ComponentTest/**
-            TumblingWindow/src/**
-            TumblingWindow/.ignore
-            TumblingWindow/*.yaml
-            TumblingWindow/Dockerfile
-            TumblingWindow/*.xml
-
-      - name: Build Tumbling Window example image and run component test
-        uses: ./.github/actions/component-test
-        if: ${{ steps.changed-files.outputs.any_changed == 'true' }}
-        with:
-          context-path: ./TumblingWindow/
-          access-token: ${{ secrets.PACKAGE_PAT }}
-          initial-kafka-topics: "TumblingWindowInputTopic"
-
-  external-lookup-component-test:
-    name: External Lookup
-    needs: should-run
-    runs-on: ubuntu-latest
-    if: ${{ needs.should-run.outputs.should-run }}
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: External Lookup - Check if files has changed
-        uses: tj-actions/changed-files@v40
-        id: changed-files
-        with: 
-          files: |
-            ExternalLookup/ComponentTest/**
-            ExternalLookup/src/**
-            ExternalLookup/.ignore
-            ExternalLookup/*.yaml
-            ExternalLookup/Dockerfile
-            ExternalLookup/*.xml
-
-      - name: Build External Lookup example image and run component test
-        uses: ./.github/actions/component-test
-        if: ${{ steps.changed-files.outputs.any_changed == 'true' }}
-        with:
-          context-path: ./ExternalLookup/
-          access-token: ${{ secrets.PACKAGE_PAT }}
-          initial-kafka-topics: "ExternalLookupInputTopic"
-
-  transform-and-store-component-test:
-    name: Transform and Store
-    needs: should-run
-    runs-on: ubuntu-latest
-    if: ${{ needs.should-run.outputs.should-run }}
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Transform And Store - Check if files has changed
-        uses: tj-actions/changed-files@v40
-        id: changed-files
-        with: 
-          files: |
-            TransformAndStore/ComponentTest/**
-            TransformAndStore/src/**
-            TransformAndStore/.ignore
-            TransformAndStore/*.yaml
-            TransformAndStore/Dockerfile
-            TransformAndStore/*.xml
-
-      - name: Build Transform And Store example image and run component test
-        uses: ./.github/actions/component-test
-        if: ${{ steps.changed-files.outputs.any_changed == 'true' }}
-        with:
-          context-path: ./TransformAndStore/
-          access-token: ${{ secrets.PACKAGE_PAT }}
-          initial-kafka-topics: "TransfromAndStoreInputTopic"
-
-  serialization-error-catch-component-test:
-    name: Serialization Error Catch
-    needs: should-run
-    runs-on: ubuntu-latest
-    if: ${{ needs.should-run.outputs.should-run }}
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Serialization Error Catch - Check if files has changed
-        uses: tj-actions/changed-files@v40
-        id: changed-files
-        with: 
-          files: |
-            SerializationErrorCatch/ComponentTest/**
-            SerializationErrorCatch/src/**
-            SerializationErrorCatch/.ignore
-            SerializationErrorCatch/*.yaml
-            SerializationErrorCatch/Dockerfile
-            SerializationErrorCatch/*.xml
-
-      - name: Build Serialization Error Catch example image and run component test
-        uses: ./.github/actions/component-test
-        if: ${{ steps.changed-files.outputs.any_changed == 'true' }}
-        with:
-          context-path: ./SerializationErrorCatch/
-          access-token: ${{ secrets.PACKAGE_PAT }}
-          initial-kafka-topics: "SerializationErrorCatchInputTopic"
+          context-path: ./${{ inputs.folder }}/
+          access-token: ${{ secrets.PAT }}
+          initial-kafka-topics: ${{ inputs.initial-kafka-topics }}
