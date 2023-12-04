@@ -38,10 +38,11 @@ services:
         state.savepoints.dir: file:///checkpoints/processing
         execution.checkpointing.interval: 300 seconds
         execution.checkpointing.min-pause: 240 seconds
-    depends_on:
-      - flinkstates-taskmanager
+        taskmanager.numberOfTaskSlots: 2
+        parallelism.default: 2
     volumes:
       - flink:/checkpoints
+
   flinkstates-taskmanager:
     image: ${DOCKER_REGISTRY-}flinkstates-job
     build:

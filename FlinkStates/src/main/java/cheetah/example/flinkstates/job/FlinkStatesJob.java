@@ -11,6 +11,9 @@ import org.apache.flink.connector.kafka.sink.KafkaSink;
 import org.apache.flink.connector.kafka.source.KafkaSource;
 import org.apache.flink.streaming.api.datastream.KeyedStream;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
+import org.apache.flink.table.api.EnvironmentSettings;
+import org.apache.flink.table.api.TableResult;
+import org.apache.flink.table.api.bridge.java.StreamTableEnvironment;
 
 import java.io.Serializable;
 
@@ -21,7 +24,6 @@ public class FlinkStatesJob extends Job implements Serializable {
 
     @SuppressWarnings("PMD.SignatureDeclareThrowsException") // Fix once lib-processing is fixed
     public static void main(final String[] args) throws Exception {
-        System.out.println("ey");
         int index;
 
         for (index = 0; index < args.length; ++index)
@@ -45,6 +47,15 @@ public class FlinkStatesJob extends Job implements Serializable {
         mapAndSink(keyedByStream, new FlinkAggregatingStatesMapper(), Double.class, "aggregating");
         mapAndSink(keyedByStream, new FlinkMapStatesMapper(), Double.class, "map");
         mapAndSink(keyedByStream, new FlinkListStatesMapper(), Double[].class, "list");
+
+
+        //SQL testing
+        StreamTableEnvironment tableEnv = StreamTableEnvironment.create(keyedByStream.getExecutionEnvironment());
+
+        tableEnv.executeSql("CREATE TABLE Orders (`user` BIGINT, product STRING, amount INT) WITH ('user'='1', 'product'='fisk', 'amount'='5')");
+
+        TableResult tableResult2 = tableEnv.sqlQuery("SELECT * FROM Orders").execute();
+        tableResult2.print();
     }
 
     public <T> void mapAndSink(KeyedStream<InputEvent, String> keyedStream, RichFlatMapFunction<InputEvent, T> function, Class<T> outputType, String kafkaPostFix){
