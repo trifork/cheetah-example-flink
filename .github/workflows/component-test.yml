@@ -12,7 +12,8 @@ on:
         description: A personal access token for retrieving private packages
 
 jobs:
-  create-release-branch:
+  run-component-test:
+    name: Run
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -30,5 +31,5 @@ jobs:
         if: ${{ steps.changed-files.outputs.any_changed == 'true' }}
         with:
           context-path: ./${{ inputs.folder }}/
-          access-token: ${{ secrets.PACKAGE_PAT }}
+          access-token: ${{ secrets.PAT }}
           initial-kafka-topics: "FlinkStatesInputTopic FlinkStatesOutputTopic-value FlinkStatesOutputTopic-reducing FlinkStatesOutputTopic-aggregating FlinkStatesOutputTopic-list FlinkStatesOutputTopic-map"
