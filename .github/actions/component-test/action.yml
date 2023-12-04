@@ -44,6 +44,3 @@ runs:
       env:
         GITHUB_ACTOR: ${{ github.actor }}
         GITHUB_TOKEN: ${{ inputs.access-token }}
-
-  
-
