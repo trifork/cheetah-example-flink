@@ -70,3 +70,12 @@ jobs:
           context-path: ./${{ matrix.folder }}/
           access-token: ${{ secrets.PACKAGE_PAT }}
           initial-kafka-topics: ${{ matrix.initial-kafka-topics }}
+
+  success:
+    name: Success
+    needs: run-component-tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Success
+        shell: bash
+        run: echo success
