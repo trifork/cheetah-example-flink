@@ -24,6 +24,7 @@ jobs:
     needs: should-run
     if: ${{ needs.should-run.outputs.should-run }}
 
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         include:
@@ -51,9 +52,21 @@ jobs:
           - folder: TumblingWindow
             initial-kafka-topics: "TumblingWindowInputTopic TumblingWindowOutputTopic"
 
-    uses: ./.github/workflows/component-test.yml
-    with:
-      folder: ${{ matrix.folder }}
-      initial-kafka-topics: ${{ matrix.initial-kafka-topics }}
-    secrets:
-      PAT: ${{ secrets.PACKAGE_PAT }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check if files have changed
+        uses: tj-actions/changed-files@v40
+        id: changed-files
+        with: 
+          files: |
+            ${{ matrix.folder }}/**
+
+      - name: Build Flink States example image and run component test
+        uses: ./.github/actions/component-test
+        if: ${{ steps.changed-files.outputs.any_changed == 'true' }}
+        with:
+          context-path: ./${{ matrix.folder }}/
+          access-token: ${{ secrets.PAT }}
+          initial-kafka-topics: ${{ matrix.initial-kafka-topics }}
