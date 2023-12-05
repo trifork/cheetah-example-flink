@@ -33,8 +33,7 @@ public class TumblingWindowJob extends Job implements Serializable {
     protected void setup() {
 
         // Transform stream
-        WatermarkStrategy<InputEvent> watermarkStrategy = WatermarkStrategyBuilder
-                .builder(InputEvent.class)
+        WatermarkStrategy<InputEvent> watermarkStrategy = WatermarkStrategyBuilder.builder(InputEvent.class)
                 .eventTimestampSupplier(input -> Instant.ofEpochMilli(input.getTimestamp()))
                 .build();
 
