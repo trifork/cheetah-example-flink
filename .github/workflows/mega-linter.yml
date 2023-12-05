@@ -30,7 +30,7 @@ jobs:
           VALIDATE_ALL_CODEBASE: true
           DISABLE: "COPYPASTE,SPELL"
           DISABLE_LINTERS: "REPOSITORY_TRIVY,REPOSITORY_TRIVY_SBOM,REPOSITORY_GRYPE,SPELL_LYCHEE,JSON_JSONLINT"
-          EXCLUDED_DIRECTORIES: ".git,.github,.devcontainer,target"
+          EXCLUDED_DIRECTORIES: ".git,.github,.devcontainer,target,avrorecord"
           FILTER_REGEX_EXCLUDE: "catalog-info.yaml"
           JAVA_CHECKSTYLE_CONFIG_FILE: "checkstyle.xml"
 
