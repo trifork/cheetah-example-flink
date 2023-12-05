@@ -79,7 +79,7 @@ under the License.
         <dependency>
             <groupId>com.trifork.cheetah.processing</groupId>
             <artifactId>cheetah-lib-processing</artifactId>
-            <version>3.9.0-RC-SNAPSHOT</version>
+            <version>3.9.0-feature-remove-deprecated-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
