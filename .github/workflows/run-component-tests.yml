@@ -68,5 +68,5 @@ jobs:
         if: ${{ steps.changed-files.outputs.any_changed == 'true' }}
         with:
           context-path: ./${{ matrix.folder }}/
-          access-token: ${{ secrets.PAT }}
+          access-token: ${{ secrets.PACKAGE_PAT }}
           initial-kafka-topics: ${{ matrix.initial-kafka-topics }}
