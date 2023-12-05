@@ -14,6 +14,8 @@ import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.table.api.EnvironmentSettings;
 import org.apache.flink.table.api.TableResult;
 import org.apache.flink.table.api.bridge.java.StreamTableEnvironment;
+import org.apache.flink.types.Row;
+import org.apache.flink.util.CloseableIterator;
 
 import java.io.Serializable;
 
@@ -34,7 +36,7 @@ public class FlinkStatesJob extends Job implements Serializable {
     }
 
     @Override
-    protected void setup() {
+    protected void setup() throws Exception {
 
         // Input source
         final KafkaSource<InputEvent> kafkaSource = CheetahKafkaSourceConfig.builder(this).toKafkaSourceBuilder(InputEvent.class).build();
@@ -49,13 +51,26 @@ public class FlinkStatesJob extends Job implements Serializable {
         mapAndSink(keyedByStream, new FlinkListStatesMapper(), Double[].class, "list");
 
 
-        //SQL testing
+        //SQL
+
+        //Get SQL Environment
         StreamTableEnvironment tableEnv = StreamTableEnvironment.create(keyedByStream.getExecutionEnvironment());
 
-        tableEnv.executeSql("CREATE TABLE Orders (`user` BIGINT, product STRING, amount INT) WITH ('user'='1', 'product'='fisk', 'amount'='5')");
+        //Connect to topics seen on RedPanda
+        String x = "FlinkStatesInputTopic";
+        tableEnv.executeSql("CREATE TABLE FlinkStatesTable (`user` BIGINT, product STRING, amount INT) WITH ('connector'='kafka','topic'='" + x + "','properties.bootstrap.servers' = 'localhost:9093','properties.group.id' = 'FlinkStates-group-id','format'='json', 'scan.startup.mode' = 'earliest-offset', 'properties.auto.offset.reset' = 'earliest')");
 
-        TableResult tableResult2 = tableEnv.sqlQuery("SELECT * FROM Orders").execute();
-        tableResult2.print();
+        //Insert statement
+        //tableEnv.executeSql("INSERT INTO Orders VALUES (1, 'Jeff', 2)");
+
+        //Show databases, it's possible to create new ones
+        tableEnv.executeSql("SHOW tables FROM default_database").print();
+
+        //Select statement
+        tableEnv.executeSql("SELECT * FROM FlinkStatesTable").print();
+
+        //TableResult tableResult2 = tableEnv.sqlQuery("SELECT * FROM FlinkStatesTable").execute();
+        //tableResult2.print();
     }
 
     public <T> void mapAndSink(KeyedStream<InputEvent, String> keyedStream, RichFlatMapFunction<InputEvent, T> function, Class<T> outputType, String kafkaPostFix){
