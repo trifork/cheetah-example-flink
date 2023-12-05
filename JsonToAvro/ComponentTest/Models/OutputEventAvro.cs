@@ -16,7 +16,7 @@ namespace jsonToAvro.ComponentTest.Models
 	[global::System.CodeDom.Compiler.GeneratedCodeAttribute("avrogen", "1.11.1")]
 	public partial class OutputEventAvro : global::Avro.Specific.ISpecificRecord
 	{
-		public static global::Avro.Schema _SCHEMA = global::Avro.Schema.Parse("{\"type\":\"record\",\"name\":\"OutputEventAvro\",\"namespace\":\"cheetah.exmaple.model." +
+		public static global::Avro.Schema _SCHEMA = global::Avro.Schema.Parse("{\"type\":\"record\",\"name\":\"OutputEventAvro\",\"namespace\":\"cheetah.example.model." +
 				"avrorecord\",\"fields\":[{\"name\":\"deviceId\",\"type\":\"string\"},{\"name\":\"value\",\"type\"" +
 				":\"double\"},{\"name\":\"timestamp\",\"type\":\"long\"},{\"name\":\"extraField\",\"type\":\"strin" +
 				"g\"}]}");
