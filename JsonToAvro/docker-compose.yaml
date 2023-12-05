@@ -1,0 +1,98 @@
+version: "3"
+services:
+
+  jsontoavro-test:
+    build:
+      context: ComponentTest
+      dockerfile: Dockerfile
+      secrets:
+        - GITHUB_TOKEN
+        - GITHUB_ACTOR
+    environment:
+      KAFKA__URL: kafka:19092
+      KAFKA__CLIENTID: ClientId
+      KAFKA__CLIENTSECRET: 1234
+      KAFKA__AUTHENDPOINT: http://cheetahoauthsimulator/oauth2/token
+      KAFKA__SCHEMAREGISTRYURL: http://schema-registry:8080/apis/ccompat/v7
+    depends_on:
+      jsontoavro-jobmanager:
+        condition: service_healthy
+
+  jsontoavro-jobmanager:
+    image: ${DOCKER_REGISTRY-}jsontoavro-job
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - MAVEN_ARGS=${EXTRA_MAVEN_ARGS-}
+      secrets:
+        - GITHUB_TOKEN
+        - GITHUB_ACTOR
+    command: |
+      standalone-job
+      --job-classname cheetah.exmaple.job.jsonToAvroJob
+      --kafka-bootstrap-servers kafka:19092
+      --input-kafka-topic jsonToAvroInputTopic
+      --output-kafka-topic jsonToAvroOutputTopic
+      --kafka-group-id jsonToAvro-group-id
+      --kafka-security-protocol SASL_PLAINTEXT
+      --sr-url http://schema-registry:8080/apis/ccompat/v7
+    environment:
+      KAFKA_CLIENT_ID: ClientId
+      KAFKA_CLIENT_SECRET: 1234
+      KAFKA_TOKEN_URL: http://cheetahoauthsimulator/oauth2/token
+      SR_CLIENT_ID: flink
+      SR_CLIENT_SECRET: testsecret
+      SR_TOKEN_URL: http://cheetahoauthsimulator/oauth2/token
+      FLINK_PROPERTIES: |
+        jobmanager.rpc.address: jsontoavro-jobmanager
+        scheduler-mode: reactive
+        rest.flamegraph.enabled: true
+        state.backend: rocksdb
+        state.checkpoints.dir: file:///checkpoints/processing
+        state.savepoints.dir: file:///checkpoints/processing
+        execution.checkpointing.interval: 300 seconds
+        execution.checkpointing.min-pause: 240 seconds
+    depends_on:
+      - jsontoavro-taskmanager
+    volumes:
+      - flink:/checkpoints
+    healthcheck:
+      test: curl localhost:8081/jobs | grep -q '"status":"RUNNING"' || exit -1
+      interval: 1s
+      timeout: 1s
+      retries: 30
+
+  jsontoavro-taskmanager:
+    image: ${DOCKER_REGISTRY-}jsontoavro-job
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - MAVEN_ARGS=${EXTRA_MAVEN_ARGS-}
+      secrets:
+        - GITHUB_TOKEN
+        - GITHUB_ACTOR
+    command: taskmanager
+    environment:
+      - |
+        FLINK_PROPERTIES=
+        jobmanager.rpc.address: jsontoavro-jobmanager
+        taskmanager.memory.process.size: 4gb
+        taskmanager.numberOfTaskSlots: 2
+    volumes:
+      - flink:/checkpoints
+
+volumes:
+  flink:
+
+secrets:
+  GITHUB_TOKEN:
+    environment: GITHUB_TOKEN
+  GITHUB_ACTOR:
+    environment: GITHUB_ACTOR
+
+networks:
+  default:
+    name: "cheetah-infrastructure"
+    external: true
