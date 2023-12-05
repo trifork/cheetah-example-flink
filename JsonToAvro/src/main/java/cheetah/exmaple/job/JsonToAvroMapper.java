@@ -1,4 +1,4 @@
-package cheetah.exmaple.job;
+package cheetah.example.job;
 
 import cheetah.exmaple.model.avrorecord.OutputEventAvro;
 import cheetah.exmaple.model.json.InputEvent;
