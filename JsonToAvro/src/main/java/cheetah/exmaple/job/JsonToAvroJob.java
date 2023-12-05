@@ -1,6 +1,5 @@
 package cheetah.exmaple.job;
 
-import cheetah.exmaple.model.avrorecord.InputEventAvro;
 import cheetah.exmaple.model.avrorecord.OutputEventAvro;
 import cheetah.exmaple.model.json.InputEvent;
 import com.trifork.cheetah.processing.connector.kafka.config.CheetahKafkaSourceConfig;
@@ -14,14 +13,12 @@ import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 
 import java.io.Serializable;
 
-import java.io.Serializable;
-
 /** jsonToAvroJob sets up the data processing job. */
-public class jsonToAvroJob extends Job implements Serializable {
+public class JsonToAvroJob extends Job implements Serializable {
 
     @SuppressWarnings("PMD.SignatureDeclareThrowsException") // Fix once lib-processing is fixed
     public static void main(final String[] args) throws Exception {
-        new jsonToAvroJob().start(args);
+        new JsonToAvroJob().start(args);
     }
 
     @Override
@@ -35,7 +32,7 @@ public class jsonToAvroJob extends Job implements Serializable {
 
         // Transform stream
         final SingleOutputStreamOperator<OutputEventAvro> outputStream =
-                inputStream.map(new jsonToAvroMapper("ExtraFieldValue"));
+                inputStream.map(new JsonToAvroMapper("ExtraFieldValue"));
 
         // Output sink
         KafkaSink<OutputEventAvro> kafkaSink = CheetahKafkaSink.avroSpecificBuilder(OutputEventAvro.class, this)

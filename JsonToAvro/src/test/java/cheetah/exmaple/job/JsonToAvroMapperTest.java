@@ -1,6 +1,5 @@
 package cheetah.exmaple.job;
 
-import cheetah.exmaple.model.avrorecord.InputEventAvro;
 import cheetah.exmaple.model.json.InputEvent;
 import org.junit.jupiter.api.Test;
 
@@ -8,8 +7,8 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class jsonToAvroMapperTest {
-    private final jsonToAvroMapper mapper = new jsonToAvroMapper("extraFieldValue");
+class JsonToAvroMapperTest {
+    private final JsonToAvroMapper mapper = new JsonToAvroMapper("extraFieldValue");
 
     @Test
     public void testEnrichment() {
