@@ -36,6 +36,9 @@ jobs:
             
           - folder: FlinkStates
             initial-kafka-topics: "FlinkStatesInputTopic FlinkStatesOutputTopic-value FlinkStatesOutputTopic-reducing FlinkStatesOutputTopic-aggregating FlinkStatesOutputTopic-list FlinkStatesOutputTopic-map"
+
+          - folder: JsonToAvro
+            initial-kafka-topics: "jsonToAvroInputTopic jsonToAvroOutputTopic"
             
           - folder: MultipleSideOutput
             initial-kafka-topics: "MultipleSideOutputExampleInputTopic OutputA-events OutputB-events OutputCD-events"
