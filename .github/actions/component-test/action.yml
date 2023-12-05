@@ -32,7 +32,7 @@ runs:
     - name: "Start development infrastructure"
       working-directory: development-infrastructure/
       shell: bash
-      run: docker compose --profile kafka --profile core up -d --build --quiet-pull
+      run: docker compose --profile core up -d --build --quiet-pull
       env:
         INITIAL_KAFKA_TOPICS: ${{ inputs.initial-kafka-topics }}
         DOCKER_REGISTRY: ghcr.io/trifork/
@@ -44,6 +44,3 @@ runs:
       env:
         GITHUB_ACTOR: ${{ github.actor }}
         GITHUB_TOKEN: ${{ inputs.access-token }}
-
-  
-
