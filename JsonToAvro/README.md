@@ -121,7 +121,7 @@ When developing your job you can run/debug it like any other Java application by
     > If either the project does not build or your Intellij is showing errors in the file, try syncing your maven projects by unfolding the Maven window (by default the top tab in the small vertical bar on the right of the IDE) and pressing the "Reload All Maven Projects"-button in the top-left of that window, then, restart Intellij.
     > The very first build can take a while, as maven builds up its cache.
 
-1. Navigate to the file `jsonToAvroJob.java`, under the `src/main/java/cheetah/exmaple/job/` folder.
+1. Navigate to the file `jsonToAvroJob.java`, under the `src/main/java/cheetah/example/job/` folder.
 1. This file contains a job that performs a mapping on all incoming `InputEvents`. It consists of the following pieces:
     <details>
     <!-- Have an empty line after the <details> tag or markdown blocks will not render. -->
@@ -170,7 +170,7 @@ When developing your job you can run/debug it like any other Java application by
 ## Tests
 ### Unit tests
 
-This project contains a sample Unit test in `src/test/java/cheetah/exmaple/job/jsonToAvroMapperTest.java`, which utilizes JUnit5.
+This project contains a sample Unit test in `src/test/java/cheetah/example/job/jsonToAvroMapperTest.java`, which utilizes JUnit5.
 
 Unit tests are automatically run as part of the build processing when building the Flink job through Docker.
 
