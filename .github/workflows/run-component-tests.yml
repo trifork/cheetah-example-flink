@@ -20,7 +20,7 @@ jobs:
     uses: trifork/cheetah-infrastructure-utils-workflows/.github/workflows/e2e-should-run.yml@main
 
   run-component-tests:
-    name: Run
+    name: ${{ matrix.folder }}
     needs: should-run
     if: ${{ needs.should-run.outputs.should-run }}
 
