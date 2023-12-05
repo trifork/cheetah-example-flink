@@ -30,7 +30,7 @@ services:
         - GITHUB_ACTOR
     command: |
       standalone-job
-      --job-classname cheetah.exmaple.job.jsonToAvroJob
+      --job-classname cheetah.example.job.JsonToAvroJob
       --kafka-bootstrap-servers kafka:19092
       --input-kafka-topic jsonToAvroInputTopic
       --output-kafka-topic jsonToAvroOutputTopic
