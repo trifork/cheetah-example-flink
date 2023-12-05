@@ -201,3 +201,5 @@ Then proceed in micro iterations, carefully assert expected output and behavior.
 The project includes several examples for JUnit tests.
 
 It is not recommended to use Mockto, since Flink is not happy about it and will produce unstable results.
+
+Trigger componenttest
