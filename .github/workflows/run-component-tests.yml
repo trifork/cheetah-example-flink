@@ -20,7 +20,7 @@ jobs:
     uses: trifork/cheetah-infrastructure-utils-workflows/.github/workflows/e2e-should-run.yml@main
 
   run-component-tests:
-    name: Component Tests
+    name: Run
     needs: should-run
     if: ${{ needs.should-run.outputs.should-run }}
 
