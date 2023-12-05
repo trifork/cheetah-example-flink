@@ -1,7 +1,7 @@
-package cheetah.exmaple.job;
+package cheetah.example.job;
 
-import cheetah.exmaple.model.avrorecord.OutputEventAvro;
-import cheetah.exmaple.model.json.InputEvent;
+import cheetah.example.model.avrorecord.OutputEventAvro;
+import cheetah.example.model.json.InputEvent;
 import com.trifork.cheetah.processing.connector.kafka.config.CheetahKafkaSourceConfig;
 import com.trifork.cheetah.processing.job.Job;
 import com.trifork.cheetah.processing.connector.kafka.CheetahKafkaSink;

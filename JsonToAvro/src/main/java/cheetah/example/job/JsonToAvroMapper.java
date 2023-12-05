@@ -1,7 +1,7 @@
 package cheetah.example.job;
 
-import cheetah.exmaple.model.avrorecord.OutputEventAvro;
-import cheetah.exmaple.model.json.InputEvent;
+import cheetah.example.model.avrorecord.OutputEventAvro;
+import cheetah.example.model.json.InputEvent;
 import org.apache.flink.api.common.functions.MapFunction;
 
 /** jsonToAvroMapper converts from InputEvent to OutputEvent. */

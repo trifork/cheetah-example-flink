@@ -3,11 +3,9 @@
  *
  * DO NOT EDIT DIRECTLY
  */
-package cheetah.exmaple.model.avrorecord;
+package cheetah.example.model.avrorecord;
 
-import org.apache.avro.generic.GenericArray;
 import org.apache.avro.specific.SpecificData;
-import org.apache.avro.util.Utf8;
 import org.apache.avro.message.BinaryMessageEncoder;
 import org.apache.avro.message.BinaryMessageDecoder;
 import org.apache.avro.message.SchemaStore;
@@ -180,8 +178,8 @@ public class InputEventAvro extends org.apache.avro.specific.SpecificRecordBase 
    * Creates a new InputEventAvro RecordBuilder.
    * @return A new InputEventAvro RecordBuilder
    */
-  public static cheetah.exmaple.model.avrorecord.InputEventAvro.Builder newBuilder() {
-    return new cheetah.exmaple.model.avrorecord.InputEventAvro.Builder();
+  public static cheetah.example.model.avrorecord.InputEventAvro.Builder newBuilder() {
+    return new cheetah.example.model.avrorecord.InputEventAvro.Builder();
   }
 
   /**
@@ -189,11 +187,11 @@ public class InputEventAvro extends org.apache.avro.specific.SpecificRecordBase 
    * @param other The existing builder to copy.
    * @return A new InputEventAvro RecordBuilder
    */
-  public static cheetah.exmaple.model.avrorecord.InputEventAvro.Builder newBuilder(cheetah.exmaple.model.avrorecord.InputEventAvro.Builder other) {
+  public static cheetah.example.model.avrorecord.InputEventAvro.Builder newBuilder(cheetah.example.model.avrorecord.InputEventAvro.Builder other) {
     if (other == null) {
-      return new cheetah.exmaple.model.avrorecord.InputEventAvro.Builder();
+      return new cheetah.example.model.avrorecord.InputEventAvro.Builder();
     } else {
-      return new cheetah.exmaple.model.avrorecord.InputEventAvro.Builder(other);
+      return new cheetah.example.model.avrorecord.InputEventAvro.Builder(other);
     }
   }
 
@@ -202,11 +200,11 @@ public class InputEventAvro extends org.apache.avro.specific.SpecificRecordBase 
    * @param other The existing instance to copy.
    * @return A new InputEventAvro RecordBuilder
    */
-  public static cheetah.exmaple.model.avrorecord.InputEventAvro.Builder newBuilder(cheetah.exmaple.model.avrorecord.InputEventAvro other) {
+  public static cheetah.example.model.avrorecord.InputEventAvro.Builder newBuilder(cheetah.example.model.avrorecord.InputEventAvro other) {
     if (other == null) {
-      return new cheetah.exmaple.model.avrorecord.InputEventAvro.Builder();
+      return new cheetah.example.model.avrorecord.InputEventAvro.Builder();
     } else {
-      return new cheetah.exmaple.model.avrorecord.InputEventAvro.Builder(other);
+      return new cheetah.example.model.avrorecord.InputEventAvro.Builder(other);
     }
   }
 
@@ -230,7 +228,7 @@ public class InputEventAvro extends org.apache.avro.specific.SpecificRecordBase 
      * Creates a Builder by copying an existing Builder.
      * @param other The existing Builder to copy.
      */
-    private Builder(cheetah.exmaple.model.avrorecord.InputEventAvro.Builder other) {
+    private Builder(cheetah.example.model.avrorecord.InputEventAvro.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.deviceId)) {
         this.deviceId = data().deepCopy(fields()[0].schema(), other.deviceId);
@@ -250,7 +248,7 @@ public class InputEventAvro extends org.apache.avro.specific.SpecificRecordBase 
      * Creates a Builder by copying an existing InputEventAvro instance
      * @param other The existing instance to copy.
      */
-    private Builder(cheetah.exmaple.model.avrorecord.InputEventAvro other) {
+    private Builder(cheetah.example.model.avrorecord.InputEventAvro other) {
       super(SCHEMA$, MODEL$);
       if (isValidValue(fields()[0], other.deviceId)) {
         this.deviceId = data().deepCopy(fields()[0].schema(), other.deviceId);
@@ -280,7 +278,7 @@ public class InputEventAvro extends org.apache.avro.specific.SpecificRecordBase 
       * @param value The value of 'deviceId'.
       * @return This builder.
       */
-    public cheetah.exmaple.model.avrorecord.InputEventAvro.Builder setDeviceId(java.lang.String value) {
+    public cheetah.example.model.avrorecord.InputEventAvro.Builder setDeviceId(java.lang.String value) {
       validate(fields()[0], value);
       this.deviceId = value;
       fieldSetFlags()[0] = true;
@@ -300,7 +298,7 @@ public class InputEventAvro extends org.apache.avro.specific.SpecificRecordBase 
       * Clears the value of the 'deviceId' field.
       * @return This builder.
       */
-    public cheetah.exmaple.model.avrorecord.InputEventAvro.Builder clearDeviceId() {
+    public cheetah.example.model.avrorecord.InputEventAvro.Builder clearDeviceId() {
       deviceId = null;
       fieldSetFlags()[0] = false;
       return this;
@@ -320,7 +318,7 @@ public class InputEventAvro extends org.apache.avro.specific.SpecificRecordBase 
       * @param value The value of 'value'.
       * @return This builder.
       */
-    public cheetah.exmaple.model.avrorecord.InputEventAvro.Builder setValue(double value) {
+    public cheetah.example.model.avrorecord.InputEventAvro.Builder setValue(double value) {
       validate(fields()[1], value);
       this.value = value;
       fieldSetFlags()[1] = true;
@@ -340,7 +338,7 @@ public class InputEventAvro extends org.apache.avro.specific.SpecificRecordBase 
       * Clears the value of the 'value' field.
       * @return This builder.
       */
-    public cheetah.exmaple.model.avrorecord.InputEventAvro.Builder clearValue() {
+    public cheetah.example.model.avrorecord.InputEventAvro.Builder clearValue() {
       fieldSetFlags()[1] = false;
       return this;
     }
@@ -359,7 +357,7 @@ public class InputEventAvro extends org.apache.avro.specific.SpecificRecordBase 
       * @param value The value of 'timestamp'.
       * @return This builder.
       */
-    public cheetah.exmaple.model.avrorecord.InputEventAvro.Builder setTimestamp(long value) {
+    public cheetah.example.model.avrorecord.InputEventAvro.Builder setTimestamp(long value) {
       validate(fields()[2], value);
       this.timestamp = value;
       fieldSetFlags()[2] = true;
@@ -379,7 +377,7 @@ public class InputEventAvro extends org.apache.avro.specific.SpecificRecordBase 
       * Clears the value of the 'timestamp' field.
       * @return This builder.
       */
-    public cheetah.exmaple.model.avrorecord.InputEventAvro.Builder clearTimestamp() {
+    public cheetah.example.model.avrorecord.InputEventAvro.Builder clearTimestamp() {
       fieldSetFlags()[2] = false;
       return this;
     }

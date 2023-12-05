@@ -1,6 +1,6 @@
-package cheetah.exmaple.job;
+package cheetah.example.job;
 
-import cheetah.exmaple.model.json.InputEvent;
+import cheetah.example.model.json.InputEvent;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;

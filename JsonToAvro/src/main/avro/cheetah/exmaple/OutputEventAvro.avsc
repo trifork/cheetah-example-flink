@@ -1,7 +1,7 @@
 {
     "type": "record",
     "name": "OutputEventAvro",
-    "namespace": "cheetah.exmaple.model.avrorecord",
+    "namespace": "cheetah.example.model.avrorecord",
     "fields":  [
         {
             "name": "deviceId",
