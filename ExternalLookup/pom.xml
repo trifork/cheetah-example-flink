@@ -30,8 +30,8 @@ under the License.
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <flink.version>1.16.1</flink.version>
-        <target.java.version>11</target.java.version>
+        <flink.version>1.18.0</flink.version>
+        <target.java.version>17</target.java.version>
         <scala.binary.version>2.12</scala.binary.version>
         <maven.compiler.source>${target.java.version}</maven.compiler.source>
         <maven.compiler.target>${target.java.version}</maven.compiler.target>
@@ -55,6 +55,7 @@ under the License.
             <url>https://maven.pkg.github.com/trifork/cheetah-lib-processing</url>
             <snapshots>
                 <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
             </snapshots>
             <releases>
                 <enabled>true</enabled>
@@ -78,7 +79,7 @@ under the License.
         <dependency>
             <groupId>com.trifork.cheetah.processing</groupId>
             <artifactId>cheetah-lib-processing</artifactId>
-            <version>3.8.1</version>
+            <version>4.0.0</version>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>

@@ -1,7 +1,7 @@
 #
 #  Install dependencies, compile sources, build jars.
 #
-FROM maven:3.8.6-openjdk-11 as build
+FROM maven:3.8.6-eclipse-temurin-17-alpine as build
 
 WORKDIR /app
 
@@ -44,7 +44,7 @@ RUN --mount=type=secret,id=GITHUB_TOKEN \
 #
 #  Install jars onto clean runtime system.
 #
-FROM flink:1.16.1-scala_2.12-java11 as runtime
+FROM flink:1.18.0-scala_2.12-java17 as runtime
 
 COPY --from=build /app/target/lib/*.jar /opt/flink/usrlib/artifacts/
 COPY --from=build /app/target/externallookup*.jar /opt/flink/usrlib/artifacts/
@@ -52,9 +52,9 @@ COPY --from=build /app/target/externallookup*.jar /opt/flink/usrlib/artifacts/
 RUN mkdir /opt/flink/plugins/s3-fs-hadoop/; \
     mkdir /opt/flink/plugins/s3-fs-presto/; \
     mkdir ./plugins/azure-fs-hadoop; \
-    cp /opt/flink/opt/flink-s3-fs-hadoop-1.16.1.jar /opt/flink/plugins/s3-fs-hadoop/; \
-    cp /opt/flink/opt/flink-s3-fs-presto-1.16.1.jar /opt/flink/plugins/s3-fs-presto/; \
-    cp ./opt/flink-azure-fs-hadoop-1.16.1.jar ./plugins/azure-fs-hadoop/
+    cp /opt/flink/opt/flink-s3-fs-hadoop-1.18.0.jar /opt/flink/plugins/s3-fs-hadoop/; \
+    cp /opt/flink/opt/flink-s3-fs-presto-1.18.0.jar /opt/flink/plugins/s3-fs-presto/; \
+    cp ./opt/flink-azure-fs-hadoop-1.18.0.jar ./plugins/azure-fs-hadoop/
 
 RUN mkdir -p /checkpoints && chmod 777 /checkpoints
 
