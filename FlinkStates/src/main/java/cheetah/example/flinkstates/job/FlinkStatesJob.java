@@ -11,11 +11,7 @@ import org.apache.flink.connector.kafka.sink.KafkaSink;
 import org.apache.flink.connector.kafka.source.KafkaSource;
 import org.apache.flink.streaming.api.datastream.KeyedStream;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
-import org.apache.flink.table.api.EnvironmentSettings;
-import org.apache.flink.table.api.TableResult;
 import org.apache.flink.table.api.bridge.java.StreamTableEnvironment;
-import org.apache.flink.types.Row;
-import org.apache.flink.util.CloseableIterator;
 
 import java.io.Serializable;
 
@@ -36,7 +32,7 @@ public class FlinkStatesJob extends Job implements Serializable {
     }
 
     @Override
-    protected void setup() throws Exception {
+    protected void setup() {
 
         // Input source
         final KafkaSource<InputEvent> kafkaSource = CheetahKafkaSourceConfig.builder(this).toKafkaSourceBuilder(InputEvent.class).build();
@@ -56,15 +52,17 @@ public class FlinkStatesJob extends Job implements Serializable {
         //Get SQL Environment
         StreamTableEnvironment tableEnv = StreamTableEnvironment.create(keyedByStream.getExecutionEnvironment());
 
+        tableEnv.executeSql("SHOW CATALOGS");
+        tableEnv.executeSql("SHOW DATABASES");
+
+
         //Connect to topics seen on RedPanda
         String x = "FlinkStatesInputTopic";
-        tableEnv.executeSql("CREATE TABLE FlinkStatesTable (`user` BIGINT, product STRING, amount INT) WITH ('connector'='kafka','topic'='" + x + "','properties.bootstrap.servers' = 'localhost:9093','properties.group.id' = 'FlinkStates-group-id','format'='json', 'scan.startup.mode' = 'earliest-offset', 'properties.auto.offset.reset' = 'earliest')");
+        tableEnv.executeSql("CREATE TABLE IF NOT EXISTS FlinkStatesTable (deviceId STRING, `timestamp` BIGINT, `value` FLOAT) WITH ('connector'='kafka','topic'='" + x + "','properties.bootstrap.servers' = 'localhost:9093','properties.group.id' = 'FlinkStates-group-id','format'='json', 'scan.startup.mode' = 'earliest-offset')");
+
 
         //Insert statement
-        //tableEnv.executeSql("INSERT INTO Orders VALUES (1, 'Jeff', 2)");
-
-        //Show databases, it's possible to create new ones
-        tableEnv.executeSql("SHOW tables FROM default_database").print();
+        tableEnv.executeSql("INSERT INTO FlinkStatesTable VALUES ('Jeff', "+ System.currentTimeMillis() +", 12.34)");
 
         //Select statement
         tableEnv.executeSql("SELECT * FROM FlinkStatesTable").print();
