@@ -12,15 +12,6 @@ COPY settings.xml ./
 # Copy in local repository
 COPY .m2/ /root/.m2/
 
-# Download all dependencies, excluding the ones marked as 'provided';
-# Change scope of Flink dependencies from 'compile' to 'provided'.
-# This basically instructs Maven to not download the jar files,
-# but rely on them being provided by other means,
-# and effectively results in a fat har without Flink jars.
-# This is because the runtime docker container provides the Flink jars
-# itself and adds them on the classpath for the fat jar to resolve.
-RUN sed -i pom.xml -e 's,<scope>compile</scope>,<scope>provided</scope>,'
-
 # Download dependencies (with docker cache)
 RUN \
     --mount=type=secret,id=GITHUB_TOKEN \
@@ -48,7 +39,6 @@ RUN \
 #
 FROM flink:1.18.0-scala_2.12-java17 as runtime
 
-COPY --from=build /app/target/lib/*.jar /opt/flink/usrlib/artifacts/
 COPY --from=build /app/target/jsonToAvro*.jar /opt/flink/usrlib/artifacts/
 
 RUN mkdir /opt/flink/plugins/s3-fs-hadoop/; \
