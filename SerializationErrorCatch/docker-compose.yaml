@@ -19,7 +19,6 @@ services:
   serializationerrorcatch-jobmanager:
     image: ${DOCKER_REGISTRY-}serializationerrorcatch-job
     build:
-      context: .
       dockerfile: Dockerfile
       args:
         - MAVEN_ARGS=${EXTRA_MAVEN_ARGS-}
@@ -64,7 +63,6 @@ services:
   serializationerrorcatch-taskmanager:
     image: ${DOCKER_REGISTRY-}serializationerrorcatch-job
     build:
-      context: .
       dockerfile: Dockerfile
       args:
         - MAVEN_ARGS=${EXTRA_MAVEN_ARGS-}

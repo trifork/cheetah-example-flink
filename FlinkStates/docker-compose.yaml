@@ -20,7 +20,6 @@ services:
   flinkstates-jobmanager:
     image: ${DOCKER_REGISTRY-}flinkstates-job
     build:
-      context: .
       dockerfile: Dockerfile
       args:
         - MAVEN_ARGS=${EXTRA_MAVEN_ARGS-}
@@ -65,7 +64,6 @@ services:
   flinkstates-taskmanager:
     image: ${DOCKER_REGISTRY-}flinkstates-job
     build:
-      context: .
       dockerfile: Dockerfile
       args:
         - MAVEN_ARGS=${EXTRA_MAVEN_ARGS-}

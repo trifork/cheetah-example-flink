@@ -20,7 +20,6 @@ services:
   tumblingwindow-job:
     image: ${DOCKER_REGISTRY-}tumblingwindow-job
     build:
-      context: .
       dockerfile: Dockerfile
       args:
         - MAVEN_ARGS=${EXTRA_MAVEN_ARGS-}
@@ -61,7 +60,6 @@ services:
   tumblingwindow-job-taskmanager:
     image: ${DOCKER_REGISTRY-}tumblingwindow-job
     build:
-      context: .
       dockerfile: Dockerfile
       args:
         - MAVEN_ARGS=${EXTRA_MAVEN_ARGS-}

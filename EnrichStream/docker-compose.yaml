@@ -20,7 +20,6 @@ services:
   enrichstream-jobmanager:
     image: ${DOCKER_REGISTRY-}enrichstream-job
     build:
-      context: .
       dockerfile: Dockerfile
       args:
         - MAVEN_ARGS=${EXTRA_MAVEN_ARGS-}
@@ -62,7 +61,6 @@ services:
   enrichstream-taskmanager:
     image: ${DOCKER_REGISTRY-}enrichstream-job
     build:
-      context: .
       dockerfile: Dockerfile
       args:
         - MAVEN_ARGS=${EXTRA_MAVEN_ARGS-}

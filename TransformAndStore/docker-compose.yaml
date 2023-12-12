@@ -24,7 +24,6 @@ services:
   transformandstore-jobmanager:
     image: ${DOCKER_REGISTRY-}transformandstore-job
     build:
-      context: .
       dockerfile: Dockerfile
       args:
         - MAVEN_ARGS=${EXTRA_MAVEN_ARGS-}
@@ -70,7 +69,6 @@ services:
   transformandstore-taskmanager:
     image: ${DOCKER_REGISTRY-}transformandstore-job
     build:
-      context: .
       dockerfile: Dockerfile
       args:
         - MAVEN_ARGS=${EXTRA_MAVEN_ARGS-}

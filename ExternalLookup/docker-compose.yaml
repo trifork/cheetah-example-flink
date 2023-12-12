@@ -20,7 +20,6 @@ services:
   externallookup-job:
     image: ${DOCKER_REGISTRY-}externallookup-job
     build:
-      context: .
       dockerfile: Dockerfile
       args:
         - MAVEN_ARGS=${EXTRA_MAVEN_ARGS-}
@@ -66,7 +65,6 @@ services:
   externallookup-job-taskmanager:
     image: ${DOCKER_REGISTRY-}externallookup-job
     build:
-      context: .
       dockerfile: Dockerfile
       args:
         - MAVEN_ARGS=${EXTRA_MAVEN_ARGS-}
