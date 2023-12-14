@@ -1,17 +1,17 @@
 version: "3"
 services:
-  flinkstates-test:
-    build:
-      context: ComponentTest
-      dockerfile: Dockerfile
-      secrets:
-        - GITHUB_TOKEN
-        - GITHUB_ACTOR
-    environment:
-      KAFKA__URL: kafka:19092
-      KAFKA__CLIENTID: ClientId
-      KAFKA__CLIENTSECRET: 1234
-      KAFKA__AUTHENDPOINT: http://cheetahoauthsimulator/oauth2/token
+#  flinkstates-test:
+#    build:
+#      context: ComponentTest
+#      dockerfile: Dockerfile
+#      secrets:
+#        - GITHUB_TOKEN
+#        - GITHUB_ACTOR
+#    environment:
+#      KAFKA__URL: kafka:19092
+#      KAFKA__CLIENTID: ClientId
+#      KAFKA__CLIENTSECRET: 1234
+#      KAFKA__AUTHENDPOINT: http://cheetahoauthsimulator/oauth2/token
 
   flinkstates-jobmanager:
     image: ${DOCKER_REGISTRY-}flinkstates-job

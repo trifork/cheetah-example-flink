@@ -41,7 +41,10 @@ RUN \
     --mount=type=cache,target=./.m2,sharing=locked \
     GITHUB_TOKEN="$(cat /run/secrets/GITHUB_TOKEN)" \
     GITHUB_ACTOR="$(cat /run/secrets/GITHUB_ACTOR)" \
-    mvn package -B -s ./settings.xml ${MAVEN_ARGS-} -Dmaven.repo.local="${CI_PROJECT_DIR-.}"/.m2/repository
+    mvn package -B -s ./settings.xml ${MAVEN_ARGS-} -Dmaven.repo.local="${CI_PROJECT_DIR-.}"/.m2/repository \
+
+RUN echo $(mvn help:evaluate -Dexpression=project.properties -q -DforceStdout)
+RUN echo $(ls -1 /app/target/)
 
 #
 #  Install jars onto clean runtime system.
