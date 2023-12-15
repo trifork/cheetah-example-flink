@@ -55,6 +55,13 @@ This will start `kafka`, an `oauth` simulator and `redpanda`, which can be used 
 
 Redpanda can be accessed on [http://localhost:9898](http://localhost:9898).
 
+You need to create the source topics which the flink job reads from. This is done by setting the `INITIAL_KAFKA_TOPICS` to `ObservabilityInputTopic` before running the `kafka-setup` container in `cheetah-development-infrastructure`:
+```powershell
+$env:INITIAL_KAFKA_TOPICS="ObservabilityInputTopic"; docker compose up kafka-setup -d
+```
+The `kafka-setup` service is also run when starting kafka using the above command, but running it seperately enables you to create the topics with an already running Kafka.
+Alternatively you can create the topics manually in Redpanda.
+
 `cheetah-development-infrastructure` contains more than just the services that the above command starts, but running the entire infrastructure setup takes up a fair amount of resources on your local system. 
 
 If you need to run other services like OpenSearch, please see the documentation in the `development-infrastructure` repository.
@@ -107,7 +114,7 @@ If doing so, make sure to run your job locally from IntelliJ before starting the
 
 You might encounter failing component tests due to your job receiving more messages than expected. This occurs if you've previously run the job and component tests and data is still present in Kafka. The component test will then, in some cases, re-read the output of previous runs.
 
-To fix this, you'll need to delete the data in Kafka by running: `docker compose down` in the `cheetah-development-infrastructure` repository and then starting it again using the command in [Local development with docker-compose](#local-development-with-docker-compose). This deletes the volume containing Kafka's data and starts everything up again.
+To fix this, you'll need to delete the data in Kafka by running: `docker compose down` in the `cheetah-development-infrastructure` repository and then starting it again using the command in [Local development with docker-compose](#local-development). This deletes the volume containing Kafka's data and starts everything up again.
 
 #### Concurrent tests
 

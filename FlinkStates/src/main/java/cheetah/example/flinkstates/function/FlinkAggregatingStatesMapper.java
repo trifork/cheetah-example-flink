@@ -16,13 +16,13 @@ import org.apache.flink.util.Collector;
  * where the temporary storage must be the same as the final result
  */
 public class FlinkAggregatingStatesMapper extends RichFlatMapFunction<InputEvent, Double> {
-
     private transient AggregatingState<InputEvent, Double> sum;
 
     /**
-     * Mapping the incoming messages to the sum of all elements seen
+     * Mapping the incoming messages to the sum of all elements seen.
+     *
      * @param value The input value.
-     * @param out The collector for returning result values.
+     * @param out   The collector for returning result values.
      */
     @Override
     public void flatMap(InputEvent value, Collector<Double> out) throws Exception {
@@ -32,12 +32,12 @@ public class FlinkAggregatingStatesMapper extends RichFlatMapFunction<InputEvent
 
     @Override
     public void open(Configuration config) {
-      AggregatingStateDescriptor<InputEvent, Double, Double> descriptor =
-              new AggregatingStateDescriptor<>(
-                      "values", // the state name
-                      getAggregateFunction(),
-                      TypeInformation.of(new TypeHint<>() {
-                      }));
+        AggregatingStateDescriptor<InputEvent, Double, Double> descriptor =
+                new AggregatingStateDescriptor<>(
+                        "values", // the state name
+                        getAggregateFunction(),
+                        TypeInformation.of(new TypeHint<>() {
+                        }));
         sum = getRuntimeContext().getAggregatingState(descriptor);
     }
 

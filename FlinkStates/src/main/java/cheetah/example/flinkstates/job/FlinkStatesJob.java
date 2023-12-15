@@ -11,9 +11,15 @@ import org.apache.flink.connector.kafka.sink.KafkaSink;
 import org.apache.flink.connector.kafka.source.KafkaSource;
 import org.apache.flink.streaming.api.datastream.KeyedStream;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
+import org.apache.flink.table.api.StatementSet;
+import org.apache.flink.table.api.Table;
+import org.apache.flink.table.api.TableResult;
+import org.apache.flink.table.api.bridge.java.StreamStatementSet;
 import org.apache.flink.table.api.bridge.java.StreamTableEnvironment;
 
 import java.io.Serializable;
+import java.sql.Statement;
+import java.util.concurrent.ExecutionException;
 
 /**
  * FlinkStatesJob sets up the data processing job. It contains examples of using the different types of state
@@ -32,7 +38,7 @@ public class FlinkStatesJob extends Job implements Serializable {
     }
 
     @Override
-    protected void setup() {
+    protected void setup() throws ExecutionException, InterruptedException {
 
         // Input source
         final KafkaSource<InputEvent> kafkaSource = CheetahKafkaSourceConfig.builder(this).toKafkaSourceBuilder(InputEvent.class).build();
@@ -52,23 +58,22 @@ public class FlinkStatesJob extends Job implements Serializable {
         //Get SQL Environment
         StreamTableEnvironment tableEnv = StreamTableEnvironment.create(keyedByStream.getExecutionEnvironment());
 
-        tableEnv.executeSql("SHOW CATALOGS");
-        tableEnv.executeSql("SHOW DATABASES");
-
-
         //Connect to topics seen on RedPanda
         String x = "FlinkStatesInputTopic";
-        tableEnv.executeSql("CREATE TABLE IF NOT EXISTS FlinkStatesTable (deviceId STRING, `timestamp` BIGINT, `value` FLOAT) WITH ('connector'='kafka','topic'='" + x + "','properties.bootstrap.servers' = 'localhost:9093','properties.group.id' = 'FlinkStates-group-id','format'='json', 'scan.startup.mode' = 'earliest-offset')");
+        //tableEnv.executeSql("CREATE TABLE IF NOT EXISTS FlinkStatesTable (deviceId STRING, `timestamp` BIGINT, `value` FLOAT) WITH ('connector'='kafka','topic'='" + x + "','properties.bootstrap.servers' = 'localhost:9093','properties.group.id' = 'FlinkStates-group-id','format'='json', 'scan.startup.mode' = 'earliest-offset');INSERT INTO FlinkStatesTable VALUES ('Jeff', "+ System.currentTimeMillis() +", 12.34);SELECT * FROM FlinkStatesTable");
 
+
+        StatementSet statement = tableEnv.createStatementSet();
+        statement.addInsertSql("INSERT INTO FlinkStatesTable VALUES ('Jeff', "+ System.currentTimeMillis() +", 12.34)");
+        statement.execute();
 
         //Insert statement
-        tableEnv.executeSql("INSERT INTO FlinkStatesTable VALUES ('Jeff', "+ System.currentTimeMillis() +", 12.34)");
+        //tableEnv.executeSql("INSERT INTO FlinkStatesTable VALUES ('Jeff', "+ System.currentTimeMillis() +", 12.34)");
 
         //Select statement
-        tableEnv.executeSql("SELECT * FROM FlinkStatesTable").print();
+        TableResult tableResult1 = tableEnv.executeSql("SELECT * FROM FlinkStatesTable");
+        tableResult1.print();
 
-        //TableResult tableResult2 = tableEnv.sqlQuery("SELECT * FROM FlinkStatesTable").execute();
-        //tableResult2.print();
     }
 
     public <T> void mapAndSink(KeyedStream<InputEvent, String> keyedStream, RichFlatMapFunction<InputEvent, T> function, Class<T> outputType, String kafkaPostFix){

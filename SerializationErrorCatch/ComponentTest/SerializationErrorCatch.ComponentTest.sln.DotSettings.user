@@ -1,0 +1,16 @@
+﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=684a86bb_002D4b20_002D4034_002Dacde_002D12c99407d624/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="Should_BeImplemented_When_ServiceIsCreated #3" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;xUnit::D4076218-47CC-4A9D-99E2-73FA3EDBFD99::net6.0::SerializationErrorCatch.ComponentTest.ComponentTest.Should_BeImplemented_When_ServiceIsCreated&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=8ea156e3_002De85d_002D4cd0_002Db195_002D04913f6694d4/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="Should_BeImplemented_When_ServiceIsCreated #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;xUnit::D4076218-47CC-4A9D-99E2-73FA3EDBFD99::net6.0::SerializationErrorCatch.ComponentTest.ComponentTest.Should_BeImplemented_When_ServiceIsCreated&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=8f2281dc_002Db2d4_002D468c_002D803c_002D2a0b478f0512/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="Should_BeImplemented_When_ServiceIsCreated" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;xUnit::D4076218-47CC-4A9D-99E2-73FA3EDBFD99::net6.0::SerializationErrorCatch.ComponentTest.ComponentTest.Should_BeImplemented_When_ServiceIsCreated&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

@@ -19,9 +19,10 @@ public class FlinkListStatesMapper extends RichFlatMapFunction<InputEvent, Doubl
     private transient ListState<Double> values;
 
     /**
-     * Outputs every two elements received in lists
+     * Outputs every two elements received in lists.
+     *
      * @param value The input value.
-     * @param out The collector for returning result values.
+     * @param out   The collector for returning result values.
      */
     @Override
     public void flatMap(InputEvent value, Collector<Double[]> out) throws Exception {

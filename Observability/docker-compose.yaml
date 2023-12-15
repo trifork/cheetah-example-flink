@@ -1,3 +1,4 @@
+---
 version: "3"
 services:
   observability-test:
@@ -19,7 +20,6 @@ services:
   observability-job:
     image: ${DOCKER_REGISTRY-}observability-job
     build:
-      context: .
       dockerfile: Dockerfile
       args:
         - MAVEN_ARGS=${EXTRA_MAVEN_ARGS-}
@@ -64,7 +64,6 @@ services:
   observability-job-taskmanager:
     image: ${DOCKER_REGISTRY-}observability-job
     build:
-      context: .
       dockerfile: Dockerfile
       args:
         - MAVEN_ARGS=${EXTRA_MAVEN_ARGS-}

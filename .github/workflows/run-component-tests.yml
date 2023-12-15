@@ -1,0 +1,84 @@
+name: Run Component Tests
+
+on:
+  workflow_call:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 3 * * *"
+  push:
+    branches: [ 'main', 'release/v**' ]
+  pull_request:
+    branches: [ 'main', 'release/v**' ]
+    types: [ opened, synchronize, reopened, labeled ]
+
+concurrency:
+  group: ${{ github.ref }}-${{ github.workflow }}
+  cancel-in-progress: true
+
+jobs:
+  should-run:
+    uses: trifork/cheetah-infrastructure-utils-workflows/.github/workflows/e2e-should-run.yml@main
+
+  run-component-tests:
+    name: ${{ matrix.folder }}
+    needs: should-run
+    if: ${{ needs.should-run.outputs.should-run }}
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - folder: EnrichStream
+            initial-kafka-topics: "EnrichStreamEnrichTopic EnrichStreamInputTopic EnrichStreamOutputTopic"
+            
+          - folder: ExternalLookup
+            initial-kafka-topics: "ExternalLookupInputTopic ExternalLookupOutputTopic"
+            
+          - folder: FlinkStates
+            initial-kafka-topics: "FlinkStatesInputTopic FlinkStatesOutputTopic-value FlinkStatesOutputTopic-reducing FlinkStatesOutputTopic-aggregating FlinkStatesOutputTopic-list FlinkStatesOutputTopic-map"
+
+          - folder: JsonToAvro
+            initial-kafka-topics: "jsonToAvroInputTopic jsonToAvroOutputTopic"
+            
+          - folder: MultipleSideOutput
+            initial-kafka-topics: "MultipleSideOutputExampleInputTopic OutputA-events OutputB-events OutputCD-events"
+            
+          - folder: Observability
+            initial-kafka-topics: "ObservabilityInputTopic"
+            
+          - folder: SerializationErrorCatch
+            initial-kafka-topics: "SerializationErrorCatchInputTopic SerializationErrorCatchInputTopic SerializationErrorCatchOutputTopic"
+            
+          - folder: TransformAndStore
+            initial-kafka-topics: "TransformAndStoreInputTopic"
+            
+          - folder: TumblingWindow
+            initial-kafka-topics: "TumblingWindowInputTopic TumblingWindowOutputTopic"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check if files have changed
+        uses: tj-actions/changed-files@v40
+        id: changed-files
+        with: 
+          files: |
+            ${{ matrix.folder }}/**
+
+      - name: Build Flink States example image and run component test
+        uses: ./.github/actions/component-test
+        if: ${{ steps.changed-files.outputs.any_changed == 'true' }}
+        with:
+          context-path: ./${{ matrix.folder }}/
+          access-token: ${{ secrets.PACKAGE_PAT }}
+          initial-kafka-topics: ${{ matrix.initial-kafka-topics }}
+
+  success:
+    name: Success
+    needs: run-component-tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Success
+        shell: bash
+        run: echo success

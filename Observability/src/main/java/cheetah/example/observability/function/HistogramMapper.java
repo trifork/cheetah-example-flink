@@ -8,7 +8,7 @@ import org.apache.flink.dropwizard.metrics.DropwizardHistogramWrapper;
 import org.apache.flink.metrics.Histogram;
 
 /**
- * The purpose of the HistogramMapper is to make a Histogram over the values in the messages
+ * The purpose of the HistogramMapper is to make a Histogram over the values in the messages.
  */
 public class HistogramMapper extends RichMapFunction<InputEvent, InputEvent> {
 

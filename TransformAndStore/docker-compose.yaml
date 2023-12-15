@@ -1,0 +1,100 @@
+---
+version: "3"
+services:
+  transformandstore-test:
+    build:
+      context: ComponentTest
+      dockerfile: Dockerfile
+      secrets:
+        - GITHUB_TOKEN
+        - GITHUB_ACTOR
+    environment:
+      KAFKA__URL: kafka:19092
+      KAFKA__CLIENTID: ClientId
+      KAFKA__CLIENTSECRET: 1234
+      KAFKA__AUTHENDPOINT: http://cheetahoauthsimulator/oauth2/token
+      OPENSEARCH__URL: http://opensearch:9200
+      OPENSEARCH__CLIENTID: ClientId
+      OPENSEARCH__CLIENTSECRET: 1234
+      OPENSEARCH__AUTHENDPOINT: http://cheetahoauthsimulator/oauth2/token
+    depends_on:
+      transformandstore-jobmanager:
+        condition: service_healthy
+
+  transformandstore-jobmanager:
+    image: ${DOCKER_REGISTRY-}transformandstore-job
+    build:
+      dockerfile: Dockerfile
+      args:
+        - MAVEN_ARGS=${EXTRA_MAVEN_ARGS-}
+      secrets:
+        - GITHUB_TOKEN
+        - GITHUB_ACTOR
+    command: |
+      standalone-job
+      --job-classname cheetah.example.transformandstore.job.TransformAndStoreJob
+      --kafka-bootstrap-servers kafka:19092
+      --input-kafka-topic TransformAndStoreInputTopic
+      --kafka-group-id transform-and-store-group-id
+      --kafka-security-protocol SASL_PLAINTEXT
+      --opensearch-hosts http://opensearch:9200
+      --opensearch-security-protocol SASL_PLAINTEXT
+      --index-base-name transformandstore-index_
+    environment:
+      KAFKA_CLIENT_ID: ClientId
+      KAFKA_CLIENT_SECRET: 1234
+      KAFKA_TOKEN_URL: http://cheetahoauthsimulator/oauth2/token
+      OPENSEARCH_CLIENT_ID: ClientId
+      OPENSEARCH_CLIENT_SECRET: 1234
+      OPENSEARCH_TOKEN_URL: http://cheetahoauthsimulator/oauth2/token
+      FLINK_PROPERTIES: |
+        jobmanager.rpc.address: transformandstore-jobmanager
+        scheduler-mode: reactive
+        rest.flamegraph.enabled: true
+        state.backend: rocksdb
+        state.checkpoints.dir: file:///checkpoints/processing
+        state.savepoints.dir: file:///checkpoints/processing
+        execution.checkpointing.interval: 300 seconds
+        execution.checkpointing.min-pause: 240 seconds
+    depends_on:
+      - transformandstore-taskmanager
+    volumes:
+      - flink:/checkpoints
+    healthcheck:
+      test: curl localhost:8081/jobs | grep -q '"status":"RUNNING"' || exit -1
+      interval: 1s
+      timeout: 1s
+      retries: 30
+
+  transformandstore-taskmanager:
+    image: ${DOCKER_REGISTRY-}transformandstore-job
+    build:
+      dockerfile: Dockerfile
+      args:
+        - MAVEN_ARGS=${EXTRA_MAVEN_ARGS-}
+      secrets:
+        - GITHUB_TOKEN
+        - GITHUB_ACTOR
+    command: taskmanager
+    environment:
+      - |
+        FLINK_PROPERTIES=
+        jobmanager.rpc.address: transformandstore-jobmanager
+        taskmanager.memory.process.size: 4gb
+        taskmanager.numberOfTaskSlots: 2
+    volumes:
+      - flink:/checkpoints
+
+volumes:
+  flink:
+
+secrets:
+  GITHUB_TOKEN:
+    environment: GITHUB_TOKEN
+  GITHUB_ACTOR:
+    environment: GITHUB_ACTOR
+
+networks:
+  default:
+    name: "cheetah-infrastructure"
+    external: true

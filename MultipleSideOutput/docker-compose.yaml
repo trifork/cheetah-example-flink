@@ -1,3 +1,4 @@
+---
 version: "3"
 services:
   multiplesideoutputexample-test:
@@ -16,7 +17,6 @@ services:
   multiplesideoutputexample-job:
     image: ${DOCKER_REGISTRY-}multiplesideoutputexample-job
     build:
-      context: .
       dockerfile: Dockerfile
       args:
         - MAVEN_ARGS=${EXTRA_MAVEN_ARGS-}
@@ -60,7 +60,6 @@ services:
   multiplesideoutputexample-job-taskmanager:
     image: ${DOCKER_REGISTRY-}multiplesideoutputexample-job
     build:
-      context: .
       dockerfile: Dockerfile
       args:
         - MAVEN_ARGS=${EXTRA_MAVEN_ARGS-}
