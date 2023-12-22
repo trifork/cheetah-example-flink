@@ -1,25 +1,13 @@
 package cheetah.example.flinkstates.job;
 
-import cheetah.example.flinkstates.function.*;
-import cheetah.example.flinkstates.model.InputEvent;
-import com.trifork.cheetah.processing.connector.kafka.CheetahKafkaSource;
-import com.trifork.cheetah.processing.connector.kafka.config.CheetahKafkaSinkConfig;
-import com.trifork.cheetah.processing.connector.kafka.config.CheetahKafkaSourceConfig;
 import com.trifork.cheetah.processing.job.Job;
-import org.apache.flink.api.common.functions.RichFlatMapFunction;
-import org.apache.flink.connector.kafka.sink.KafkaSink;
-import org.apache.flink.connector.kafka.source.KafkaSource;
-import org.apache.flink.streaming.api.datastream.KeyedStream;
-import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
-import org.apache.flink.table.api.StatementSet;
-import org.apache.flink.table.api.Table;
-import org.apache.flink.table.api.TableResult;
-import org.apache.flink.table.api.bridge.java.StreamStatementSet;
+import io.strimzi.kafka.oauth.client.ClientConfig;
+import io.strimzi.kafka.oauth.client.JaasClientOauthLoginCallbackHandler;
+import io.strimzi.kafka.oauth.common.Config;
 import org.apache.flink.table.api.bridge.java.StreamTableEnvironment;
+import org.apache.kafka.common.security.oauthbearer.OAuthBearerLoginModule;
 
 import java.io.Serializable;
-import java.sql.Statement;
-import java.util.concurrent.ExecutionException;
 
 /**
  * FlinkStatesJob sets up the data processing job. It contains examples of using the different types of state
@@ -28,59 +16,106 @@ public class FlinkStatesJob extends Job implements Serializable {
 
     @SuppressWarnings("PMD.SignatureDeclareThrowsException") // Fix once lib-processing is fixed
     public static void main(final String[] args) throws Exception {
-        int index;
-
-        for (index = 0; index < args.length; ++index)
-        {
-            System.out.println("args[" + index + "]: " + args[index]);
-        }
         new FlinkStatesJob().start(args);
     }
 
     @Override
-    protected void setup() throws ExecutionException, InterruptedException {
-
-        // Input source
-        final KafkaSource<InputEvent> kafkaSource = CheetahKafkaSourceConfig.builder(this).toKafkaSourceBuilder(InputEvent.class).build();
-        final KeyedStream<InputEvent, String> keyedByStream = CheetahKafkaSource.toDataStream(this, kafkaSource, "Event Input Source")
-                .keyBy(InputEvent::getDeviceId);
-
-        // Setup each mapper and corresponding sink
-        mapAndSink(keyedByStream, new FlinkValueStatesMapper(), Double.class, "value");
-        mapAndSink(keyedByStream, new FlinkReducingStatesMapper(), Double.class, "reducing");
-        mapAndSink(keyedByStream, new FlinkAggregatingStatesMapper(), Double.class, "aggregating");
-        mapAndSink(keyedByStream, new FlinkMapStatesMapper(), Double.class, "map");
-        mapAndSink(keyedByStream, new FlinkListStatesMapper(), Double[].class, "list");
-
-
+    protected void setup() {
         //SQL
 
         //Get SQL Environment
-        StreamTableEnvironment tableEnv = StreamTableEnvironment.create(keyedByStream.getExecutionEnvironment());
-
-        //Connect to topics seen on RedPanda
-        String x = "FlinkStatesInputTopic";
-        //tableEnv.executeSql("CREATE TABLE IF NOT EXISTS FlinkStatesTable (deviceId STRING, `timestamp` BIGINT, `value` FLOAT) WITH ('connector'='kafka','topic'='" + x + "','properties.bootstrap.servers' = 'localhost:9093','properties.group.id' = 'FlinkStates-group-id','format'='json', 'scan.startup.mode' = 'earliest-offset');INSERT INTO FlinkStatesTable VALUES ('Jeff', "+ System.currentTimeMillis() +", 12.34);SELECT * FROM FlinkStatesTable");
+        StreamTableEnvironment tableEnv = StreamTableEnvironment.create(getStreamExecutionEnvironment());
 
 
-        StatementSet statement = tableEnv.createStatementSet();
-        statement.addInsertSql("INSERT INTO FlinkStatesTable VALUES ('Jeff', "+ System.currentTimeMillis() +", 12.34)");
-        statement.execute();
+        //Queries
+        String createSQL = "CREATE TABLE IF NOT EXISTS FlinkStatesTable (deviceId STRING, `timestamp` BIGINT, `value` FLOAT) WITH ('connector'='kafka','topic'='FlinkStatesInputTopic','properties.bootstrap.servers' = 'kafka:19093','properties.group.id' = 'FlinkStates-group-id','format'='json', 'scan.startup.mode' = 'earliest-offset')";
+        String insertSQL = "INSERT INTO FlinkStatesTable VALUES ('Jeff2', 5555, 12.34)";
+        String selectSQL = "SELECT * FROM FlinkStatesTable";
+        String showSQL = "SHOW PARTITIONS FlinkStatesTable";
 
-        //Insert statement
-        //tableEnv.executeSql("INSERT INTO FlinkStatesTable VALUES ('Jeff', "+ System.currentTimeMillis() +", 12.34)");
+        //Args example:
+        //--sql "INSERT INTO OutputTopicSQL SELECT * FROM InputTopicSQL WHERE deviceId like %27Martin%27" --source "InputTopicSQL" --sink "OutputTopicSQL"
 
-        //Select statement
-        TableResult tableResult1 = tableEnv.executeSql("SELECT * FROM FlinkStatesTable");
-        tableResult1.print();
+        //Create input topic / table
+        //If topic already exists - table data is based upon that and
+        //any data inserted is inserted into topic aswell.
+        //If topic doesnt exist - new topic is created.
+        String userSourceTopic = getParameters().get("source");
+        String sourceTableSQL = "CREATE TABLE IF NOT EXISTS " + userSourceTopic + " (" +
+                "deviceId STRING, " +
+                "`timestamp` BIGINT, " +
+                "`value` FLOAT" +
+                ") WITH (" +
+                "'connector'='kafka'," +
+                "'topic'='" + userSourceTopic + "'," +
+                "'properties.bootstrap.servers' = 'kafka:19092'," +
+                "'properties.group.id' = 'FlinkStates-group-id'," +
+                "'format'='json', " +
+                "'scan.startup.mode' = 'earliest-offset', " +
+                "'scan.bounded.mode' = 'latest-offset', " +
+                "'properties.sasl.mechanism' = '" + OAuthBearerLoginModule.OAUTHBEARER_MECHANISM + "', " +
+                "'properties.security.protocol' = 'SASL_PLAINTEXT', " +
+                "'properties.sasl.login.callback.handler.class' = '"+ JaasClientOauthLoginCallbackHandler.class.getName() + "', " +
+                "'properties.sasl.jaas.config' = '"+OAuthBearerLoginModule.class.getName() + " required "
+                + Config.OAUTH_CLIENT_ID + "=\"flink\" "
+                + Config.OAUTH_CLIENT_SECRET + "=\"testsecret\" "
+                + Config.OAUTH_SCOPE + "=\"flink\" "
+                + ClientConfig.OAUTH_TOKEN_ENDPOINT_URI + "=\"http://cheetahoauthsimulator/oauth2/token\";'"+
+                ")";
+        tableEnv.executeSql(sourceTableSQL);
 
-    }
 
-    public <T> void mapAndSink(KeyedStream<InputEvent, String> keyedStream, RichFlatMapFunction<InputEvent, T> function, Class<T> outputType, String kafkaPostFix){
 
-        final SingleOutputStreamOperator<T> outputStream = keyedStream.flatMap(function);
-        final KafkaSink<T> sink = CheetahKafkaSinkConfig.builder(this, kafkaPostFix).toSinkBuilder(outputType).build();
+        //Create output topic / table
+        String userSinkTopic = getParameters().get("sink");
+        String sinkTableSQL = "CREATE TABLE IF NOT EXISTS " + userSinkTopic + " (" +
+                "deviceId STRING, " +
+                "`timestamp` BIGINT, " +
+                "`value` FLOAT) " +
+                "WITH (" +
+                "'connector'='kafka'," +
+                "'topic'='" + userSinkTopic + "'," +
+                "'properties.bootstrap.servers' = 'kafka:19092'," +
+                "'properties.group.id' = 'FlinkStates-group-id'," +
+                "'format'='json', " +
+                "'scan.startup.mode' = 'earliest-offset', " +
+                "'properties.sasl.mechanism' = '" + OAuthBearerLoginModule.OAUTHBEARER_MECHANISM + "', " +
+                "'properties.security.protocol' = 'SASL_PLAINTEXT', " +
+                "'properties.sasl.login.callback.handler.class' = '"+ JaasClientOauthLoginCallbackHandler.class.getName() + "', " +
+                "'properties.sasl.jaas.config' = '"+OAuthBearerLoginModule.class.getName() + " required "
+                + Config.OAUTH_CLIENT_ID + "=\"flink\" "
+                + Config.OAUTH_CLIENT_SECRET + "=\"testsecret\" "
+                + Config.OAUTH_SCOPE + "=\"flink\" "
+                + ClientConfig.OAUTH_TOKEN_ENDPOINT_URI + "=\"http://cheetahoauthsimulator/oauth2/token\";'"+
+                ")";
+        tableEnv.executeSql(sinkTableSQL);
 
-        outputStream.sinkTo(sink);
+        //Execute user SQL
+        String userSQL = getParameters().get("sql").replaceAll( "%27", "'");
+        tableEnv.executeSql(userSQL);
+
+
+
+
+
+
+        //Insert some data
+//        String partition = "INSERT INTO InputTableSQL VALUES ('Jeff', " + System.currentTimeMillis() + ", 13.37)";
+//        String partition1 = "INSERT INTO InputTableSQL VALUES ('Martin', " + System.currentTimeMillis() + ", 80.085)";
+//        String partition2 = "INSERT INTO InputTableSQL VALUES ('Karsten', " + System.currentTimeMillis() + ", 77.7)";
+//        String partition3 = "INSERT INTO InputTableSQL VALUES ('Steen', " + System.currentTimeMillis() + ", 10.10)";
+//
+//        StatementSet statementSet = tableEnv.createStatementSet();
+//        statementSet.addInsertSql(partition);
+//        statementSet.addInsertSql(partition1);
+//        statementSet.addInsertSql(partition2);
+//        statementSet.addInsertSql(partition3);
+//        statementSet.execute();
+
+        //Print
+        //Convert table to datastream and print
+        //DataStream<InputEvent> resultStream = tableEnv.toDataStream(resultTable, InputEvent.class);
+        //resultStream.print();
+
     }
 }

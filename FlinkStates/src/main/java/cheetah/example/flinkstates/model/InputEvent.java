@@ -14,6 +14,15 @@ import lombok.Setter;
 @NoArgsConstructor
 public class InputEvent {
     private String deviceId;
-    private double value;
     private long timestamp;
+    private double value;
+
+    @Override
+    public String toString() {
+        return "InputEvent{" +
+                "deviceId='" + deviceId + '\'' +
+                ", timestamp=" + timestamp +
+                ", value=" + value +
+                '}';
+    }
 }

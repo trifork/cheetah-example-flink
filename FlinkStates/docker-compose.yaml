@@ -42,6 +42,7 @@ services:
         parallelism.default: 2
     volumes:
       - flink:/checkpoints
+      - ./src/main/resources/log4j2.properties:/opt/flink/conf/log4j2.properties
 
   flinkstates-taskmanager:
     image: ${DOCKER_REGISTRY-}flinkstates-job
@@ -58,9 +59,10 @@ services:
         FLINK_PROPERTIES=
         jobmanager.rpc.address: flinkstates-jobmanager
         taskmanager.memory.process.size: 4gb
-        taskmanager.numberOfTaskSlots: 2
+        taskmanager.numberOfTaskSlots: 1
     volumes:
       - flink:/checkpoints
+      - ./src/main/resources/log4j2.properties:/opt/flink/conf/log4j2.properties
 
 volumes:
   flink:
