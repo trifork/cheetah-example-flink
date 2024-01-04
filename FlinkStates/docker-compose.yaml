@@ -59,7 +59,7 @@ services:
         FLINK_PROPERTIES=
         jobmanager.rpc.address: flinkstates-jobmanager
         taskmanager.memory.process.size: 4gb
-        taskmanager.numberOfTaskSlots: 1
+        taskmanager.numberOfTaskSlots: 2
     volumes:
       - flink:/checkpoints
       - ./src/main/resources/log4j2.properties:/opt/flink/conf/log4j2.properties
