@@ -10,9 +10,10 @@ services:
         - GITHUB_ACTOR
     environment:
       KAFKA__URL: kafka:19092
-      KAFKA__CLIENTID: ClientId
-      KAFKA__CLIENTSECRET: 1234
-      KAFKA__AUTHENDPOINT: http://cheetahoauthsimulator/oauth2/token
+      KAFKA__OAUTH2__CLIENTID: default-access
+      KAFKA__OAUTH2__CLIENTSECRET: default-access-secret
+      KAFKA__OAUTH2__SCOPE: kafka
+      KAFKA__OAUTH2__TOKENENDPOINT: http://keycloak:1852/realms/local-development/protocol/openid-connect/token
     depends_on:
       enrichstream-jobmanager:
         condition: service_healthy
@@ -36,9 +37,10 @@ services:
       --input-kafka-topic-main EnrichStreamInputTopic
       --output-kafka-topic EnrichStreamOutputTopic
     environment:
-      KAFKA_CLIENT_ID: ClientId
-      KAFKA_CLIENT_SECRET: 1234
-      KAFKA_TOKEN_URL: http://cheetahoauthsimulator/oauth2/token
+      KAFKA_CLIENT_ID: default-access
+      KAFKA_CLIENT_SECRET: default-access-secret
+      KAFKA_SCOPE: kafka
+      KAFKA_TOKEN_URL: http://keycloak:1852/realms/local-development/protocol/openid-connect/token
       FLINK_PROPERTIES: |
         jobmanager.rpc.address: enrichstream-jobmanager
         scheduler-mode: reactive
