@@ -41,16 +41,18 @@ public class FlinkStatesJob extends Job implements Serializable {
         //Create example of api-call to run job with args
 
         /* ARGS EXAMPLE */
-        //--sql "INSERT INTO MultiSourceOutput SELECT InputTopicSQL.deviceId, InputTopicSQL.`timestamp`, OutputTopicSQL.`value` FROM InputTopicSQL JOIN OutputTopicSQL ON InputTopicSQL.`timestamp` = OutputTopicSQL.`timestamp` WHERE InputTopicSQL.`timestamp` > 2222" --source "InputTopicSQL" --source1 "OutputTopicSQL" --sink "MultiSourceOutput" --sourceSql "deviceId STRING, `timestamp` BIGINT, `value` FLOAT" --sourceSql1 "deviceId STRING, `timestamp` BIGINT, `value` FLOAT" --sinkSql "deviceId STRING, `timestamp` BIGINT, `value` FLOAT"
+        //--sql "INSERT INTO MultiSourceOutput SELECT InputTopicSQL.deviceId, InputTopicSQL.`timestamp`, OutputTopicSQL.`value` FROM InputTopicSQL JOIN OutputTopicSQL ON InputTopicSQL.`timestamp` = OutputTopicSQL.`timestamp` WHERE InputTopicSQL.`timestamp` > 2222" --source "InputTopicSQL" --source1 "OutputTopicSQL" --sink "MultiSourceOutput" --sourceSql "deviceId STRING, `timestamp` BIGINT, `value` FLOAT" --sourceSql1 "deviceId STRING, `timestamp` BIGINT, `value` FLOAT" --sinkSql "deviceId STRING, `timestamp` BIGINT, `value` FLOAT" --groupId "Sql-group-id" --clientId "Sql-client-id"
 
         //Query desc: inserts deviceId, timestamp, value from InputTopicSQL where timestamp matches timestamp in OutputTopicSQL and timestamp is bigger than 2222 in InputTopicSQL
-        //--sql "INSERT INTO MultiSourceOutput SELECT InputTopicSQL.deviceId, InputTopicSQL.`timestamp`, OutputTopicSQL.`value` FROM InputTopicSQL JOIN OutputTopicSQL ON InputTopicSQL.`timestamp` = OutputTopicSQL.`timestamp` WHERE InputTopicSQL.`timestamp` > 2222"
+        // --sql "INSERT INTO MultiSourceOutput SELECT InputTopicSQL.deviceId, InputTopicSQL.`timestamp`, OutputTopicSQL.`value` FROM InputTopicSQL JOIN OutputTopicSQL ON InputTopicSQL.`timestamp` = OutputTopicSQL.`timestamp` WHERE InputTopicSQL.`timestamp` > 2222"
         // --source "InputTopicSQL"
         // --source1 "OutputTopicSQL"
         // --sink "MultiSourceOutput"
         // --sourceSql "deviceId STRING, `timestamp` BIGINT, `value` FLOAT"
         // --sourceSql1 "deviceId STRING, `timestamp` BIGINT, `value` FLOAT"
         // --sinkSql "deviceId STRING, `timestamp` BIGINT, `value` FLOAT"
+        // --groupId "Sql-group-id"
+        // --clientId "Sql-client-id"
 
         /* LIMITATIONS */
         //The SQL-Job can execute ONE query per job not including CREATE statements
@@ -60,20 +62,24 @@ public class FlinkStatesJob extends Job implements Serializable {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         StreamTableEnvironment tableEnv = StreamTableEnvironment.create(env);
 
+        //Extract groupId and clientId
+        String groupId = getParameters().get("groupId");
+        String clientId = getParameters().get("clientId");
+
         //Create source table / topic
         String userSourceTopic = getParameters().get("source");
         String userSourceSql = getParameters().get("sourceSql");
-        createTable(userSourceTopic, tableEnv, userSourceSql);
+        createTable(userSourceTopic, tableEnv, userSourceSql, groupId, clientId);
 
         //Create another source table / topic
         String userSourceTopic1 = getParameters().get("source1");
         String userSourceSql1 = getParameters().get("sourceSql1");
-        createTable(userSourceTopic1, tableEnv, userSourceSql1);
+        createTable(userSourceTopic1, tableEnv, userSourceSql1, groupId, clientId);
 
         //Create sink table / topic
         String userSinkTopic = getParameters().get("sink");
         String userSinkSql = getParameters().get("sinkSql");
-        createTable(userSinkTopic, tableEnv, userSinkSql);
+        createTable(userSinkTopic, tableEnv, userSinkSql, groupId, clientId);
 
         //Execute user SQL
         String userSQL = getParameters().get("sql").replaceAll( "%27", "'");
@@ -88,7 +94,7 @@ public class FlinkStatesJob extends Job implements Serializable {
 
     }
 
-    public void createTable(String topicName, StreamTableEnvironment tableEnv, String tableSql) {
+    public void createTable(String topicName, StreamTableEnvironment tableEnv, String tableSql, String groupId, String clientId) {
         //Create input topic / table
         //If topic already exists - table data is based upon that and
         //any data inserted is inserted into topic aswell.
@@ -99,7 +105,7 @@ public class FlinkStatesJob extends Job implements Serializable {
                 "'connector'='kafka'," +
                 "'topic'='" + topicName + "'," +
                 "'properties.bootstrap.servers' = 'kafka:19092'," +
-                "'properties.group.id' = 'Sql-group-id'," +
+                "'properties.group.id' = '" + groupId + "'," +
                 "'format'='json', " +
                 "'scan.startup.mode' = 'earliest-offset', " +
         //        "'scan.bounded.mode' = 'latest-offset', " +
@@ -107,13 +113,11 @@ public class FlinkStatesJob extends Job implements Serializable {
                 "'properties.security.protocol' = 'SASL_PLAINTEXT', " +
                 "'properties.sasl.login.callback.handler.class' = '"+ JaasClientOauthLoginCallbackHandler.class.getName() + "', " +
                 "'properties.sasl.jaas.config' = '"+OAuthBearerLoginModule.class.getName() + " required "
-                + Config.OAUTH_CLIENT_ID + "=\"flink\" "
+                + Config.OAUTH_CLIENT_ID + "= " + clientId + " "
                 + Config.OAUTH_CLIENT_SECRET + "=\"testsecret\" "
                 + Config.OAUTH_SCOPE + "=\"flink\" "
                 + ClientConfig.OAUTH_TOKEN_ENDPOINT_URI + "=\"http://cheetahoauthsimulator/oauth2/token\";'"+
                 ")";
         tableEnv.executeSql(tableSQL);
     }
-
-
 }
