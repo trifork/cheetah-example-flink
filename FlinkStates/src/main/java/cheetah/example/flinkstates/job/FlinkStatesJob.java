@@ -40,24 +40,34 @@ public class FlinkStatesJob extends Job implements Serializable {
         //Investigate running multiple jobs
         //Create example of api-call to run job with args
 
+        /* ARGS EXAMPLE */
+        //--sql "INSERT INTO MultiSourceOutput SELECT InputTopicSQL.deviceId, InputTopicSQL.`timestamp`, OutputTopicSQL.`value` FROM InputTopicSQL JOIN OutputTopicSQL ON InputTopicSQL.`timestamp` = OutputTopicSQL.`timestamp` WHERE InputTopicSQL.`timestamp` > 2222" --source "InputTopicSQL" --source1 "OutputTopicSQL" --sink "MultiSourceOutput" --sourceSql "deviceId STRING, `timestamp` BIGINT, `value` FLOAT" --sourceSql1 "deviceId STRING, `timestamp` BIGINT, `value` FLOAT" --sinkSql "deviceId STRING, `timestamp` BIGINT, `value` FLOAT"
+
+        //--sql "INSERT INTO MultiSourceOutput SELECT InputTopicSQL.deviceId, OutputTopicSQL.`value` FROM InputTopicSQL JOIN OutputTopicSQL ON InputTopicSQL.`timestamp` = OutputTopicSQL.`timestamp` WHERE InputTopicSQL.`timestamp` > 2222"
+        // --source "InputTopicSQL"
+        // --source1 "OutputTopicSQL"
+        // --sink "MultiSourceOutput"
+        // --sourceSql "deviceId STRING, `timestamp` BIGINT, `value` FLOAT"
+        // --sourceSql1 "deviceId STRING, `timestamp` BIGINT, `value` FLOAT"
+        // --sinkSql "deviceId STRING, `timestamp` BIGINT, `value` FLOAT"
+
+        /* LIMITATIONS */
+        //The SQL-Job can execute ONE query per job not including CREATE statements
+
+
         //Create SQL Environment
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         StreamTableEnvironment tableEnv = StreamTableEnvironment.create(env);
-
-        /* ARGS EXAMPLE */
-        //--sql "INSERT INTO OutputTopicSQL SELECT * FROM InputTopicSQL WHERE deviceId like %27Mort%27" --source "InputTopicSQL" --sink "OutputTopicSQL" --sourceSql "deviceId STRING, `timestamp` BIGINT, `value` FLOAT" --sinkSql "deviceId STRING, `timestamp` BIGINT, `value` FLOAT"
-
-        //--sql "INSERT INTO OutputTopicSQL SELECT * FROM InputTopicSQL WHERE deviceId like %27Mort%27"
-        // --source "InputTopicSQL"
-        // --sink "OutputTopicSQL"
-        // --sourceSql "deviceId STRING, `timestamp` BIGINT, `value` FLOAT"
-        // --sinkSql "deviceId STRING, `timestamp` BIGINT, `value` FLOAT"
-
 
         //Create source table / topic
         String userSourceTopic = getParameters().get("source");
         String userSourceSql = getParameters().get("sourceSql");
         createTable(userSourceTopic, tableEnv, userSourceSql);
+
+        //Create another source table / topic
+        String userSourceTopic1 = getParameters().get("source1");
+        String userSourceSql1 = getParameters().get("sourceSql1");
+        createTable(userSourceTopic1, tableEnv, userSourceSql1);
 
         //Create sink table / topic
         String userSinkTopic = getParameters().get("sink");
