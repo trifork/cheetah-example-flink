@@ -1,16 +1,25 @@
 package cheetah.example.flinkstates.job;
 
+import cheetah.example.flinkstates.model.InputEvent;
+import com.trifork.cheetah.processing.connector.kafka.CheetahKafkaSink;
+import com.trifork.cheetah.processing.connector.kafka.CheetahKafkaSource;
 import com.trifork.cheetah.processing.connector.kafka.config.CheetahKafkaSinkConfig;
-import com.trifork.cheetah.processing.connector.kafka.config.CheetahKafkaSinkConfigBuilder;
 import com.trifork.cheetah.processing.connector.kafka.config.CheetahKafkaSourceConfig;
 import com.trifork.cheetah.processing.job.Job;
 import io.strimzi.kafka.oauth.client.ClientConfig;
 import io.strimzi.kafka.oauth.client.JaasClientOauthLoginCallbackHandler;
 import io.strimzi.kafka.oauth.common.Config;
+import org.apache.flink.connector.kafka.sink.KafkaSink;
+import org.apache.flink.connector.kafka.source.KafkaSource;
+import org.apache.flink.streaming.api.datastream.DataStream;
+import org.apache.flink.streaming.api.datastream.KeyedStream;
+import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
+import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.table.api.bridge.java.StreamTableEnvironment;
 import org.apache.kafka.common.security.oauthbearer.OAuthBearerLoginModule;
 
 import java.io.Serializable;
+import java.util.concurrent.ExecutionException;
 
 /**
  * FlinkStatesJob sets up the data processing job. It contains examples of using the different types of state
@@ -24,11 +33,25 @@ public class FlinkStatesJob extends Job implements Serializable {
 
     @Override
     protected void setup() {
-        //Create SQL Environment
-        StreamTableEnvironment tableEnv = StreamTableEnvironment.create(getStreamExecutionEnvironment());
+        /* TO DO */
+        //Fix no operator defined in flink topology exception
+        //Fix SaslCallbackHandler not castable exception
+        //Investigate multiple sources query
+        //Investigate running multiple jobs
+        //Create example of api-call to run job with args
 
-        //Args example:
+        //Create SQL Environment
+        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+        StreamTableEnvironment tableEnv = StreamTableEnvironment.create(env);
+
+        /* ARGS EXAMPLE */
         //--sql "INSERT INTO OutputTopicSQL SELECT * FROM InputTopicSQL WHERE deviceId like %27Mort%27" --source "InputTopicSQL" --sink "OutputTopicSQL" --sourceSql "deviceId STRING, `timestamp` BIGINT, `value` FLOAT" --sinkSql "deviceId STRING, `timestamp` BIGINT, `value` FLOAT"
+
+        //--sql "INSERT INTO OutputTopicSQL SELECT * FROM InputTopicSQL WHERE deviceId like %27Mort%27"
+        // --source "InputTopicSQL"
+        // --sink "OutputTopicSQL"
+        // --sourceSql "deviceId STRING, `timestamp` BIGINT, `value` FLOAT"
+        // --sinkSql "deviceId STRING, `timestamp` BIGINT, `value` FLOAT"
 
 
         //Create source table / topic
@@ -46,28 +69,15 @@ public class FlinkStatesJob extends Job implements Serializable {
         tableEnv.executeSql(userSQL);
 
 
-//        --Insert data
-//        String partition = "INSERT INTO InputTopicSQL VALUES ('Jeff', 1111, 13.37)";
-//        String partition1 = "INSERT INTO InputTopicSQL VALUES ('Martin', 2222, 88.88)";
-//        String partition2 = "INSERT INTO InputTopicSQL VALUES ('Karsten', 3333, 77.7)";
-//        String partition3 = "INSERT INTO InputTopicSQL VALUES ('Steen', 4444, 10.10)";
-//
-//        StatementSet statementSet = tableEnv.createStatementSet();
-//        statementSet.addInsertSql(partition);
-//        statementSet.addInsertSql(partition1);
-//        statementSet.addInsertSql(partition2);
-//        statementSet.addInsertSql(partition3);
-//        statementSet.execute();
-//
+
 //        --Print
 //        Convert table to datastream and print
-//        DataStream<InputEvent> resultStream = tableEnv.toDataStream(resultTable, InputEvent.class);
+//        DataStream<InputEvent> resultStream = tableEnv.toDataStream(tableEnv.from("OutputTopicSQL"), InputEvent.class);
 //        resultStream.print();
 
     }
 
     public void createTable(String topicName, StreamTableEnvironment tableEnv, String tableSql) {
-
         //Create input topic / table
         //If topic already exists - table data is based upon that and
         //any data inserted is inserted into topic aswell.
@@ -81,7 +91,7 @@ public class FlinkStatesJob extends Job implements Serializable {
                 "'properties.group.id' = 'Sql-group-id'," +
                 "'format'='json', " +
                 "'scan.startup.mode' = 'earliest-offset', " +
-                "'scan.bounded.mode' = 'latest-offset', " +
+        //        "'scan.bounded.mode' = 'latest-offset', " +
                 "'properties.sasl.mechanism' = '" + OAuthBearerLoginModule.OAUTHBEARER_MECHANISM + "', " +
                 "'properties.security.protocol' = 'SASL_PLAINTEXT', " +
                 "'properties.sasl.login.callback.handler.class' = '"+ JaasClientOauthLoginCallbackHandler.class.getName() + "', " +
@@ -93,4 +103,6 @@ public class FlinkStatesJob extends Job implements Serializable {
                 ")";
         tableEnv.executeSql(tableSQL);
     }
+
+
 }
