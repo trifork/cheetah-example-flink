@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Cheetah.ComponentTest.Kafka;
+using Cheetah.Kafka.Testing;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Xunit;
@@ -17,12 +17,14 @@ public class ComponentTest
     public ComponentTest()
     {
         // These will be overriden by environment variables from compose
-        var conf = new Dictionary<string, string>()
+        var conf = new Dictionary<string, string?>
         {
-            {"KAFKA:AUTHENDPOINT", "http://localhost:1752/oauth2/token"},
-            {"KAFKA:CLIENTID", "ClientId" },
-            {"KAFKA:CLIENTSECRET", "1234" },
-            {"KAFKA:URL", "localhost:9092"}
+            { "KAFKA:URL", "localhost:9092" },
+            { "KAFKA:OAUTH2:CLIENTID", "default-access" },
+            { "KAFKA:OAUTH2:CLIENTSECRET", "default-access-secret" },
+            { "KAFKA:OAUTH2:SCOPE", "kafka" },
+            { "KAFKA:OAUTH2:TOKENENDPOINT", "http://localhost:1852/realms/local-development/protocol/openid-connect/token" },
+            { "KAFKA:SCHEMAREGISTRYURL", "http://localhost:8081/apis/ccompat/v7" }
         };
         _configuration = new ConfigurationBuilder()
             .AddInMemoryCollection(conf)
@@ -34,22 +36,15 @@ public class ComponentTest
     public async Task External_Lookup_Component_Test()
     {
         // Arrange
-        // Here you'll set up one or more writers and readers, which connect to the topic(s) that your job consumes
-        // from and publishes to. 
-        var writer = KafkaWriterBuilder.Create<string, InputEvent>(_configuration)
-            .WithTopic("ExternalLookupInputTopic") // The topic to consume from
-            .WithKeyFunction(model => model.DeviceId) // Optional function to retrieve the message key.
-                                                          // If no key is desired, use KafkaWriterBuilder.Create<Null, InputModel>
-                                                          // and make this function return null
-            .Build();
-
-        var reader = KafkaReaderBuilder.Create<string, OutputEvent>(_configuration)
-            .WithTopic("ExternalLookupOutputTopic")
-            .WithConsumerGroup("MyGroup")
-            .Build();
+        // Create a KafkaTestClientFactory to create KafkaTestReaders and KafkaTestWriters
+        var kafkaClientFactory = KafkaTestClientFactory.Create(_configuration);
+        
+        // Create a KafkaTestWriter to write messages and a KafkaTestReader to read messages
+        var writer = kafkaClientFactory.CreateTestWriter<string, InputEvent>("ExternalLookupInputTopic",model => model.DeviceId);
+        var reader = kafkaClientFactory.CreateTestReader<string, OutputEvent>("ExternalLookupOutputTopic", "MyGroup");
         
         // Act
-        // Write one or more messages to the writer
+        // Create Input event and publish it to Kafka
         var inputEvent = new InputEvent()
         {
             DeviceId = "deviceId-1",
@@ -60,11 +55,9 @@ public class ComponentTest
         await writer.WriteAsync(inputEvent);
         
         // Assert
-        // Then consume using the reader, supplying how many output messages your input messages expected to generate
-        // as well as the maximum duration it is allowed to take for those messages to be produced
+        // Verify one message was written to Kafka and that the message is the same as the input event with an additional field
         var messages = reader.ReadMessages(1, TimeSpan.FromSeconds(20));
         
-        // Then evaluate whether your messages are as expected, and that there are only as many as you expected 
         messages.Should().ContainSingle(message => 
             message.DeviceId == inputEvent.DeviceId && 
             message.Value == inputEvent.Value &&

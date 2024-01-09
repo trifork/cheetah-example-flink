@@ -38,7 +38,7 @@ public class ComponentTest
         // Create a KafkaTestClientFactory to create KafkaTestReaders and KafkaTestWriters
         var kafkaClientFactory = KafkaTestClientFactory.Create(_configuration);
         
-        // Create a KafkaTestWriters for the input topics and a KafkaTestReader for the output topic
+        // Create KafkaTestWriters for the input topics and a KafkaTestReader for the output topic
         var enrichEventWriter = kafkaClientFactory.CreateTestWriter<EnrichEvent>("EnrichStreamEnrichTopic");
         var inputEventWriter= kafkaClientFactory.CreateTestWriter<InputEvent>("EnrichStreamInputTopic");
         var outputReader = kafkaClientFactory.CreateTestReader<OutputEvent>("EnrichStreamOutputTopic", "MyGroup");
