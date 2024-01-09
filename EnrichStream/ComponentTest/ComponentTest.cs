@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Xunit;
@@ -15,7 +16,17 @@ public class ComponentTest
 
     public ComponentTest()
     {
+        var conf = new Dictionary<string, string?>
+        {
+            { "KAFKA:URL", "localhost:9092" },
+            { "KAFKA:OAUTH2:CLIENTID", "default-access" },
+            { "KAFKA:OAUTH2:CLIENTSECRET", "default-access-secret" },
+            { "KAFKA:OAUTH2:SCOPE", "kafka" },
+            { "KAFKA:OAUTH2:TOKENENDPOINT", "http://localhost:1852/realms/local-development/protocol/openid-connect/token" },
+            { "KAFKA:SCHEMAREGISTRYURL", "http://localhost:8081/apis/ccompat/v7" }
+        };
         _configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(conf)
             .AddEnvironmentVariables()
             .Build();
     }
