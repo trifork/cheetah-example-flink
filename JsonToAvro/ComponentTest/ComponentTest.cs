@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Cheetah.ComponentTest.Kafka;
+using Cheetah.Kafka.Testing;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Xunit;
@@ -18,10 +18,11 @@ public class ComponentTest
         // These will be overriden by environment variables from compose
         var conf = new Dictionary<string, string>()
         {
-            { "KAFKA:AUTHENDPOINT", "http://localhost:1752/oauth2/token" },
-            { "KAFKA:CLIENTID", "ClientId" },
-            { "KAFKA:CLIENTSECRET", "1234" },
             { "KAFKA:URL", "localhost:9092" },
+            { "KAFKA:OAUTH2:CLIENTID", "default-access" },
+            { "KAFKA:OAUTH2:CLIENTSECRET", "default-access-secret" },
+            { "KAFKA:OAUTH2:SCOPE", "kafka schema-registry" },
+            { "KAFKA:OAUTH2:TOKENENDPOINT", "http://localhost:1852/realms/local-development/protocol/openid-connect/token" },
             { "KAFKA:SCHEMAREGISTRYURL", "http://localhost:8081/apis/ccompat/v7" }
         };
         _configuration = new ConfigurationBuilder()
@@ -34,23 +35,15 @@ public class ComponentTest
     public void Should_BeImplemented_When_ServiceIsCreated()
     {
         // Arrange
-        // Here you'll set up one or more writers and readers, which connect to the topic(s) that your job consumes
-        // from and publishes to. 
-        var writer = KafkaWriterBuilder.Create<string, InputEvent>(_configuration)
-            .WithTopic("jsonToAvroInputTopic") // The topic to consume from
-            .WithKeyFunction(model => model.DeviceId) // Optional function to retrieve the message key.
-                                                          // If no key is desired, use KafkaWriterBuilder.Create<Null, InputModel>
-                                                          // and make this function return null
-            .Build();
-
-        var reader = KafkaReaderBuilder.Create<string, OutputEventAvro>(_configuration)
-            .WithTopic("jsonToAvroOutputTopic")
-            .WithConsumerGroup("MyGroup")
-            .UsingAvro()
-            .Build();
+        // Create a KafkaTestClientFactory to create KafkaTestReaders and KafkaTestWriters
+        var kafkaClientFactory = KafkaTestClientFactory.Create(_configuration);
+        
+        // Create writer and reader
+        var writer = kafkaClientFactory.CreateTestWriter<InputEvent>("jsonToAvroInputTopic");
+        var reader = kafkaClientFactory.CreateAvroTestReader<OutputEventAvro>("jsonToAvroOutputTopic");
         
         // Act
-        // Write one or more messages to the writer
+        // Create InputEvent
         var inputEvent = new InputEvent()
         {
             DeviceId = "deviceId-1",
@@ -61,11 +54,8 @@ public class ComponentTest
         writer.WriteAsync(inputEvent);
         
         // Assert
-        // Then consume using the reader, supplying how many output messages your input messages expected to generate
-        // as well as the maximum duration it is allowed to take for those messages to be produced
-        var messages = reader.ReadMessages(1, TimeSpan.FromSeconds(20));
+        var messages = reader.ReadMessages(1, TimeSpan.FromSeconds(10));
         
-        // Then evaluate whether your messages are as expected, and that theSre are only as many as you expected 
         messages.Should().ContainSingle(message => 
             message.deviceId == inputEvent.DeviceId && 
             message.value == inputEvent.Value &&
