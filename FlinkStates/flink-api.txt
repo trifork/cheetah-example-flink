@@ -1,0 +1,19 @@
+C:/Users/wille/OneDrive/Skrivebord/Trifork/Code/cheetah-example-flink/FlinkStates/target/flinkstates-0.0.1-shaded.jar
+
+
+UPLOAD
+curl -X POST "Expect:" -F "jarfile=@C:/Users/wille/OneDrive/Skrivebord/Trifork/Code/cheetah-example-flink/FlinkStates/target/flinkstates-0.0.1-shaded.jar" http://localhost:8082/jars/upload?entry-class=cheetah.example.flinkstates.job.FlinkStatesJob
+
+
+RUN
+curl -X POST http://localhost:8082/jars/5418e851-177d-4de9-8aa7-6fcaeda40a35_flinkstates-0.0.1-shaded.jar/run
+
+
+RUN W/ ENTRY
+curl -X POST http://localhost:8082/jars/2077506e-39fb-4251-8160-8b37c3e2fbec_flinkstates-0.0.1-shaded.jar/run?entry-class=cheetah.example.flinkstates.job.FlinkStatesJob
+
+
+RUN W/ ENTRY+ARG
+curl -X POST -H 'Content-Type: application/json' --data '{"programArgsList" : ["--kafka-bootstrap-servers", "kafka:19092", "--kafka-group-id", "FlinkStates-group-id", "--kafka-security-protocol", "SASL_PLAINTEXT", "--input-kafka-topic", "FlinkStatesInputTopic", "--output-kafka-topic-value", "FlinkStatesOutputTopic-value", "--output-kafka-topic-reducing", "FlinkStatesOutputTopic-reducing", "--output-kafka-topic-aggregating", "FlinkStatesOutputTopic-aggregating", "--output-kafka-topic-list", "FlinkStatesOutputTopic-list", "--output-kafka-topic-map", "FlinkStatesOutputTopic-map" ], "parallelism": 30 }' http://localhost:8082/jars/743a547e-b6de-4f9d-8133-348b77b1e4c7_flinkstates-0.0.1-shaded.jar/run
+
+

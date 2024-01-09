@@ -1,0 +1,39 @@
+/* JOB API ENDPOINTS */
+
+/* UPLOAD JOB */
+curl -X POST
+    "Expect:"
+    -F "jarfile=@C:/Users/wille/OneDrive/Skrivebord/Trifork/Code/cheetah-example-flink/FlinkStates/target/flinkstates-0.0.1-shaded.jar"
+  http://localhost:8082/jars/upload
+
+curl -X POST "Expect:" -F "jarfile=@C:/Users/wille/OneDrive/Skrivebord/Trifork/Code/cheetah-example-flink/FlinkStates/target/flinkstates-0.0.1-shaded.jar" http://localhost:8082/jars/upload
+
+
+/* RUN JOB */
+curl -X POST -H 'Content-Type: application/json' --data
+    '{"entryClass": "cheetah.example.flinkstates.job.FlinkStatesJob",
+        "programArgsList" : [
+            "--kafka-bootstrap-servers", "kafka:19092",
+            "--kafka-group-id", "FlinkSQL-group-id",
+            "--kafka-security-protocol", "SASL_PLAINTEXT",
+            "--input-kafka-topic", "InputTopicSQL",
+            "--output-kafka-topic","OutputTopicSQL",
+            "--sql", "INSERT INTO OutputTopicSQL SELECT * FROM InputTopicSQL WHERE deviceId like %27Mort%27",
+            "--source", "InputTopicSQL",
+            "--sink", "OutputTopicSQL",
+            "--sourceSql", "deviceId STRING, `timestamp` BIGINT, `value` FLOAT",
+            "--sinkSql", "deviceId STRING, `timestamp` BIGINT, `value` FLOAT"
+            ]
+        }'
+    http://localhost:8082/jars/17bc6019-1a70-4b5c-a8e5-c19841da30bf_flinkstates-0.0.1-shaded.jar/run
+
+
+curl -X POST -H 'Content-Type: application/json' --data '{"entryClass": "cheetah.example.flinkstates.job.FlinkStatesJob","programArgsList" : ["--kafka-bootstrap-servers", "kafka:19092","--kafka-group-id", "FlinkSQL-group-id","--kafka-security-protocol", "SASL_PLAINTEXT","--input-kafka-topic", "InputTopicSQL","--output-kafka-topic","OutputTopicSQL","--sql", "INSERT INTO OutputTopicSQL SELECT * FROM InputTopicSQL WHERE deviceId like %27Mort%27","--source", "InputTopicSQL","--sink", "OutputTopicSQL","--sourceSql", "deviceId STRING, `timestamp` BIGINT, `value` FLOAT","--sinkSql", "deviceId STRING, `timestamp` BIGINT, `value` FLOAT"]}' http://localhost:8082/jars/b7cb3723-dbd2-4ca5-b6de-758b839da599_flinkstates-0.0.1-shaded.jar/run
+
+
+/* STOP JOB */
+curl -X POST
+    http://localhost:8082/jobs/52c6bb5d-1144-4dba-8060-1a432af1902b_flinkstates-0.0.1-shaded.jar/stop
+
+curl -X POST http://localhost:8082/jobs/52c6bb5d-1144-4dba-8060-1a432af1902b_flinkstates-0.0.1-shaded.jar/stop
+

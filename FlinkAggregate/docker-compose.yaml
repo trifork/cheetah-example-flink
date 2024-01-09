@@ -1,52 +1,66 @@
----
 version: "3"
 services:
-#  flinkstates-test:
-#    build:
-#      context: ComponentTest
-#      dockerfile: Dockerfile
-#      secrets:
-#        - GITHUB_TOKEN
-#        - GITHUB_ACTOR
-#    environment:
-#      KAFKA__URL: kafka:19092
-#      KAFKA__CLIENTID: ClientId
-#      KAFKA__CLIENTSECRET: 1234
-#      KAFKA__AUTHENDPOINT: http://cheetahoauthsimulator/oauth2/token
+  flinkstates-test:
+    build:
+      context: ComponentTest
+      dockerfile: Dockerfile
+      secrets:
+        - GITHUB_TOKEN
+        - GITHUB_ACTOR
+    environment:
+      KAFKA__URL: kafka:19092
+      KAFKA__CLIENTID: ClientId
+      KAFKA__CLIENTSECRET: 1234
+      KAFKA__AUTHENDPOINT: http://cheetahoauthsimulator/oauth2/token
+    depends_on:
+      flinkstates-jobmanager:
+        condition: service_healthy
 
   flinkstates-jobmanager:
     image: ${DOCKER_REGISTRY-}flinkstates-job
     build:
+      context: .
       dockerfile: Dockerfile
       args:
         - MAVEN_ARGS=${EXTRA_MAVEN_ARGS-}
       secrets:
         - GITHUB_TOKEN
         - GITHUB_ACTOR
-    ports:
-      - "8082:8081"
-    command: jobmanager
+    command: |
+      standalone-job
+      --job-classname cheetah.example.flinkstates.job.FlinkStatesJob
+      --kafka-bootstrap-servers kafka:19092
+      --kafka-group-id FlinkStates-group-id
+      --kafka-security-protocol SASL_PLAINTEXT
+      --input-kafka-topic FlinkStatesInputTopic
+      --output-kafka-topic-aggregating FlinkStatesOutputTopic-aggregating
     environment:
       KAFKA_CLIENT_ID: ClientId
       KAFKA_CLIENT_SECRET: 1234
       KAFKA_TOKEN_URL: http://cheetahoauthsimulator/oauth2/token
       FLINK_PROPERTIES: |
         jobmanager.rpc.address: flinkstates-jobmanager
+        scheduler-mode: reactive
         rest.flamegraph.enabled: true
         state.backend: rocksdb
         state.checkpoints.dir: file:///checkpoints/processing
         state.savepoints.dir: file:///checkpoints/processing
         execution.checkpointing.interval: 300 seconds
         execution.checkpointing.min-pause: 240 seconds
-        taskmanager.numberOfTaskSlots: 2
-        parallelism.default: 2
+    depends_on:
+      - flinkstates-taskmanager
     volumes:
       - flink:/checkpoints
-      - ./src/main/resources/log4j2.properties:/opt/flink/conf/log4j2.properties
+    healthcheck:
+      test: curl localhost:8081/jobs | grep -q '"status":"RUNNING"' || exit -1
+      interval: 1s
+      timeout: 1s
+      retries: 30
 
   flinkstates-taskmanager:
     image: ${DOCKER_REGISTRY-}flinkstates-job
     build:
+      context: .
       dockerfile: Dockerfile
       args:
         - MAVEN_ARGS=${EXTRA_MAVEN_ARGS-}
@@ -62,7 +76,6 @@ services:
         taskmanager.numberOfTaskSlots: 2
     volumes:
       - flink:/checkpoints
-      - ./src/main/resources/log4j2.properties:/opt/flink/conf/log4j2.properties
 
 volumes:
   flink:

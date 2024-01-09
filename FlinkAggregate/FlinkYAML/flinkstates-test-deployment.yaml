@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose --file=docker-compose-copy.yaml convert
+    kompose.version: 1.26.0 (40646f47)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: flinkstates-test
+  name: flinkstates-test
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: flinkstates-test
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose --file=docker-compose-copy.yaml convert
+        kompose.version: 1.26.0 (40646f47)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: flinkstates-test
+    spec:
+      containers:
+        - env:
+            - name: KAFKA__AUTHENDPOINT
+              value: http://cheetahoauthsimulator/oauth2/token
+            - name: KAFKA__CLIENTID
+              value: ClientId
+            - name: KAFKA__CLIENTSECRET
+              value: "1234"
+            - name: KAFKA__URL
+              value: kafka:19092
+          image: flinkstates-test
+          name: flinkstates-test
+          resources: {}
+      restartPolicy: Always
+status: {}
