@@ -10,13 +10,16 @@ services:
         - GITHUB_ACTOR
     environment:
       KAFKA__URL: kafka:19092
-      KAFKA__CLIENTID: ClientId
-      KAFKA__CLIENTSECRET: 1234
-      KAFKA__AUTHENDPOINT: http://cheetahoauthsimulator/oauth2/token
+      KAFKA__OAUTH2__CLIENTID: default-access
+      KAFKA__OAUTH2__CLIENTSECRET: default-access-secret
+      KAFKA__OAUTH2__SCOPE: kafka
+      KAFKA__OAUTH2__TOKENENDPOINT: http://keycloak:1852/realms/local-development/protocol/openid-connect/token
       OPENSEARCH__URL: http://opensearch:9200
-      OPENSEARCH__CLIENTID: ClientId
-      OPENSEARCH__CLIENTSECRET: 1234
-      OPENSEARCH__AUTHENDPOINT: http://cheetahoauthsimulator/oauth2/token
+      OPENSEARCH__AUTHMODE: oauth2
+      OPENSEARCH__OAUTH2__CLIENTID: default-access
+      OPENSEARCH__OAUTH2__CLIENTSECRET: default-access-secret
+      OPENSEARCH__OAUTH2__SCOPE: opensearch
+      OPENSEARCH__OAUTH2__TOKENENDPOINT: http://keycloak:1852/realms/local-development/protocol/openid-connect/token
     depends_on:
       transformandstore-jobmanager:
         condition: service_healthy
@@ -41,12 +44,14 @@ services:
       --opensearch-security-protocol SASL_PLAINTEXT
       --index-base-name transformandstore-index_
     environment:
-      KAFKA_CLIENT_ID: ClientId
-      KAFKA_CLIENT_SECRET: 1234
-      KAFKA_TOKEN_URL: http://cheetahoauthsimulator/oauth2/token
-      OPENSEARCH_CLIENT_ID: ClientId
-      OPENSEARCH_CLIENT_SECRET: 1234
-      OPENSEARCH_TOKEN_URL: http://cheetahoauthsimulator/oauth2/token
+      KAFKA_CLIENT_ID: default-access
+      KAFKA_CLIENT_SECRET: default-access-secret
+      KAFKA_SCOPE: kafka
+      KAFKA_TOKEN_URL: http://keycloak:1852/realms/local-development/protocol/openid-connect/token
+      OPENSEARCH_CLIENT_ID: default-access
+      OPENSEARCH_CLIENT_SECRET: default-access-secret
+      OPENSEARCH_SCOPE: opensearch
+      OPENSEARCH_TOKEN_URL: http://keycloak:1852/realms/local-development/protocol/openid-connect/token
       FLINK_PROPERTIES: |
         jobmanager.rpc.address: transformandstore-jobmanager
         scheduler-mode: reactive
