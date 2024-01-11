@@ -1,42 +1,33 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Xunit;
 using EnrichStream.ComponentTest.Models;
 using System.Threading.Tasks;
 using Cheetah.Kafka.Testing;
+using Microsoft.Extensions.Hosting.Internal;
 
 namespace EnrichStream.ComponentTest;
 
 [Trait("TestType", "IntegrationTests")]
 public class ComponentTest
 {
-    private readonly IConfiguration _configuration;
-
-    public ComponentTest()
-    {
-        var conf = new Dictionary<string, string?>
-        {
-            { "KAFKA:URL", "localhost:9092" },
-            { "KAFKA:OAUTH2:CLIENTID", "default-access" },
-            { "KAFKA:OAUTH2:CLIENTSECRET", "default-access-secret" },
-            { "KAFKA:OAUTH2:SCOPE", "kafka" },
-            { "KAFKA:OAUTH2:TOKENENDPOINT", "http://localhost:1852/realms/local-development/protocol/openid-connect/token" },
-            { "KAFKA:SCHEMAREGISTRYURL", "http://localhost:8081/apis/ccompat/v7" }
-        };
-        _configuration = new ConfigurationBuilder()
-            .AddInMemoryCollection(conf)
-            .AddEnvironmentVariables()
-            .Build();
-    }
-
+    
     [Fact]
     public async Task Merge_Two_Streams_Component_Test()
     {
         // Arrange
+        // Setup configuration. Configuration from appsettings.json is overridden by environment variables.
+        var configuration = new ConfigurationBuilder()
+            .AddJsonFile("appsettings.json")
+            .AddEnvironmentVariables()
+            .Build();
+        
         // Create a KafkaTestClientFactory to create KafkaTestReaders and KafkaTestWriters
-        var kafkaClientFactory = KafkaTestClientFactory.Create(_configuration);
+        var kafkaClientFactory = KafkaTestClientFactory.Create(configuration);
         
         // Create KafkaTestWriters for the input topics and a KafkaTestReader for the output topic
         var enrichEventWriter = kafkaClientFactory.CreateTestWriter<EnrichEvent>("EnrichStreamEnrichTopic");

@@ -14,45 +14,24 @@ namespace TransformAndStore.ComponentTest;
 [Trait("TestType", "IntegrationTests")]
 public class ComponentTest
 {
-    readonly IConfiguration _configuration;
-
-    public ComponentTest()
-    {
-        // These will be overriden by environment variables from compose
-        var conf = new Dictionary<string, string>()
-        {
-            { "KAFKA:URL", "localhost:9092" },
-            { "KAFKA:OAUTH2:CLIENTID", "default-access" },
-            { "KAFKA:OAUTH2:CLIENTSECRET", "default-access-secret" },
-            { "KAFKA:OAUTH2:SCOPE", "kafka" },
-            { "KAFKA:OAUTH2:TOKENENDPOINT", "http://localhost:1852/realms/local-development/protocol/openid-connect/token" },
-            {"OPENSEARCH:URL", "http://localhost:9200"},
-            {"OPENSEARCH:AuthMode", "oauth2"},
-            {"OPENSEARCH:OAUTH2:CLIENTID", "default-access"},
-            {"OPENSEARCH:OAUTH2:CLIENTSECRET", "default-access-secret"},
-            {"OPENSEARCH:OAUTH2:SCOPE", "opensearch"},
-            {"OPENSEARCH:OAUTH2:TOKENENDPOINT", "http://localhost:1852/realms/local-development/protocol/openid-connect/token"}
-            
-            
-        };
-        _configuration = new ConfigurationBuilder()
-            .AddInMemoryCollection(conf)
-            .AddEnvironmentVariables()
-            .Build();
-    }
-
     [Fact]
     public async Task Should_BeImplemented_When_ServiceIsCreated()
     {
         // Arrange
+        // Setup configuration. Configuration from appsettings.json is overridden by environment variables.
+        var configuration = new ConfigurationBuilder()
+            .AddJsonFile("appsettings.json")
+            .AddEnvironmentVariables()
+            .Build();
+        
         // Create a KafkaTestClientFactory to create a KafkaTestWriter
-        var kafkaClientFactory = KafkaTestClientFactory.Create(_configuration);
+        var kafkaClientFactory = KafkaTestClientFactory.Create(configuration);
         
         var writer = kafkaClientFactory.CreateTestWriter<InputEvent>("TransformAndStoreInputTopic");
         
         // Create a OpenSearchTestClient to count the initial number of documents in the index
         const string indexName = "transformandstore-index_*";
-        var openSearchClient= OpenSearchTestClient.Create(_configuration);
+        var openSearchClient= OpenSearchTestClient.Create(configuration);
         var initialDocCount = await openSearchClient.CountAsync<object>(q => q.Index(indexName));
         
         // Act

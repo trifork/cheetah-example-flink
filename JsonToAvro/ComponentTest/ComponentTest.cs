@@ -11,32 +11,18 @@ namespace jsonToAvro.ComponentTest;
 [Trait("TestType", "IntegrationTests")]
 public class ComponentTest
 {
-    readonly IConfiguration _configuration;
-
-    public ComponentTest()
-    {
-        // These will be overriden by environment variables from compose
-        var conf = new Dictionary<string, string>()
-        {
-            { "KAFKA:URL", "localhost:9092" },
-            { "KAFKA:OAUTH2:CLIENTID", "default-access" },
-            { "KAFKA:OAUTH2:CLIENTSECRET", "default-access-secret" },
-            { "KAFKA:OAUTH2:SCOPE", "kafka schema-registry" },
-            { "KAFKA:OAUTH2:TOKENENDPOINT", "http://localhost:1852/realms/local-development/protocol/openid-connect/token" },
-            { "KAFKA:SCHEMAREGISTRYURL", "http://localhost:8081/apis/ccompat/v7" }
-        };
-        _configuration = new ConfigurationBuilder()
-            .AddInMemoryCollection(conf)
-            .AddEnvironmentVariables()
-            .Build();
-    }
-
     [Fact]
-    public void Should_BeImplemented_When_ServiceIsCreated()
+    public void Json_To_Avro_Component_Test()
     {
         // Arrange
+        // Setup configuration. Configuration from appsettings.json is overridden by environment variables.
+        var configuration = new ConfigurationBuilder()
+            .AddJsonFile("appsettings.json")
+            .AddEnvironmentVariables()
+            .Build();
+        
         // Create a KafkaTestClientFactory to create KafkaTestReaders and KafkaTestWriters
-        var kafkaClientFactory = KafkaTestClientFactory.Create(_configuration);
+        var kafkaClientFactory = KafkaTestClientFactory.Create(configuration);
         
         // Create writer and reader
         var writer = kafkaClientFactory.CreateTestWriter<InputEvent>("jsonToAvroInputTopic");

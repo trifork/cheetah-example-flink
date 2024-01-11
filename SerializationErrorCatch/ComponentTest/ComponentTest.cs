@@ -12,36 +12,23 @@ namespace SerializationErrorCatch.ComponentTest;
 [Trait("TestType", "IntegrationTests")]
 public class ComponentTest
 {
-    readonly IConfiguration _configuration;
-
-    public ComponentTest()
-    {
-        // These will be overriden by environment variables from compose
-        var conf = new Dictionary<string, string>()
-        {
-            { "KAFKA:URL", "localhost:9092" },
-            { "KAFKA:OAUTH2:CLIENTID", "default-access" },
-            { "KAFKA:OAUTH2:CLIENTSECRET", "default-access-secret" },
-            { "KAFKA:OAUTH2:SCOPE", "kafka" },
-            { "KAFKA:OAUTH2:TOKENENDPOINT", "http://localhost:1852/realms/local-development/protocol/openid-connect/token" }
-        };
-        _configuration = new ConfigurationBuilder()
-            .AddInMemoryCollection(conf)
-            .AddEnvironmentVariables()
-            .Build();
-    }
-
     [Fact]
     public async Task SerializationErrorCatchJob_ComponentTest()
     {
         // Arrange
-        var kafkaClientFactory = KafkaTestClientFactory.Create(_configuration);
+        // Setup configuration. Configuration from appsettings.json is overridden by environment variables.
+        var configuration = new ConfigurationBuilder()
+            .AddJsonFile("appsettings.json")
+            .AddEnvironmentVariables()
+            .Build();
+        
+        // Create a KafkaTestClientFactory
+        var kafkaClientFactory = KafkaTestClientFactory.Create(configuration);
         
         var writer = kafkaClientFactory.CreateTestWriter<InputEvent>("SerializationErrorCatchInputTopic");
         var badWriter = kafkaClientFactory.CreateTestWriter<BadEvent>("SerializationErrorCatchInputTopic");
         var reader = kafkaClientFactory.CreateTestReader<OutputEvent>("SerializationErrorCatchOutputTopic");
         
-        // Act
         // Act
         // Create an InputEvent
         var inputEvent = new InputEvent()
