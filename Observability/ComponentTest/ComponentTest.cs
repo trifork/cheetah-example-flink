@@ -1,13 +1,14 @@
 using System;
 using System.Collections.Generic;
-using Cheetah.ComponentTest.Kafka;
+
 using Microsoft.Extensions.Configuration;
 using Xunit;
 using Observability.ComponentTest.Models;
-using Observability.ComponentTest.PrometheusMetrics;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Linq;
+using Cheetah.Kafka.Testing;
+using Cheetah.MetricsTesting.PrometheusMetrics;
 
 namespace Observability.ComponentTest;
 
@@ -24,15 +25,12 @@ public class ComponentTest
             .AddEnvironmentVariables()
             .Build();
         
-        // Here you'll set up one or more writers and readers, which connect to the topic(s) that your job consumes
-        // from and publishes to. 
-        var writer = KafkaWriterBuilder.Create<string, InputEvent>(configuration)
-            .WithTopic("ObservabilityInputTopic") // The topic to consume from
-            .WithKeyFunction(model => model.DeviceId) // Optional function to retrieve the message key.
-                                                      // If no key is desired, use KafkaWriterBuilder.Create<Null, InputModel>
-                                                      // and make this function return null
-            .Build();
-
+        // Create a KafkaTestClientFactory to create KafkaTestWriter
+        var kafkaClientFactory = KafkaTestClientFactory.Create(configuration);
+        
+        var writer = kafkaClientFactory.CreateTestWriter<InputEvent>("ObservabilityInputTopic");
+        
+        // create metric reader
         var metricsReader = new PrometheusMetricsReader("observability-job-taskmanager", 9249);
 
         // Act
@@ -57,7 +55,7 @@ public class ComponentTest
         await writer.WriteAsync(inputEvent);
 
         //Wait, to ensure processing is done
-        await Task.Delay(TimeSpan.FromSeconds(20));
+        await Task.Delay(TimeSpan.FromSeconds(10));
 
         //Assert
         //Read counter values.

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Cheetah.Kafka.Testing;
+using Cheetah.MetricsTesting.PrometheusMetrics;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Xunit;
@@ -25,6 +26,8 @@ public class ComponentTest
         // Create a KafkaTestClientFactory
         var kafkaClientFactory = KafkaTestClientFactory.Create(configuration);
         
+        // Create a PrometheusMetricsReader
+        var metricsReader = new PrometheusMetricsReader("serializationerrorcatch-taskmanager", 9249);
         var writer = kafkaClientFactory.CreateTestWriter<InputEvent>("SerializationErrorCatchInputTopic");
         var badWriter = kafkaClientFactory.CreateTestWriter<BadEvent>("SerializationErrorCatchInputTopic");
         var reader = kafkaClientFactory.CreateTestReader<OutputEvent>("SerializationErrorCatchOutputTopic");
@@ -55,6 +58,11 @@ public class ComponentTest
         
         //Wait, to ensure processing is done
         await Task.Delay(TimeSpan.FromSeconds(5));
+
+        // Assert
+        // Assert metric failed_messages_processed is 3
+        var gauge = await metricsReader.GetCounterValueAsync("FailedMessagesProcessed");
+        Assert.Equal(3, gauge);
         
         // Assert 1 message was written to the SerializationErrorCatchOutputTopic topic
         var messages = reader.ReadMessages(1, TimeSpan.FromSeconds(5));
