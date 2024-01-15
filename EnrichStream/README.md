@@ -48,16 +48,16 @@ For local development, you will need to clone the [cheetah-development-infrastru
 You'll then be able to run necessary infrastructure with the following command from within that repository:
 
 ```bash
-docker compose up kafka cheetah.oauth.simulator redpanda -d
+docker compose up --profile kafka -d
 ```
 
-This will start `kafka`, an `oauth` simulator and `redpanda`, which can be used to inspect what topics and messages exist in `kafka`. 
+This will start `kafka`, `keycloak` , `schema-registry` (used for AVRO schemas) and `redpanda`, which can be used to inspect what topics and messages exist in `kafka`. 
 
 Redpanda can be accessed on [http://localhost:9898](http://localhost:9898).
 
-You need to create the source topics which the flink job reads from. This is done by setting the `INITIAL_KAFKA_TOPICS` to `MergeTwoStreamsInputTopicA MergeTwoStreamsInputTopicB` before running the `kafka-setup` container in `cheetah-development-infrastructure`:
+You need to create the source topics which the flink job reads from. This is done by setting the `INITIAL_KAFKA_TOPICS` to `EnrichStreamInputTopic EnrichStreamEnrichTopic` before running the `kafka-setup` container in `cheetah-development-infrastructure`:
 ```powershell
-$env:INITIAL_KAFKA_TOPICS="MergeTwoStreamsInputTopicA MergeTwoStreamsInputTopicB"; docker compose up kafka-setup -d
+$env:INITIAL_KAFKA_TOPICS="EnrichStreamInputTopic EnrichStreamEnrichTopic"; docker compose up kafka-setup -d
 ```
 The `kafka-setup` service is also run when starting kafka using the above command, but running it seperately enables you to create the topics with an already running Kafka.
 Alternatively you can create the topics manually in Redpanda.
@@ -76,13 +76,15 @@ Program arguments:
 ```
 --kafka-bootstrap-servers localhost:9092
 --input-kafka-topic EnrichStreamInputTopic
+--input-kafka-topic EnrichStreamEnrichTopic
 --output-kafka-topic EnrichStreamOutputTopic
 ```
 Environment variables:
 ```
-- KAFKA_CLIENT_ID=flink
-- KAFKA_CLIENT_SECRET=testsecret
-- KAFKA_TOKEN_URL=http://localhost:1752/oauth2/token
+- KAFKA_CLIENT_ID=default-access
+- KAFKA_CLIENT_SECRET=default-access-secret
+- KAFKA_SCOPE=kafka
+- KAFKA_TOKEN_URL=http://localhost::1852/realms/local-development/protocol/openid-connect/token
 ```
 
 ## Tests
