@@ -26,7 +26,7 @@ runs:
       uses: actions/checkout@v4
       with:
         repository: trifork/cheetah-development-infrastructure
-        ref: v1.1.0
+        ref: v2.0.0
         token: ${{ inputs.access-token }}
         path: development-infrastructure
 
