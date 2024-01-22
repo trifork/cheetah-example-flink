@@ -40,7 +40,7 @@ services:
       KAFKA_CLIENT_SECRET: default-access-secret
       KAFKA_SCOPE: kafka
       KAFKA_TOKEN_URL: http://keycloak:1852/realms/local-development/protocol/openid-connect/token
-      ID_SERVICE_URL: http://id-service:80/
+      ID_SERVICE_URL: http://id-service:8080/
       ID_SERVICE_TOKEN_URL: http://keycloak:1852/realms/local-development/protocol/openid-connect/token
       ID_SERVICE_CLIENT_ID: default-access
       ID_SERVICE_CLIENT_SECRET: default-access-secret
@@ -94,7 +94,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
     ports:
-      - 1862:80
+      - 1862:8080
 
 volumes:
   flink:
