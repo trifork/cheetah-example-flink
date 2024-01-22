@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Cheetah.ComponentTest.Kafka;
+using Cheetah.Kafka.Testing;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Xunit;
@@ -12,80 +12,50 @@ namespace FlinkStates.ComponentTest;
 [Trait("TestType", "IntegrationTests")]
 public class ComponentTest
 {
-    readonly IConfiguration _configuration;
-
-    public ComponentTest()
-    {
-        // These will be overriden by environment variables from compose
-        var conf = new Dictionary<string, string>()
-        {
-            {"KAFKA:AUTHENDPOINT", "http://localhost:1752/oauth2/token"},
-            {"KAFKA:CLIENTID", "ClientId" },
-            {"KAFKA:CLIENTSECRET", "1234" },
-            {"KAFKA:URL", "localhost:9092"}
-        };
-        _configuration = new ConfigurationBuilder()
-            .AddInMemoryCollection(conf)
-            .AddEnvironmentVariables()
-            .Build();
-    }
-
     [Fact]
     public async Task Flink_States_Component_Test()
     {
         // Arrange
-        // Here you'll set up one or more writers and readers, which connect to the topic(s) that your job consumes
-        // from and publishes to. 
-        var writer = KafkaWriterBuilder.Create<string, InputEvent>(_configuration)
-            .WithTopic("FlinkStatesInputTopic") // The topic to consume from
-            .WithKeyFunction(model => model.DeviceId) // Optional function to retrieve the message key.
-                                                          // If no key is desired, use KafkaWriterBuilder.Create<Null, InputModel>
-                                                          // and make this function return null
+        // Setup configuration. Configuration from appsettings.json is overridden by environment variables.
+        var configuration = new ConfigurationBuilder()
+            .AddJsonFile("appsettings.json")
+            .AddEnvironmentVariables()
             .Build();
-
-        var valueReader = KafkaReaderBuilder.Create<string, double>(_configuration)
-            .WithTopic("FlinkStatesOutputTopic-value")
-            .WithConsumerGroup("MyGroup")
-            .Build();
-        var reducingReader = KafkaReaderBuilder.Create<string, double>(_configuration)
-            .WithTopic("FlinkStatesOutputTopic-reducing")
-            .WithConsumerGroup("MyGroup")
-            .Build();
-        var aggregatingReader = KafkaReaderBuilder.Create<string, double>(_configuration)
-            .WithTopic("FlinkStatesOutputTopic-aggregating")
-            .WithConsumerGroup("MyGroup")
-            .Build();
-        var listReader = KafkaReaderBuilder.Create<string, double[]>(_configuration)
-            .WithTopic("FlinkStatesOutputTopic-list")
-            .WithConsumerGroup("MyGroup")
-            .Build();
-        var mapReader = KafkaReaderBuilder.Create<string, double>(_configuration)
-            .WithTopic("FlinkStatesOutputTopic-map")
-            .WithConsumerGroup("MyGroup")
-            .Build();
-
+        
+        // Create a KafkaTestClientFactory to create KafkaTestReaders and KafkaTestWriters
+        var kafkaClientFactory = KafkaTestClientFactory.Create(configuration);
+        
+        // Create a KafkaTestWriter to write messages to the topic "FlinkStatesInputTopic"
+        var writer =
+            kafkaClientFactory.CreateTestWriter<string, InputEvent>("FlinkStatesInputTopic", model => model.DeviceId);
+        
+        // Create KafkaTestReaders to read messages from the topics "FlinkStatesOutputTopic-value"
+        var valueReader = kafkaClientFactory.CreateTestReader<string, double>("FlinkStatesOutputTopic-value", "MyGroup");
+        var reducingReader = kafkaClientFactory.CreateTestReader<string, double>("FlinkStatesOutputTopic-reducing", "MyGroup");
+        var aggregatingReader = kafkaClientFactory.CreateTestReader<string, double>("FlinkStatesOutputTopic-aggregating", "MyGroup");
+        var listReader = kafkaClientFactory.CreateTestReader<string, double[]>("FlinkStatesOutputTopic-list", "MyGroup");
+        var mapReader = kafkaClientFactory.CreateTestReader<string, double>("FlinkStatesOutputTopic-map", "MyGroup");
+        
         // Act
-        // Write one or more messages to the writer
+        // Create two different input events
         var inputEvent = new InputEvent()
         {
             DeviceId = "deviceId-1",
             Value = 12.34,
             Timestamp = DateTimeOffset.UnixEpoch.ToUnixTimeMilliseconds()
         };
-
+        
         var inputEvent2 = new InputEvent()
         {
             DeviceId = "deviceId-1",
             Value = 56.78,
             Timestamp = DateTimeOffset.UnixEpoch.ToUnixTimeMilliseconds()
         };
-
+        
         await writer.WriteAsync(inputEvent);
         await writer.WriteAsync(inputEvent2);
-
+        
         // Assert
-        // Then consume using the reader, supplying how many output messages your input messages expected to generate
-        // as well as the maximum duration it is allowed to take for those messages to be produced
         await Task.Delay(TimeSpan.FromSeconds(20));
         var valueMessages = valueReader.ReadMessages(1, TimeSpan.FromSeconds(1));
         var reducingMessages = reducingReader.ReadMessages(2, TimeSpan.FromSeconds(1));
@@ -93,7 +63,7 @@ public class ComponentTest
         var listMessages = listReader.ReadMessages(1, TimeSpan.FromSeconds(1));
         var mapMessages = mapReader.ReadMessages(2, TimeSpan.FromSeconds(1));
 
-        // Then evaluate whether your messages are as expected, and that there are only as many as you expected 
+        // Evaluate the results
         valueMessages.Should().ContainSingle(message => message == 34.56);
 
         reducingMessages.Should().ContainSingle(message => message == 12.34);

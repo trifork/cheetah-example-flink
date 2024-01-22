@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Cheetah.ComponentTest.Kafka;
+using Cheetah.Kafka.Testing;
+using Cheetah.MetricsTesting.PrometheusMetrics;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
-using Observability.ComponentTest.PrometheusMetrics;
 using Xunit;
 using SerializationErrorCatch.ComponentTest.Models;
 
@@ -13,48 +13,24 @@ namespace SerializationErrorCatch.ComponentTest;
 [Trait("TestType", "IntegrationTests")]
 public class ComponentTest
 {
-    readonly IConfiguration _configuration;
-
-    public ComponentTest()
-    {
-        // These will be overriden by environment variables from compose
-        var conf = new Dictionary<string, string>()
-        {
-            {"KAFKA:AUTHENDPOINT", "http://localhost:1752/oauth2/token"},
-            {"KAFKA:CLIENTID", "ClientId" },
-            {"KAFKA:CLIENTSECRET", "1234" },
-            {"KAFKA:URL", "localhost:9092"}
-        };
-        _configuration = new ConfigurationBuilder()
-            .AddInMemoryCollection(conf)
-            .AddEnvironmentVariables()
-            .Build();
-    }
-
     [Fact]
     public async Task SerializationErrorCatchJob_ComponentTest()
     {
         // Arrange
-        // writer is used to write messages to the SerializationErrorCatchInputTopic topic. 
-        var writer = KafkaWriterBuilder.Create<string, InputEvent>(_configuration)
-            .WithTopic("SerializationErrorCatchInputTopic")
-            .WithKeyFunction(model => model.DeviceId) 
-            .Build();
-
-        // badWriter is used to write messages to the SerializationErrorCatchInputTopic topic to trigger deserialization error.
-        var badWriter = KafkaWriterBuilder.Create<string, BadEvent>(_configuration)
-            .WithTopic("SerializationErrorCatchInputTopic")
-            .WithKeyFunction(model => model.DeviceId) 
+        // Setup configuration. Configuration from appsettings.json is overridden by environment variables.
+        var configuration = new ConfigurationBuilder()
+            .AddJsonFile("appsettings.json")
+            .AddEnvironmentVariables()
             .Build();
         
-        // reader is used to read messages from the SerializationErrorCatchOutputTopic topic.
-        var reader = KafkaReaderBuilder.Create<string, OutputEvent>(_configuration)
-            .WithTopic("SerializationErrorCatchOutputTopic")     // The topic being published to from the job
-            .WithConsumerGroup("MyGroup")           // The consumer group used for reading from the topic
-            .Build();
+        // Create a KafkaTestClientFactory
+        var kafkaClientFactory = KafkaTestClientFactory.Create(configuration);
         
-        // metricsReader is used to read metrics from the job
+        // Create a PrometheusMetricsReader
         var metricsReader = new PrometheusMetricsReader("serializationerrorcatch-taskmanager", 9249);
+        var writer = kafkaClientFactory.CreateTestWriter<InputEvent>("SerializationErrorCatchInputTopic");
+        var badWriter = kafkaClientFactory.CreateTestWriter<BadEvent>("SerializationErrorCatchInputTopic");
+        var reader = kafkaClientFactory.CreateTestReader<OutputEvent>("SerializationErrorCatchOutputTopic");
         
         // Act
         // Create an InputEvent
@@ -82,8 +58,9 @@ public class ComponentTest
         
         //Wait, to ensure processing is done
         await Task.Delay(TimeSpan.FromSeconds(5));
-        
-        // Assert that the FailedMessagesProcessed metric is 3
+
+        // Assert
+        // Assert metric failed_messages_processed is 3
         var gauge = await metricsReader.GetCounterValueAsync("FailedMessagesProcessed");
         Assert.Equal(3, gauge);
         

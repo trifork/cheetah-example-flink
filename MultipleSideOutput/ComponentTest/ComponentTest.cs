@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Cheetah.ComponentTest.Kafka;
+using Cheetah.Kafka.Testing;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Xunit;
@@ -13,49 +13,23 @@ namespace MultipleSideOutputExample.ComponentTest;
 [Trait("TestType", "IntegrationTests")]
 public class ComponentTest
 {
-    readonly IConfiguration _configuration;
-
-    public ComponentTest()
-    {
-        // These will be overriden by environment variables from compose
-        var conf = new Dictionary<string, string>()
-        {
-            {"KAFKA:AUTHENDPOINT", "http://localhost:1752/oauth2/token"},
-            {"KAFKA:CLIENTID", "ClientId" },
-            {"KAFKA:CLIENTSECRET", "1234" },
-            {"KAFKA:URL", "localhost:9092"}
-        };
-        _configuration = new ConfigurationBuilder()
-            .AddInMemoryCollection(conf)
-            .AddEnvironmentVariables()
-            .Build();
-    }
-
     [Fact]
     public async Task Multiple_Side_Output_Component_Test(){
         // Arrange
-        // Setting up the writer (Kafka producer), not using a message key.
-        var writer = KafkaWriterBuilder.Create<string, InputEvent>(_configuration)
-            .WithTopic("MultipleSideOutputExampleInputTopic")
-            .WithKeyFunction(model => model.DeviceId)
+        // Setup configuration. Configuration from appsettings.json is overridden by environment variables.
+        var configuration = new ConfigurationBuilder()
+            .AddJsonFile("appsettings.json")
+            .AddEnvironmentVariables()
             .Build();
-
-        // Setting up readers (Kafka consumer)
-        var readerTopicA = KafkaReaderBuilder.Create<string, OutputEvent>(_configuration)
-            .WithTopic("OutputA-events")
-            .WithConsumerGroup("ComponentTest")
-            .Build();
-
-        var readerTopicB = KafkaReaderBuilder.Create<string, OutputEvent>(_configuration)
-            .WithTopic("OutputB-events")
-            .WithConsumerGroup("ComponentTest")
-            .Build();
-
-        var readerTopicCD = KafkaReaderBuilder.Create<string, OutputEvent2>(_configuration)
-            .WithTopic("OutputCD-events")
-            .WithConsumerGroup("ComponentTest")
-            .Build();
-
+        
+        // Create a KafkaTestClientFactory to create KafkaTestReaders and KafkaTestWriters
+        var kafkaClientFactory = KafkaTestClientFactory.Create(configuration);
+        
+        var writer = kafkaClientFactory.CreateTestWriter<InputEvent>("MultipleSideOutputExampleInputTopic");
+        var readerTopicA = kafkaClientFactory.CreateTestReader<OutputEvent>("OutputA-events");
+        var readerTopicB = kafkaClientFactory.CreateTestReader<OutputEvent>("OutputB-events");
+        var readerTopicCD = kafkaClientFactory.CreateTestReader<OutputEvent2>("OutputCD-events");
+        
         // Act
         // Making an input event
         var inputEvent = new InputEvent(){
@@ -70,7 +44,6 @@ public class ComponentTest
         await writer.WriteAsync(inputEvent);
         
         // Assert
-        // Assuming the job produce the message on each topic
         await Task.Delay(TimeSpan.FromSeconds(20));
         var messagesTopicA = readerTopicA.ReadMessages(1, TimeSpan.FromSeconds(1));
         var messagesTopicB = readerTopicB.ReadMessages(1, TimeSpan.FromSeconds(1));

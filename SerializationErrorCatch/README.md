@@ -48,10 +48,10 @@ For local development, you will need to clone the [cheetah-development-infrastru
 You'll then be able to run necessary infrastructure with the following command from within that repository:
 
 ```bash
-docker compose up kafka cheetah.oauth.simulator redpanda -d
+docker compose up --profile kafka -d
 ```
 
-This will start `kafka`, an `oauth` simulator and `redpanda`, which can be used to inspect what topics and messages exist in `kafka`. 
+This will start `kafka`, `keycloak` , `schema-registry` (used for AVRO schemas) and `redpanda`, which can be used to inspect what topics and messages exist in `kafka`. 
 
 Redpanda can be accessed on [http://localhost:9898](http://localhost:9898).
 
@@ -104,10 +104,10 @@ When developing your job you can run/debug it like any other Java application by
   And add the following Environment variables:
 
   ```
-  - KAFKA_CLIENT_ID=flink
-  - KAFKA_CLIENT_SECRET=testsecret
-  - KAFKA_TOKEN_URL=http://localhost:1752/oauth2/token
-  - KAFKA_SECURITY_PROTOCOL=SASL_PLAINTEXT
+  - KAFKA_CLIENT_ID=default-access
+  - KAFKA_CLIENT_SECRET=default-access-secret
+  - KAFKA_SCOPE=kafka
+  - KAFKA_TOKEN_URL=http://localhost:1852/realms/local-development/protocol/openid-connect/token
   ```
   
 ## Tests

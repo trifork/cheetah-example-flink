@@ -48,7 +48,7 @@ For local development, you will need to clone the [cheetah-development-infrastru
 You'll then be able to run necessary infrastructure with the following command from within that repository:
 
 ```bash
-docker compose --profile=kafka --profile=oauth --profile=opensearch up -d
+docker compose --profile kafka --profile opensearch up -d
 ```
 
 This will start the required infrastructure to run the job, as well as some development tools. 
@@ -107,13 +107,14 @@ When developing your job you can run/debug it like any other Java application by
   And add the following Environment variables:
 
   ```
-  - KAFKA_CLIENT_ID=flink
-  - KAFKA_CLIENT_SECRET=testsecret
-  - KAFKA_TOKEN_URL=http://localhost:1752/oauth2/token
-  - KAFKA_SECURITY_PROTOCOL=SASL_PLAINTEXT
-  - OPENSEARCH_CLIENT_ID=ClientId
-  - OPENSEARCH_CLIENT_SECRET=1234
-  - OPENSEARCH_TOKEN_URL=http://localhost:1752/oauth2/token
+  - KAFKA_CLIENT_ID=default-access
+  - KAFKA_CLIENT_SECRET=default-access-secret
+  - KAFKA_SCOPE=kafka
+  - KAFKA_TOKEN_URL=http://localhost:1852/realms/local-development/protocol/openid-connect/token
+  - OPENSEARCH_CLIENT_ID=default-access
+  - OPENSEARCH_CLIENT_SECRET=default-access-secret
+  - OPENSEARCH_SCOPE=opensearch
+  - OPENSEARCH_TOKEN_URL=http://localhost:1852/realms/local-development/protocol/openid-connect/token
   ```
   You can insert the following string in the `Environment variables` field:
 
