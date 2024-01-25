@@ -35,7 +35,7 @@ RUN --mount=type=secret,id=GITHUB_TOKEN \
 #
 #  Install jars onto clean runtime system.
 #
-FROM flink:1.18.0-scala_2.12-java17 as runtime
+FROM flink:1.18.1-scala_2.12-java17 as runtime
 
 COPY --from=build /app/target/externallookup*.jar /opt/flink/usrlib/artifacts/
 
