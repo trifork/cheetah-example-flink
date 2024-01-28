@@ -8,7 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Cheetah.Kafka" Version="0.1.0" />
+        <PackageReference Include="Cheetah.Kafka" Version="0.2.0" />
         <PackageReference Include="Cheetah.OpenSearch" Version="0.1.0" />
         <PackageReference Include="FluentAssertions" Version="6.12.0" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
