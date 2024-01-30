@@ -117,7 +117,6 @@ When developing your job you can run/debug it like any other Java application by
   ```
 1. Notice how the job is configured to consume events from topic `KeySerializationSchemaInputTopic` and output to `KeySerializationSchemaOutputTopic`
 1. Save configuration by clicking OK
-  > [!IMPORTANT]
   > When running the job you might see a warning in the console informing that *An illegal reflective access operation has occurred*, which can be ignored.
 
 ## Tests

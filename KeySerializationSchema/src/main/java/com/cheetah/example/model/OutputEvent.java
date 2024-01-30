@@ -18,6 +18,7 @@ public class OutputEvent {
         this.keys = inputEvent.getKeys();
         this.extraField = extraFieldValue;
     }
+
     private String deviceId;
     private double value;
     private long timestamp;
