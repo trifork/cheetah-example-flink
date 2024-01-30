@@ -1,6 +1,0 @@
-﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=7494773a_002D5c27_002D4c7f_002D8f30_002D6fa9d88f4cec/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="Merge_Two_Streams_Component_Test" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;xUnit::D4076218-47CC-4A9D-99E2-73FA3EDBFD99::net6.0::EnrichStream.ComponentTest.ComponentTest.Merge_Two_Streams_Component_Test&lt;/TestId&gt;&#xD;
-  &lt;/TestAncestor&gt;&#xD;
-&lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
