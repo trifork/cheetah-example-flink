@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /** OutputEvent represents the events being generated. */
 @Getter
@@ -23,6 +24,6 @@ public class OutputEvent {
     private String deviceId;
     private double value;
     private long timestamp;
-    private ArrayList<String> list;
+    private List<String> list;
     private String extraField;
 }

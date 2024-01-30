@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -17,7 +19,7 @@ class SerializationIssueMapperTest {
         final String deviceId = UUID.randomUUID().toString();
         final double value = 1.0;
         final long timestamp = 0;
-        final var input = new InputEvent(deviceId, value, timestamp);
+        final var input = new InputEvent(deviceId, value, timestamp, List.of("hej"));
 
         final var actual = mapper.map(input);
 

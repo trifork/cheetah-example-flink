@@ -40,7 +40,7 @@ public class ComponentTest
             message.DeviceId == inputEvent.DeviceId && 
             message.Value == inputEvent.Value &&
             message.Timestamp == inputEvent.Timestamp &&
-            message.List == inputEvent.List &&
+            message.List.Count == inputEvent.List.Count &&
             message.ExtraField == "ExtraFieldValue");
         reader.VerifyNoMoreMessages(TimeSpan.FromSeconds(10)).Should().BeTrue();
 
