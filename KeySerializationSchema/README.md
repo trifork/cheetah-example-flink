@@ -117,6 +117,7 @@ When developing your job you can run/debug it like any other Java application by
   ```
 1. Notice how the job is configured to consume events from topic `KeySerializationSchemaInputTopic` and output to `KeySerializationSchemaOutputTopic`
 1. Save configuration by clicking OK
+  > [!IMPORTANT]
   > When running the job you might see a warning in the console informing that *An illegal reflective access operation has occurred*, which can be ignored.
 
 ## Tests
@@ -154,7 +155,7 @@ You can observe the topics and produced messages at [http://localhost:9898](http
 
 You might encounter failing component tests due to your job receiving more messages than expected. This occurs if you've previously run the job and component tests and data is still present in Kafka. The component test will then, in some cases, re-read the output of previous runs.
 
-To fix this, you'll need to delete the data in Kafka by running: `docker compose down` in the `cheetah-development-infrastructure` repository and then starting it again using the command in [Local development with docker-compose](#local-development-with-docker-compose). This deletes the volume containing Kafka's data and starts everything up again.
+To fix this, you'll need to delete the data in Kafka by running: `docker compose down` in the `cheetah-development-infrastructure` repository and then starting it again using the command in [Local development with docker-compose](#local-development). This deletes the volume containing Kafka's data and starts everything up again.
 
 #### Concurrent tests
 
