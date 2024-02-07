@@ -1,7 +1,7 @@
 ---
 services:
   storage-job-jobmanager:
-    image: ghcr.io/trifork/cheetah-app-jobs:release-v2.1
+    image: ghcr.io/trifork/cheetah-app-jobs:3.0.0
     ports:
       - "28087:8081"
       - "29256:9249"
@@ -14,14 +14,18 @@ services:
 
       --index-base-name your-index-name
 
-      --output-es-hosts http://opensearch:9200
+      --opensearch-hosts http://opensearch:9200
     environment:
-      - INPUT_KAFKA_CLIENT_ID=flink
-      - INPUT_KAFKA_CLIENT_SECRET=ThisIsASecret
-      - INPUT_KAFKA_TOKEN_URL=http://cheetahoauthsimulator/oauth2/token
-      - OPENSEARCH_CLIENT_ID=opensearch
-      - OPENSEARCH_CLIENT_SECRET=ThisIsASecret
-      - OPENSEARCH_TOKEN_URL=http://cheetahoauthsimulator/oauth2/token
+      - KAFKA_SECURITY_PROTOCOL=SASL_PLAINTEXT
+      - INPUT_KAFKA_CLIENT_ID=default-access
+      - INPUT_KAFKA_CLIENT_SECRET=default-access-secret
+      - KAFKA_SCOPE=kafka
+      - INPUT_KAFKA_TOKEN_URL=http://keycloak:1852/realms/local-development/protocol/openid-connect/token
+      - OPENSEARCH_SECURITY_PROTOCOL=SASL_PLAINTEXT
+      - OPENSEARCH_CLIENT_ID=default-access
+      - OPENSEARCH_CLIENT_SECRET=default-access-secret
+      - OPENSEARCH_SCOPE=opensearch
+      - OPENSEARCH_TOKEN_URL=http://keycloak:1852/realms/local-development/protocol/openid-connect/token
       - |
         FLINK_PROPERTIES=
         jobmanager.rpc.address: storage-job-jobmanager
@@ -40,7 +44,7 @@ services:
       - storage-job-taskmanager
 
   storage-job-taskmanager:
-    image: ghcr.io/trifork/cheetah-app-jobs:release-v2.1
+    image: ghcr.io/trifork/cheetah-app-jobs:3.0.0
     command: taskmanager
     environment:
       - |
@@ -48,9 +52,6 @@ services:
         jobmanager.rpc.address: storage-job-jobmanager
         taskmanager.memory.process.size: 4gb
         taskmanager.numberOfTaskSlots: 2
-      - OPENSEARCH_CLIENT_ID=opensearch
-      - OPENSEARCH_CLIENT_SECRET=ThisIsASecret
-      - OPENSEARCH_TOKEN_URL=http://cheetahoauthsimulator/oauth2/token
     volumes:
       - flink:/checkpoints
 
