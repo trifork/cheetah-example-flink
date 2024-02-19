@@ -52,7 +52,7 @@ public class TumblingWindowJob extends Job implements Serializable {
                 .aggregate(new TumblingWindowAggregate(), new TumblingWindowFunction());
 
         // Output sink
-        final KafkaSink<EventWindow> kafkaSink = CheetahKafkaSinkConfig.builder(this).toSinkBuilder(EventWindow.class).build();
+        final KafkaSink<EventWindow> kafkaSink = CheetahKafkaSinkConfig.builder(this).toKafkaSinkBuilder(EventWindow.class).build();
 
         // Connect transformed stream to sink
         outputStream.sinkTo(kafkaSink).name(TumblingWindowJob.class.getSimpleName());
