@@ -37,7 +37,7 @@ RUN \
 #
 #  Install jars onto clean runtime system.
 #
-FROM ghcr.io/trifork/cheetah-lib-processing:4.2.0-feature-lib-processing-image-SNAPSHOT-2 as runtime
+FROM ghcr.io/trifork/cheetah-lib-processing:4.2.0-feature-lib-processing-image-SNAPSHOT-5 as runtime
 
 COPY --from=build /app/target/observability*.jar /opt/flink/usrlib/artifacts/
 
