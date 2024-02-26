@@ -1,6 +1,5 @@
 version: "3"
 services:
-
   jsontoavro-test:
     build:
       context: ComponentTest
@@ -17,6 +16,8 @@ services:
     depends_on:
       jsontoavro-jobmanager:
         condition: service_healthy
+    profiles:
+      - ComponentTest
 
   jsontoavro-jobmanager:
     image: ${DOCKER_REGISTRY-}jsontoavro-job
@@ -32,12 +33,13 @@ services:
       standalone-job
       --job-classname cheetah.example.job.JsonToAvroJob
       --kafka-bootstrap-servers kafka:19092
-      --input-kafka-topic jsonToAvroInputTopic
-      --output-kafka-topic jsonToAvroOutputTopic
-      --kafka-group-id jsonToAvro-group-id
+      --input-kafka-topic test-index-ktd-no-compression
+      --output-kafka-topic test-index-ktd-avro-no-compression
+      --kafka-group-id jsonToAvro-no-compression
       --kafka-security-protocol SASL_PLAINTEXT
       --sr-url http://schema-registry:8080/apis/ccompat/v7
     environment:
+      KAFKA_COMPRESSION_TYPE: none
       KAFKA_CLIENT_ID: ClientId
       KAFKA_CLIENT_SECRET: 1234
       KAFKA_TOKEN_URL: http://cheetahoauthsimulator/oauth2/token
@@ -62,6 +64,9 @@ services:
       interval: 1s
       timeout: 1s
       retries: 30
+    ports:
+      - "28082:8081"
+      - "29247:9249"
 
   jsontoavro-taskmanager:
     image: ${DOCKER_REGISTRY-}jsontoavro-job

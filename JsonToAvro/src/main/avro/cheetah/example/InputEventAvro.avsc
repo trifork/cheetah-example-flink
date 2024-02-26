@@ -1,0 +1,51 @@
+{
+  "type": "record",
+  "name": "EventAvro",
+  "namespace": "cheetah.example.model.avrorecord",
+  "fields": [
+    {
+      "name": "readingTimestamp",
+      "type": "string"
+    },
+    {
+      "name": "acousticNoise",
+      "type": "string"
+    },
+    {
+      "name": "Unit",
+      "type": "string"
+    },
+    {
+      "name": "Enhed_1",
+      "type": "string"
+    },
+    {
+      "name": "Enhed_2",
+      "type": "string"
+    },
+    {
+      "name": "Enhed_3",
+      "type": "string"
+    },
+    {
+      "name": "infocodes",
+      "type": "string"
+    },
+    {
+      "name": "loggedVolume1",
+      "type": "string"
+    },
+    {
+      "name": "meterSerialNumber",
+      "type": "string"
+    },
+    {
+      "name": "hourCounter",
+      "type": "string"
+    },
+    {
+      "name": "volume1",
+      "type": "string"
+    }
+  ]
+}
