@@ -39,7 +39,7 @@ RUN \
 #
 FROM flink:1.18.1-scala_2.12-java17 as runtime
 
-COPY --from=build /app/target/transform-and-store*.jar /opt/flink/usrlib/artifacts/
+COPY --from=build /app/target/transform-and-store*.jar /opt/flink/usrlib/artifacts/transform-and-store.jar
 
 RUN mkdir /opt/flink/plugins/s3-fs-hadoop/; \
     mkdir /opt/flink/plugins/s3-fs-presto/; \
