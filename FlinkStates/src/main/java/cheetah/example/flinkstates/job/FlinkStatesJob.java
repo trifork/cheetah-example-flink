@@ -120,4 +120,32 @@ public class FlinkStatesJob extends Job implements Serializable {
                 ")";
         tableEnv.executeSql(tableSQL);
     }
+
+    public void createAvroConfluentTable(String topicName, StreamTableEnvironment tableEnv, String tableSql, String groupId, String clientId) {
+        //Create input topic / table
+        //If topic already exists - table data is based upon that and
+        //any data inserted is inserted into topic aswell.
+        //If topic doesnt exist - new topic is created.
+        String tableSQL = "CREATE TABLE IF NOT EXISTS " + topicName + " (" +
+                tableSql +
+                ") WITH (" +
+                "'connector'='kafka'," +
+                "'topic'='" + topicName + "'," +
+                "'properties.bootstrap.servers' = 'kafka:19092'," +
+                "'properties.group.id' = '" + groupId + "'," +
+                "'format'='avro-confluent', " +
+                "'avro-confluent.url'='http://localhost:8080'," +
+                "'scan.startup.mode' = 'earliest-offset', " +
+                //        "'scan.bounded.mode' = 'latest-offset', " +
+                "'properties.sasl.mechanism' = '" + OAuthBearerLoginModule.OAUTHBEARER_MECHANISM + "', " +
+                "'properties.security.protocol' = 'SASL_PLAINTEXT', " +
+                "'properties.sasl.login.callback.handler.class' = '"+ JaasClientOauthLoginCallbackHandler.class.getName() + "', " +
+                "'properties.sasl.jaas.config' = '"+OAuthBearerLoginModule.class.getName() + " required "
+                + Config.OAUTH_CLIENT_ID + "= " + clientId + " "
+                + Config.OAUTH_CLIENT_SECRET + "=\"testsecret\" "
+                + Config.OAUTH_SCOPE + "=\"flink\" "
+                + ClientConfig.OAUTH_TOKEN_ENDPOINT_URI + "=\"http://cheetahoauthsimulator/oauth2/token\";'"+
+                ")";
+        tableEnv.executeSql(tableSQL);
+    }
 }
