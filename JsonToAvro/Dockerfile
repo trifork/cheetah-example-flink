@@ -39,6 +39,11 @@ RUN \
 #
 FROM ghcr.io/trifork/cheetah-lib-processing:E2E-SNAPSHOT1508 as runtime
 
-COPY --from=build /app/target/jsonToAvro*.jar /opt/flink/usrlib/artifacts/
+COPY --from=build /app/target/jsonToAvro*.jar /opt/flink/usrlib/artifacts/jsonToAvro.jar
+
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+# Add support for structured JSON logging
+RUN log4jVersion=$(find /opt/flink/lib/ -name 'log4j-core-*.jar' -exec basename {} \; | grep -oP '(\d+\.\d+\.\d+)') && \
+    wget --progress=dot:giga -P /opt/flink/lib "https://repo1.maven.org/maven2/org/apache/logging/log4j/log4j-layout-template-json/$log4jVersion/log4j-layout-template-json-$log4jVersion.jar"
 
 USER flink
