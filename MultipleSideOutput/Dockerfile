@@ -41,13 +41,4 @@ FROM ghcr.io/trifork/cheetah-lib-processing:4.2.0-feature-lib-processing-image-S
 
 COPY --from=build /app/target/multiplesideoutput*.jar /opt/flink/usrlib/artifacts/
 
-RUN mkdir /opt/flink/plugins/s3-fs-hadoop/; \
-    mkdir /opt/flink/plugins/s3-fs-presto/; \
-    mkdir ./plugins/azure-fs-hadoop; \
-    cp /opt/flink/opt/flink-s3-fs-hadoop-1.18.1.jar /opt/flink/plugins/s3-fs-hadoop/; \
-    cp /opt/flink/opt/flink-s3-fs-presto-1.18.1.jar /opt/flink/plugins/s3-fs-presto/; \
-    cp ./opt/flink-azure-fs-hadoop-1.18.1.jar ./plugins/azure-fs-hadoop/
-
-RUN mkdir -p /checkpoints && chmod 777 /checkpoints
-
 USER flink
