@@ -35,7 +35,7 @@ RUN --mount=type=secret,id=GITHUB_TOKEN \
 #
 #  Install jars onto clean runtime system.
 #
-FROM ghcr.io/trifork/cheetah-lib-processing:4.2.0-feature-lib-processing-image-SNAPSHOT-5 as runtime
+FROM ghcr.io/trifork/cheetah-lib-processing:E2E-SNAPSHOT1508 as runtime
 
 COPY --from=build /app/target/tumblingwindow*.jar /opt/flink/usrlib/artifacts/
 
