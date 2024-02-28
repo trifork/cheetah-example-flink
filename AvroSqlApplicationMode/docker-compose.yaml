@@ -1,0 +1,109 @@
+version: "3"
+services:
+  avrosqlapplicationmode-test:
+    build:
+      context: ComponentTest
+      dockerfile: Dockerfile
+      secrets:
+        - GITHUB_TOKEN
+        - GITHUB_ACTOR
+    environment:
+      KAFKA__URL: kafka:19092
+      KAFKA__OAUTH2__CLIENTID: default-access
+      KAFKA__OAUTH2__CLIENTSECRET: default-access-secret
+      KAFKA__OAUTH2__SCOPE: kafka
+      KAFKA__OAUTH2__TOKENENDPOINT: http://keycloak:1852/realms/local-development/protocol/openid-connect/token
+    depends_on:
+      avrosqlapplicationmode-jobmanager:
+        condition: service_healthy
+
+  avrosqlapplicationmode-jobmanager:
+    image: ${DOCKER_REGISTRY-}avrosqlapplicationmode-job
+    build:
+      dockerfile: Dockerfile
+      args:
+        - MAVEN_ARGS=${EXTRA_MAVEN_ARGS-}
+      secrets:
+        - GITHUB_TOKEN
+        - GITHUB_ACTOR
+    command: |
+      standalone-job
+      --job-classname cheetah.example.avrosqlapplicationmode.job.AvroSqlApplicationModeJob
+      --kafka-bootstrap-servers kafka:19092
+      --kafka-group-id AvroSqlApplicationMode-group-id
+      --sql "INSERT INTO MultiSourceOutput SELECT AvroSqlApplicationModeInputTopic.deviceId, AvroSqlApplicationModeInputTopic.`timestamp`, AvroSqlApplicationModeInputTopic.`value` FROM AvroSqlApplicationModeInputTopic JOIN AvroSqlApplicationModeOutputTopic ON AvroSqlApplicationModeInputTopic.`timestamp` = AvroSqlApplicationModeOutputTopic.`timestamp` WHERE AvroSqlApplicationModeInputTopic.`timestamp` > 2222"
+      --source SqlApplicationModeInputTopic
+      --source1 SqlApplicationModeOutputTopic
+      --sink MultiSourceOutput
+      --sourceSql "deviceId STRING, `timestamp` BIGINT, `value` FLOAT"
+      --sourceSql1 "deviceId STRING, `timestamp` BIGINT, `value` FLOAT"
+      --sinkSql "deviceId STRING, `timestamp` BIGINT, `value` FLOAT"
+      --groupId Sql-group-id
+      --clientId Sql-client-id
+      
+      --sr-url http://schema-registry:8080/apis/ccompat/v7
+    ports:
+      - "8098:8081"
+
+    environment:
+      SECURITY_PROTOCOL: SASL_PLAINTEXT
+      TOKEN_URL: http://keycloak:1852/realms/local-development/protocol/openid-connect/token
+      KAFKA_CLIENT_ID: default-access
+      KAFKA_CLIENT_SECRET: default-access-secret
+      KAFKA_SCOPE: kafka
+      KAFKA_TOKEN_URL: http://keycloak:1852/realms/local-development/protocol/openid-connect/token
+      SCHEMA_REGISTRY_CLIENT_ID: default-access
+      SCHEMA_REGISTRY_CLIENT_SECRET: default-access-secret
+      SCHEMA_REGISTRY_SCOPE: schema-registry
+      SCHEMA_REGISTRY_TOKEN_URL: http://keycloak:1852/realms/local-development/protocol/openid-connect/token
+
+      FLINK_PROPERTIES: |
+        jobmanager.rpc.address: avrosqlapplicationmode-jobmanager
+        scheduler-mode: reactive
+        rest.flamegraph.enabled: true
+        state.backend: hashmap
+        state.checkpoints.dir: file:///checkpoints/processing
+        state.savepoints.dir: file:///checkpoints/processing
+        execution.checkpointing.interval: 300 seconds
+        execution.checkpointing.min-pause: 240 seconds
+    volumes:
+      - flink:/checkpoints
+    healthcheck:
+      test: curl localhost:8081/jobs | grep -q '"status":"RUNNING"' || exit -1
+      interval: 1s
+      timeout: 1s
+      retries: 30
+    depends_on:
+      - avrosqlapplicationmode-taskmanager
+
+  avrosqlapplicationmode-taskmanager:
+    image: ${DOCKER_REGISTRY-}avrosqlapplicationmode-job
+    build:
+      dockerfile: Dockerfile
+      args:
+        - MAVEN_ARGS=${EXTRA_MAVEN_ARGS-}
+      secrets:
+        - GITHUB_TOKEN
+        - GITHUB_ACTOR
+    command: taskmanager
+    environment:
+      FLINK_PROPERTIES: |
+        jobmanager.rpc.address: avrosqlapplicationmode-jobmanager
+        taskmanager.memory.process.size: 4gb
+        taskmanager.numberOfTaskSlots: 2
+    volumes:
+      - flink:/checkpoints
+
+networks:
+  default:
+    name: "cheetah-infrastructure"
+    external: true
+
+volumes:
+  flink:
+
+secrets:
+  GITHUB_TOKEN:
+    environment: GITHUB_TOKEN
+  GITHUB_ACTOR:
+    environment: GITHUB_ACTOR
