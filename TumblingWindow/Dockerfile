@@ -28,7 +28,7 @@ RUN --mount=type=secret,id=GITHUB_TOKEN \
     --mount=type=cache,target=./.m2,sharing=locked \
     GITHUB_TOKEN="$(cat /run/secrets/GITHUB_TOKEN)" \
     GITHUB_ACTOR="$(cat /run/secrets/GITHUB_ACTOR)" \
-    mvn package -B -s ./settings.xml ${MAVEN_ARGS-}
+    mvn package -B -s ./settings.xml
 
 #
 #  Install jars onto clean runtime system.
