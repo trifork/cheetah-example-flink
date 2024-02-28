@@ -2,8 +2,6 @@ version: "3"
 services:
   serializationerrorcatch-test:
     build:
-      context: ComponentTest
-      dockerfile: Dockerfile
       secrets:
         - GITHUB_TOKEN
         - GITHUB_ACTOR
@@ -18,11 +16,7 @@ services:
         condition: service_healthy
 
   serializationerrorcatch-jobmanager:
-    image: ${DOCKER_REGISTRY-}serializationerrorcatch-job
     build:
-      dockerfile: Dockerfile
-      args:
-        - MAVEN_ARGS=${EXTRA_MAVEN_ARGS-}
       secrets:
         - GITHUB_TOKEN
         - GITHUB_ACTOR
@@ -63,18 +57,13 @@ services:
       retries: 30
 
   serializationerrorcatch-taskmanager:
-    image: ${DOCKER_REGISTRY-}serializationerrorcatch-job
     build:
-      dockerfile: Dockerfile
-      args:
-        - MAVEN_ARGS=${EXTRA_MAVEN_ARGS-}
       secrets:
         - GITHUB_TOKEN
         - GITHUB_ACTOR
     command: taskmanager
     environment:
-      - |
-        FLINK_PROPERTIES=
+      FLINK_PROPERTIES: |
         jobmanager.rpc.address: serializationerrorcatch-jobmanager
         taskmanager.memory.process.size: 4gb
         taskmanager.numberOfTaskSlots: 2

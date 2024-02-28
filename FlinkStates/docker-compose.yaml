@@ -3,8 +3,6 @@ version: "3"
 services:
   flinkstates-test:
     build:
-      context: ComponentTest
-      dockerfile: Dockerfile
       secrets:
         - GITHUB_TOKEN
         - GITHUB_ACTOR
@@ -19,11 +17,7 @@ services:
         condition: service_healthy
 
   flinkstates-jobmanager:
-    image: ${DOCKER_REGISTRY-}flinkstates-job
     build:
-      dockerfile: Dockerfile
-      args:
-        - MAVEN_ARGS=${EXTRA_MAVEN_ARGS-}
       secrets:
         - GITHUB_TOKEN
         - GITHUB_ACTOR
@@ -64,18 +58,13 @@ services:
       retries: 30
 
   flinkstates-taskmanager:
-    image: ${DOCKER_REGISTRY-}flinkstates-job
     build:
-      dockerfile: Dockerfile
-      args:
-        - MAVEN_ARGS=${EXTRA_MAVEN_ARGS-}
       secrets:
         - GITHUB_TOKEN
         - GITHUB_ACTOR
     command: taskmanager
     environment:
-      - |
-        FLINK_PROPERTIES=
+      FLINK_PROPERTIES: |
         jobmanager.rpc.address: flinkstates-jobmanager
         taskmanager.memory.process.size: 4gb
         taskmanager.numberOfTaskSlots: 2

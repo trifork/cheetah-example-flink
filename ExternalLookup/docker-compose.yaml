@@ -3,8 +3,6 @@ version: "3"
 services:
   externallookup-test:
     build:
-      context: ComponentTest
-      dockerfile: Dockerfile
       secrets:
         - GITHUB_TOKEN
         - GITHUB_ACTOR
@@ -19,11 +17,7 @@ services:
         condition: service_healthy
 
   externallookup-job:
-    image: ${DOCKER_REGISTRY-}externallookup-job
     build:
-      dockerfile: Dockerfile
-      args:
-        - MAVEN_ARGS=${EXTRA_MAVEN_ARGS-}
       secrets:
         - GITHUB_TOKEN
         - GITHUB_ACTOR
@@ -65,11 +59,7 @@ services:
       retries: 30
 
   externallookup-job-taskmanager:
-    image: ${DOCKER_REGISTRY-}externallookup-job
     build:
-      dockerfile: Dockerfile
-      args:
-        - MAVEN_ARGS=${EXTRA_MAVEN_ARGS-}
       secrets:
         - GITHUB_TOKEN
         - GITHUB_ACTOR
