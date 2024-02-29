@@ -8,7 +8,7 @@ import org.apache.flink.api.common.functions.MapFunction;
 public class AvroToJsonMapper implements MapFunction<InputEventAvro, OutputEventJson> {
 
     @Override
-    public OutputEventJson map(final InputEventAvro InputEventAvro) {
-        return new OutputEventJson(InputEventAvro.getDeviceId(), InputEventAvro.getValue(), InputEventAvro.getTimestamp());
+    public OutputEventJson map(final InputEventAvro inputEventAvro) {
+        return new OutputEventJson(inputEventAvro.getDeviceId(), inputEventAvro.getValue(), inputEventAvro.getTimestamp());
     }
 }
