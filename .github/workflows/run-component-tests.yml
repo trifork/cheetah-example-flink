@@ -55,6 +55,9 @@ jobs:
           - folder: TumblingWindow
             initial-kafka-topics: "TumblingWindowInputTopic TumblingWindowOutputTopic"
 
+          - folder: DockerComposeExamples/RunMultipleFlinkJobs
+            initial-kafka-topics: "JsonToAvroInputTopic JsonToAvroOutputTopic"
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
