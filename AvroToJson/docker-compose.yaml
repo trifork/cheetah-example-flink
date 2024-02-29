@@ -1,9 +1,8 @@
+version: "3"
 services:
-  # Copied from JsonToAvro project
-  # Start of JsonToAvro service
-  jsontoavro-test:
+  avrotojson-test:
     build:
-      context: ../../JsonToAvro/ComponentTest
+      context: ComponentTest
       dockerfile: Dockerfile
       secrets:
         - GITHUB_TOKEN
@@ -16,82 +15,12 @@ services:
       KAFKA__OAUTH2__TOKENENDPOINT: http://keycloak:1852/realms/local-development/protocol/openid-connect/token
       KAFKA__SCHEMAREGISTRYURL: http://schema-registry:8080/apis/ccompat/v7
     depends_on:
-      jsontoavro-jobmanager:
+      avrotojson-jobmanager:
         condition: service_healthy
 
-  jsontoavro-jobmanager:
-    image: ${DOCKER_REGISTRY-}jsontoavro-job
-    build:
-      context: ../../JsonToAvro
-      dockerfile: Dockerfile
-      args:
-        - MAVEN_ARGS=${EXTRA_MAVEN_ARGS-}
-      secrets:
-        - GITHUB_TOKEN
-        - GITHUB_ACTOR
-    command: |
-      standalone-job
-      --job-classname cheetah.example.job.JsonToAvroJob
-      --kafka-bootstrap-servers kafka:19092
-      --input-kafka-topic jsonToAvroInputTopic
-      --output-kafka-topic jsonToAvroOutputTopic
-      --kafka-group-id jsonToAvro-group-id
-      --kafka-security-protocol SASL_PLAINTEXT
-      --sr-url http://schema-registry:8080/apis/ccompat/v7
-    environment:
-      TOKEN_URL: http://keycloak:1852/realms/local-development/protocol/openid-connect/token
-      KAFKA_CLIENT_ID: default-access
-      KAFKA_CLIENT_SECRET: default-access-secret
-      KAFKA_SCOPE: kafka
-      SCHEMA_REGISTRY_CLIENT_ID: default-access
-      SCHEMA_REGISTRY_CLIENT_SECRET: default-access-secret
-      SCHEMA_REGISTRY_SCOPE: schema-registry
-      FLINK_PROPERTIES: |
-        jobmanager.rpc.address: jsontoavro-jobmanager
-        scheduler-mode: reactive
-        rest.flamegraph.enabled: true
-        state.backend: rocksdb
-        state.checkpoints.dir: file:///checkpoints/processing
-        state.savepoints.dir: file:///checkpoints/processing
-        execution.checkpointing.interval: 300 seconds
-        execution.checkpointing.min-pause: 240 seconds
-    depends_on:
-      - jsontoavro-taskmanager
-    volumes:
-      - flink:/checkpoints
-    healthcheck:
-      test: curl localhost:8081/jobs | grep -q '"status":"RUNNING"' || exit -1
-      interval: 1s
-      timeout: 1s
-      retries: 30
-
-  jsontoavro-taskmanager:
-    image: ${DOCKER_REGISTRY-}jsontoavro-job
-    build:
-      context: ../../JsonToAvro
-      dockerfile: Dockerfile
-      args:
-        - MAVEN_ARGS=${EXTRA_MAVEN_ARGS-}
-      secrets:
-        - GITHUB_TOKEN
-        - GITHUB_ACTOR
-    command: taskmanager
-    environment:
-      - |
-        FLINK_PROPERTIES=
-        jobmanager.rpc.address: jsontoavro-jobmanager
-        taskmanager.memory.process.size: 4gb
-        taskmanager.numberOfTaskSlots: 2
-    volumes:
-      - flink:/checkpoints
-  # End of JsonToAvro service
-
-  # Copied from AvroToJson project
-  # Start of AvroToJson service
   avrotojson-jobmanager:
     image: ${DOCKER_REGISTRY-}avrotojson-job
     build:
-      context: ../../AvroToJson
       dockerfile: Dockerfile
       args:
         - MAVEN_ARGS=${EXTRA_MAVEN_ARGS-}
@@ -107,7 +36,7 @@ services:
       --kafka-group-id AvroToJson-group-id
       --schema-registry-url http://schema-registry:8080/apis/ccompat/v7
       
-      --input-kafka-topic jsonToAvroOutputTopic
+      --input-kafka-topic AvroToJsonInputTopic
       --output-kafka-topic AvroToJsonOutputTopic
     environment:
       SECURITY_PROTOCOL: SASL_PLAINTEXT
@@ -140,7 +69,6 @@ services:
   avrotojson-taskmanager:
     image: ${DOCKER_REGISTRY-}avrotojson-job
     build:
-      context: ../../AvroToJson
       dockerfile: Dockerfile
       args:
         - MAVEN_ARGS=${EXTRA_MAVEN_ARGS-}
@@ -155,9 +83,12 @@ services:
         taskmanager.numberOfTaskSlots: 2
     volumes:
       - flink:/checkpoints
-# End of AvroToJson service
 
-# Shared top level elements
+networks:
+  default:
+    name: "cheetah-infrastructure"
+    external: true
+
 volumes:
   flink:
 
@@ -166,8 +97,3 @@ secrets:
     environment: GITHUB_TOKEN
   GITHUB_ACTOR:
     environment: GITHUB_ACTOR
-
-networks:
-  default:
-    name: "cheetah-infrastructure"
-    external: true

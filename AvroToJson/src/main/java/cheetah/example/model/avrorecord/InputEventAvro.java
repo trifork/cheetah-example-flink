@@ -13,26 +13,26 @@ import org.apache.avro.message.BinaryMessageDecoder;
 import org.apache.avro.message.SchemaStore;
 
 @org.apache.avro.specific.AvroGenerated
-public class OutputEventAvro extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  private static final long serialVersionUID = -7501648990002563427L;
+public class InputEventAvro extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
+  private static final long serialVersionUID = -8085524035827512123L;
 
 
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"OutputEventAvro\",\"namespace\":\"cheetah.example.model.avrorecord\",\"fields\":[{\"name\":\"deviceId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"value\",\"type\":\"double\"},{\"name\":\"timestamp\",\"type\":\"long\"}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"InputEventAvro\",\"namespace\":\"cheetah.example.model.avrorecord\",\"fields\":[{\"name\":\"deviceId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"value\",\"type\":\"double\"},{\"name\":\"timestamp\",\"type\":\"long\"}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
 
   private static final SpecificData MODEL$ = new SpecificData();
 
-  private static final BinaryMessageEncoder<OutputEventAvro> ENCODER =
+  private static final BinaryMessageEncoder<InputEventAvro> ENCODER =
       new BinaryMessageEncoder<>(MODEL$, SCHEMA$);
 
-  private static final BinaryMessageDecoder<OutputEventAvro> DECODER =
+  private static final BinaryMessageDecoder<InputEventAvro> DECODER =
       new BinaryMessageDecoder<>(MODEL$, SCHEMA$);
 
   /**
    * Return the BinaryMessageEncoder instance used by this class.
    * @return the message encoder used by this class
    */
-  public static BinaryMessageEncoder<OutputEventAvro> getEncoder() {
+  public static BinaryMessageEncoder<InputEventAvro> getEncoder() {
     return ENCODER;
   }
 
@@ -40,7 +40,7 @@ public class OutputEventAvro extends org.apache.avro.specific.SpecificRecordBase
    * Return the BinaryMessageDecoder instance used by this class.
    * @return the message decoder used by this class
    */
-  public static BinaryMessageDecoder<OutputEventAvro> getDecoder() {
+  public static BinaryMessageDecoder<InputEventAvro> getDecoder() {
     return DECODER;
   }
 
@@ -49,12 +49,12 @@ public class OutputEventAvro extends org.apache.avro.specific.SpecificRecordBase
    * @param resolver a {@link SchemaStore} used to find schemas by fingerprint
    * @return a BinaryMessageDecoder instance for this class backed by the given SchemaStore
    */
-  public static BinaryMessageDecoder<OutputEventAvro> createDecoder(SchemaStore resolver) {
+  public static BinaryMessageDecoder<InputEventAvro> createDecoder(SchemaStore resolver) {
     return new BinaryMessageDecoder<>(MODEL$, SCHEMA$, resolver);
   }
 
   /**
-   * Serializes this OutputEventAvro to a ByteBuffer.
+   * Serializes this InputEventAvro to a ByteBuffer.
    * @return a buffer holding the serialized data for this instance
    * @throws java.io.IOException if this instance could not be serialized
    */
@@ -63,12 +63,12 @@ public class OutputEventAvro extends org.apache.avro.specific.SpecificRecordBase
   }
 
   /**
-   * Deserializes a OutputEventAvro from a ByteBuffer.
+   * Deserializes a InputEventAvro from a ByteBuffer.
    * @param b a byte buffer holding serialized data for an instance of this class
-   * @return a OutputEventAvro instance decoded from the given buffer
+   * @return a InputEventAvro instance decoded from the given buffer
    * @throws java.io.IOException if the given bytes could not be deserialized into an instance of this class
    */
-  public static OutputEventAvro fromByteBuffer(
+  public static InputEventAvro fromByteBuffer(
       java.nio.ByteBuffer b) throws java.io.IOException {
     return DECODER.decode(b);
   }
@@ -82,7 +82,7 @@ public class OutputEventAvro extends org.apache.avro.specific.SpecificRecordBase
    * to their default values from the schema.  If that is desired then
    * one should use <code>newBuilder()</code>.
    */
-  public OutputEventAvro() {}
+  public InputEventAvro() {}
 
   /**
    * All-args constructor.
@@ -90,7 +90,7 @@ public class OutputEventAvro extends org.apache.avro.specific.SpecificRecordBase
    * @param value The new value for value
    * @param timestamp The new value for timestamp
    */
-  public OutputEventAvro(java.lang.String deviceId, java.lang.Double value, java.lang.Long timestamp) {
+  public InputEventAvro(java.lang.String deviceId, java.lang.Double value, java.lang.Long timestamp) {
     this.deviceId = deviceId;
     this.value = value;
     this.timestamp = timestamp;
@@ -177,45 +177,45 @@ public class OutputEventAvro extends org.apache.avro.specific.SpecificRecordBase
   }
 
   /**
-   * Creates a new OutputEventAvro RecordBuilder.
-   * @return A new OutputEventAvro RecordBuilder
+   * Creates a new InputEventAvro RecordBuilder.
+   * @return A new InputEventAvro RecordBuilder
    */
-  public static cheetah.example.model.avrorecord.OutputEventAvro.Builder newBuilder() {
-    return new cheetah.example.model.avrorecord.OutputEventAvro.Builder();
+  public static cheetah.example.model.avrorecord.InputEventAvro.Builder newBuilder() {
+    return new cheetah.example.model.avrorecord.InputEventAvro.Builder();
   }
 
   /**
-   * Creates a new OutputEventAvro RecordBuilder by copying an existing Builder.
+   * Creates a new InputEventAvro RecordBuilder by copying an existing Builder.
    * @param other The existing builder to copy.
-   * @return A new OutputEventAvro RecordBuilder
+   * @return A new InputEventAvro RecordBuilder
    */
-  public static cheetah.example.model.avrorecord.OutputEventAvro.Builder newBuilder(cheetah.example.model.avrorecord.OutputEventAvro.Builder other) {
+  public static cheetah.example.model.avrorecord.InputEventAvro.Builder newBuilder(cheetah.example.model.avrorecord.InputEventAvro.Builder other) {
     if (other == null) {
-      return new cheetah.example.model.avrorecord.OutputEventAvro.Builder();
+      return new cheetah.example.model.avrorecord.InputEventAvro.Builder();
     } else {
-      return new cheetah.example.model.avrorecord.OutputEventAvro.Builder(other);
+      return new cheetah.example.model.avrorecord.InputEventAvro.Builder(other);
     }
   }
 
   /**
-   * Creates a new OutputEventAvro RecordBuilder by copying an existing OutputEventAvro instance.
+   * Creates a new InputEventAvro RecordBuilder by copying an existing InputEventAvro instance.
    * @param other The existing instance to copy.
-   * @return A new OutputEventAvro RecordBuilder
+   * @return A new InputEventAvro RecordBuilder
    */
-  public static cheetah.example.model.avrorecord.OutputEventAvro.Builder newBuilder(cheetah.example.model.avrorecord.OutputEventAvro other) {
+  public static cheetah.example.model.avrorecord.InputEventAvro.Builder newBuilder(cheetah.example.model.avrorecord.InputEventAvro other) {
     if (other == null) {
-      return new cheetah.example.model.avrorecord.OutputEventAvro.Builder();
+      return new cheetah.example.model.avrorecord.InputEventAvro.Builder();
     } else {
-      return new cheetah.example.model.avrorecord.OutputEventAvro.Builder(other);
+      return new cheetah.example.model.avrorecord.InputEventAvro.Builder(other);
     }
   }
 
   /**
-   * RecordBuilder for OutputEventAvro instances.
+   * RecordBuilder for InputEventAvro instances.
    */
   @org.apache.avro.specific.AvroGenerated
-  public static class Builder extends org.apache.avro.specific.SpecificRecordBuilderBase<OutputEventAvro>
-    implements org.apache.avro.data.RecordBuilder<OutputEventAvro> {
+  public static class Builder extends org.apache.avro.specific.SpecificRecordBuilderBase<InputEventAvro>
+    implements org.apache.avro.data.RecordBuilder<InputEventAvro> {
 
     private java.lang.String deviceId;
     private double value;
@@ -230,7 +230,7 @@ public class OutputEventAvro extends org.apache.avro.specific.SpecificRecordBase
      * Creates a Builder by copying an existing Builder.
      * @param other The existing Builder to copy.
      */
-    private Builder(cheetah.example.model.avrorecord.OutputEventAvro.Builder other) {
+    private Builder(cheetah.example.model.avrorecord.InputEventAvro.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.deviceId)) {
         this.deviceId = data().deepCopy(fields()[0].schema(), other.deviceId);
@@ -247,10 +247,10 @@ public class OutputEventAvro extends org.apache.avro.specific.SpecificRecordBase
     }
 
     /**
-     * Creates a Builder by copying an existing OutputEventAvro instance
+     * Creates a Builder by copying an existing InputEventAvro instance
      * @param other The existing instance to copy.
      */
-    private Builder(cheetah.example.model.avrorecord.OutputEventAvro other) {
+    private Builder(cheetah.example.model.avrorecord.InputEventAvro other) {
       super(SCHEMA$, MODEL$);
       if (isValidValue(fields()[0], other.deviceId)) {
         this.deviceId = data().deepCopy(fields()[0].schema(), other.deviceId);
@@ -280,7 +280,7 @@ public class OutputEventAvro extends org.apache.avro.specific.SpecificRecordBase
       * @param value The value of 'deviceId'.
       * @return This builder.
       */
-    public cheetah.example.model.avrorecord.OutputEventAvro.Builder setDeviceId(java.lang.String value) {
+    public cheetah.example.model.avrorecord.InputEventAvro.Builder setDeviceId(java.lang.String value) {
       validate(fields()[0], value);
       this.deviceId = value;
       fieldSetFlags()[0] = true;
@@ -300,7 +300,7 @@ public class OutputEventAvro extends org.apache.avro.specific.SpecificRecordBase
       * Clears the value of the 'deviceId' field.
       * @return This builder.
       */
-    public cheetah.example.model.avrorecord.OutputEventAvro.Builder clearDeviceId() {
+    public cheetah.example.model.avrorecord.InputEventAvro.Builder clearDeviceId() {
       deviceId = null;
       fieldSetFlags()[0] = false;
       return this;
@@ -320,7 +320,7 @@ public class OutputEventAvro extends org.apache.avro.specific.SpecificRecordBase
       * @param value The value of 'value'.
       * @return This builder.
       */
-    public cheetah.example.model.avrorecord.OutputEventAvro.Builder setValue(double value) {
+    public cheetah.example.model.avrorecord.InputEventAvro.Builder setValue(double value) {
       validate(fields()[1], value);
       this.value = value;
       fieldSetFlags()[1] = true;
@@ -340,7 +340,7 @@ public class OutputEventAvro extends org.apache.avro.specific.SpecificRecordBase
       * Clears the value of the 'value' field.
       * @return This builder.
       */
-    public cheetah.example.model.avrorecord.OutputEventAvro.Builder clearValue() {
+    public cheetah.example.model.avrorecord.InputEventAvro.Builder clearValue() {
       fieldSetFlags()[1] = false;
       return this;
     }
@@ -359,7 +359,7 @@ public class OutputEventAvro extends org.apache.avro.specific.SpecificRecordBase
       * @param value The value of 'timestamp'.
       * @return This builder.
       */
-    public cheetah.example.model.avrorecord.OutputEventAvro.Builder setTimestamp(long value) {
+    public cheetah.example.model.avrorecord.InputEventAvro.Builder setTimestamp(long value) {
       validate(fields()[2], value);
       this.timestamp = value;
       fieldSetFlags()[2] = true;
@@ -379,16 +379,16 @@ public class OutputEventAvro extends org.apache.avro.specific.SpecificRecordBase
       * Clears the value of the 'timestamp' field.
       * @return This builder.
       */
-    public cheetah.example.model.avrorecord.OutputEventAvro.Builder clearTimestamp() {
+    public cheetah.example.model.avrorecord.InputEventAvro.Builder clearTimestamp() {
       fieldSetFlags()[2] = false;
       return this;
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public OutputEventAvro build() {
+    public InputEventAvro build() {
       try {
-        OutputEventAvro record = new OutputEventAvro();
+        InputEventAvro record = new InputEventAvro();
         record.deviceId = fieldSetFlags()[0] ? this.deviceId : (java.lang.String) defaultValue(fields()[0]);
         record.value = fieldSetFlags()[1] ? this.value : (java.lang.Double) defaultValue(fields()[1]);
         record.timestamp = fieldSetFlags()[2] ? this.timestamp : (java.lang.Long) defaultValue(fields()[2]);
@@ -402,8 +402,8 @@ public class OutputEventAvro extends org.apache.avro.specific.SpecificRecordBase
   }
 
   @SuppressWarnings("unchecked")
-  private static final org.apache.avro.io.DatumWriter<OutputEventAvro>
-    WRITER$ = (org.apache.avro.io.DatumWriter<OutputEventAvro>)MODEL$.createDatumWriter(SCHEMA$);
+  private static final org.apache.avro.io.DatumWriter<InputEventAvro>
+    WRITER$ = (org.apache.avro.io.DatumWriter<InputEventAvro>)MODEL$.createDatumWriter(SCHEMA$);
 
   @Override public void writeExternal(java.io.ObjectOutput out)
     throws java.io.IOException {
@@ -411,8 +411,8 @@ public class OutputEventAvro extends org.apache.avro.specific.SpecificRecordBase
   }
 
   @SuppressWarnings("unchecked")
-  private static final org.apache.avro.io.DatumReader<OutputEventAvro>
-    READER$ = (org.apache.avro.io.DatumReader<OutputEventAvro>)MODEL$.createDatumReader(SCHEMA$);
+  private static final org.apache.avro.io.DatumReader<InputEventAvro>
+    READER$ = (org.apache.avro.io.DatumReader<InputEventAvro>)MODEL$.createDatumReader(SCHEMA$);
 
   @Override public void readExternal(java.io.ObjectInput in)
     throws java.io.IOException {
