@@ -1,4 +1,4 @@
-package cheetah.example.sqlapplicationmode.job;
+package cheetah.example.avrosqlapplicationmode.job;
 
 import org.apache.avro.Schema;
 import org.apache.calcite.rel.type.RelDataType;
