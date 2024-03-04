@@ -42,9 +42,9 @@ import org.apache.calcite.rel.type.RelDataTypeFactory;
 import org.apache.flink.table.api.*;
 import static org.apache.flink.table.api.Expressions.*;
 
-import java.util.Map;
+import java.util.*;
 import java.io.File;
-import java.util.Properties;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.io.Serializable;
@@ -54,11 +54,14 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /** AvroSqlApplicationModeJob sets up the data processing job. */
-public class AvroSqlApplicationModeJob  implements Serializable {   //, KeyedDeserializationSchema<GenericRecord>
+public class AvroSqlApplicationModeJob implements Serializable {   //, KeyedDeserializationSchema<GenericRecord>
 
     private static final Logger logger = LoggerFactory.getLogger(AvroSqlApplicationModeJob.class);
+    private transient ObjectMapper objectMapper;
 
     private SchemaConverter schemaConverter;
 
@@ -166,41 +169,39 @@ public class AvroSqlApplicationModeJob  implements Serializable {   //, KeyedDes
         logger.info("Setup parameter and config done!--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
 
         //-----------------------------------------Convert kafka connection properties to a Map from:          https://ibm.github.io/event-automation/es/schemas/setting-java-apps-apicurio-serdes/
-        try {
-            // Example GET request
-            String getRequestUrl = "http://localhost:8081/apis/ccompat/v7/schemas/ids/1";
-            String getResponse = sendGetRequest(getRequestUrl);
-            System.out.println("GET Response:");
-            System.out.println(getResponse);
-            Schema schema = new Schema.Parser().parse(getResponse);
 
-//            // Example POST request
-//            String postRequestUrl = "https://jsonplaceholder.typicode.com/posts";
-//            String postData = "{\"title\": \"foo\",\"body\": \"bar\",\"userId\": 1}";
-//            String postResponse = sendPostRequest(postRequestUrl, postData);
-//            System.out.println("POST Response:");
-//            System.out.println(postResponse);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        // Example GET the subjects and take the last as reference
 
-        // Map<String, Object> config = (Map) props;
-        // Create the client
-        // RegistryClient client = RegistryClientFactory.create(registryUrl, config);
+        String getRequestUrl = registryUrl + "/subjects";
+        String stringSubjects = sendGetRequest(getRequestUrl);
+        String [] jsonSubjects = getStringArray (stringSubjects);
+        String subject = jsonSubjects [jsonSubjects.length - 1];
+        System.out.println("GET Response: ");
+        System.out.println(subject);
 
+        // Example GET the last version
+        getRequestUrl = registryUrl + "/subjects/" + subject + "/versions";
+        String versions = sendGetRequest(getRequestUrl);
+        String [] jsonVersions = getStringArray (versions);
+        String version = jsonVersions [jsonVersions.length - 1];
+        System.out.println("GET Response: ");
+        System.out.println(version);
 
-        // Get the schema from apicurio and convert to an avro schema
-        // Schema schema = new Schema.Parser().parse(client.getLatestArtifact(null, "jsonToAvroOutputTopic-value"));   //artifactId
-        //---------------------------------------------------------------------
-        // To be implented refer to a class from:              https://github.com/milinda/avro-to-calcite/blob/master/src/main/java/org/pathirage/a2c/AvroSchemaConverter.java
+        // Example GET the registry
+        getRequestUrl = registryUrl + "/schemas/ids/" + version;
+        String stringSchema = sendGetRequest(getRequestUrl);
+        System.out.println(stringSchema);
 
-//        RelDataTypeFactory relDataTypeFactory = new RelDataTypeFactory()  //this is an interface!
-//        SchemaConverter schemaConverter = new SchemaConverter(relDataTypeFactory, schema);
+        // Transform the registry into JSON
+        JsonNode schema = getJsonNode (stringSchema);
 
-//        Object sqlSchema = schemaConverter.convert();
+        System.out.println(schema);
 
-//        createAvroTable(userSourceTopic, tableEnv, sqlSchema, groupId, clientId);
-        logger.info("First table!--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+        String tableMetadata = jsonSchemaToSql(schema);
+
+        System.out.println(tableMetadata);
+
+        logger.info("Metadata for the table done!--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
     }
 
     static public void createTable(String topicName, StreamTableEnvironment tableEnv, String tableSql, String groupId, String clientId) {
@@ -275,23 +276,68 @@ public class AvroSqlApplicationModeJob  implements Serializable {   //, KeyedDes
         return response.toString();
     }
 
-    static public String sendPostRequest(String url, String data) throws IOException {
-        HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
-        connection.setRequestMethod("POST");
-        connection.setRequestProperty("Content-Type", "application/json");
-        connection.setDoOutput(true);
-        OutputStream os = connection.getOutputStream();
-        os.write(data.getBytes());
-        os.flush();
-        os.close();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-        StringBuilder response = new StringBuilder();
-        String line;
-        while ((line = reader.readLine()) != null) {
-            response.append(line);
-        }
-        reader.close();
-        return response.toString();
+    static public JsonNode getJsonNode(String string) throws IOException {
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.readValue(string, JsonNode.class);
     }
+
+    static public String [] getStringArray(String string) throws IOException {
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        return  objectMapper.readValue(string, String[].class);
+    }
+
+    static public String jsonSchemaToSql (JsonNode schema) {
+
+        String sql = "";
+
+        Schema temp = new Schema.Parser().parse(schema.get("schema").asText());
+        List<Schema.Field> listSchema =  temp.getFields();
+        int numberOfElements = listSchema.size();
+
+        int i = 0;
+
+        for (Schema.Field listField : listSchema) {
+
+            String value = String.valueOf(listField.name());
+            String field = rawFieldToSql(String.valueOf(listField.schema().getType().getName()));
+
+            if (i == numberOfElements - 1) {
+                sql = sql + " " + value + " " + field;
+            } else if (i == 0) {
+                sql = sql + value + " " + field + ",";
+            } else {
+                sql = sql + " " + value + " " + field + ",";
+            }
+
+            i++;
+        }
+        return sql;
+    }
+
+    static public String rawFieldToSql (String type) {
+
+        String sql = "";
+
+        if (Objects.equals(type, "string")) {
+            sql = "VARCHAR";
+        } else if (Objects.equals(type, "int")) {
+            sql = "INTEGER";
+        } else if (Objects.equals(type, "boolean")) {
+            sql = "BOOLEAN";
+        } else if (Objects.equals(type, "bytes")) {
+            sql = "BINARY";
+        } else if (Objects.equals(type, "long")) {
+            sql = "BIGINT";
+        } else if (Objects.equals(type, "double")) {
+            sql = "DOUBLE";
+        } else if (Objects.equals(type, "float")) {
+            sql = "FLOAT";
+        }
+
+        return sql;
+    }
+
 }
 
