@@ -1,20 +1,10 @@
 package cheetah.example.avrosqlapplicationmode.job;
 
-import cheetah.example.avrosqlapplicationmode.model.InputEvent;
-import cheetah.example.avrosqlapplicationmode.model.OutputEvent;
-import cheetah.example.avrosqlapplicationmode.job.SchemaConverter;
-import com.trifork.cheetah.processing.job.Job;
-import org.apache.flink.connector.kafka.sink.KafkaSink;
-import org.apache.flink.connector.kafka.source.KafkaSource;
-import com.trifork.cheetah.processing.connector.kafka.CheetahKafkaSink;
-import com.trifork.cheetah.processing.connector.kafka.CheetahKafkaSource;
-import org.apache.flink.streaming.api.datastream.DataStream;
-import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
-
 import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.table.api.bridge.java.StreamTableEnvironment;
 import org.apache.flink.table.api.EnvironmentSettings;
+import org.apache.flink.table.api.DataTypes;
 import io.strimzi.kafka.oauth.client.ClientConfig;
 import io.strimzi.kafka.oauth.client.JaasClientOauthLoginCallbackHandler;
 import io.strimzi.kafka.oauth.common.Config;
@@ -23,47 +13,31 @@ import org.apache.kafka.common.security.oauthbearer.OAuthBearerLoginModule;
 import io.apicurio.registry.serde.SerdeConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
-import io.apicurio.registry.serde.avro.AvroKafkaSerdeConfig;
-import io.apicurio.rest.client.config.ApicurioClientConfig;
-import io.apicurio.registry.rest.client.RegistryClient;
-import io.apicurio.registry.rest.client.RegistryClientFactory;
 import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig;
 import io.confluent.kafka.serializers.KafkaAvroDeserializer;
 import org.apache.avro.Schema;
-import org.apache.avro.generic.GenericData;
-import org.apache.avro.generic.GenericRecord;
-import org.apache.kafka.clients.CommonClientConfigs;
-import org.apache.kafka.common.config.SaslConfigs;
-import org.apache.kafka.common.config.SslConfigs;
-import org.apache.calcite.sql.type.SqlTypeFactoryImpl;
-import org.apache.calcite.rel.type.RelDataTypeSystem;
-import org.apache.calcite.rel.type.RelDataTypeFactory;
-
-import org.apache.flink.table.api.*;
-import static org.apache.flink.table.api.Expressions.*;
 
 import java.util.*;
-import java.io.File;
 
+import java.lang.reflect.Method;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.io.Serializable;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /** AvroSqlApplicationModeJob sets up the data processing job. */
 public class AvroSqlApplicationModeJob implements Serializable {   //, KeyedDeserializationSchema<GenericRecord>
 
     private static final Logger logger = LoggerFactory.getLogger(AvroSqlApplicationModeJob.class);
-    private transient ObjectMapper objectMapper;
-
-    private SchemaConverter schemaConverter;
 
     public static void main(final String[] args) throws Exception {
 
@@ -296,12 +270,18 @@ public class AvroSqlApplicationModeJob implements Serializable {   //, KeyedDese
         List<Schema.Field> listSchema =  temp.getFields();
         int numberOfElements = listSchema.size();
 
+        List<String> ddlTypes = getDdlTypes();
+
         int i = 0;
 
         for (Schema.Field listField : listSchema) {
 
             String value = String.valueOf(listField.name());
             String field = rawFieldToSql(String.valueOf(listField.schema().getType().getName()));
+
+            if (ddlTypes.contains(value.toLowerCase())){
+                value = "`" + value + "`";
+            }
 
             if (i == numberOfElements - 1) {
                 sql = sql + " " + value + " " + field;
@@ -316,7 +296,7 @@ public class AvroSqlApplicationModeJob implements Serializable {   //, KeyedDese
         return sql;
     }
 
-    static public String rawFieldToSql (String type) {
+    static private String rawFieldToSql (String type) {
 
         String sql = "";
 
@@ -337,6 +317,47 @@ public class AvroSqlApplicationModeJob implements Serializable {   //, KeyedDese
         }
 
         return sql;
+    }
+
+    static private List<String> getDdlTypes () {
+
+        List<String> dataTypeList = new ArrayList<>();
+
+        // Get all methods from the DataTypes class
+        Method[] methods = DataTypes.class.getDeclaredMethods();
+
+        // Iterate through the methods
+        for (Method method : methods) {
+            // Ensure the method is public and static
+            if (java.lang.reflect.Modifier.isPublic(method.getModifiers())
+                    && java.lang.reflect.Modifier.isStatic(method.getModifiers())) {
+
+                    String dataTypeMethodNames = getLowerCaseMethodNames(method);
+
+                    if (!dataTypeList.contains(dataTypeMethodNames) && !Objects.equals(dataTypeMethodNames, "")) {
+                        dataTypeList.add(dataTypeMethodNames.toLowerCase());
+                    }
+            }
+        }
+
+        return dataTypeList;
+    }
+
+    private static String getLowerCaseMethodNames(Method method) {
+        String cleanedMethodName = "";
+
+        // Check if method name is written entirely in uppercase letters
+        if (method.getName().equals(method.getName().toUpperCase())) {
+            cleanedMethodName = cleanMethodName(method.getName().toLowerCase());
+        }
+
+        return cleanedMethodName;
+    }
+
+    // Function to clean method names
+    private static String cleanMethodName(String methodName) {
+        // Replace all symbols other than underscores with empty string
+        return methodName.replaceAll("[^a-zA-Z0-9_]", "");
     }
 
 }
