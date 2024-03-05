@@ -31,7 +31,7 @@ RUN --mount=type=secret,id=GITHUB_TOKEN \
 #
 #  Install jar onto clean runtime system.
 #
-FROM ghcr.io/trifork/cheetah-lib-processing:E2E-SNAPSHOT1508
+FROM ghcr.io/trifork/cheetah-flink:4.2.0-feature-lib-processing-image-SNAPSHOT35-flink-1.18.1-java17
 
 COPY --from=build /app/target/observability*.jar /opt/flink/usrlib/artifacts/observability.jar
 
