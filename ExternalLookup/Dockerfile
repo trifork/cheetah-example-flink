@@ -31,7 +31,7 @@ RUN --mount=type=secret,id=GITHUB_TOKEN \
 #
 #  Install jar onto clean runtime system.
 #
-FROM ghcr.io/trifork/cheetah-lib-processing:4.2.0-feature-lib-processing-image-snapshot36-flink-1.18.1-java11
+FROM ghcr.io/trifork/cheetah-lib-processing:4.2.0-feature-lib-processing-image-snapshot36-flink-1.18.1-java17
 
 COPY --from=build /app/target/externallookup*.jar /opt/flink/usrlib/artifacts/externallookup.jar
 
