@@ -35,9 +35,4 @@ FROM ghcr.io/trifork/cheetah-lib-processing:4.2.0-feature-lib-processing-image-s
 
 COPY --from=build /app/target/enrichstream*.jar /opt/flink/usrlib/artifacts/enrichstream.jar
 
-SHELL ["/bin/bash", "-o", "pipefail", "-c"]
-# Add support for structured JSON logging
-RUN log4jVersion=$(find /opt/flink/lib/ -name 'log4j-core-*.jar' -exec basename {} \; | grep -oP '(\d+\.\d+\.\d+)') && \
-    wget --progress=dot:giga -P /opt/flink/lib "https://repo1.maven.org/maven2/org/apache/logging/log4j/log4j-layout-template-json/$log4jVersion/log4j-layout-template-json-$log4jVersion.jar"
-
 USER flink
