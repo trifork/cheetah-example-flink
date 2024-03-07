@@ -1,6 +1,6 @@
 {
     "type": "record",
-    "name": "OutputEventAvro",
+    "name": "InputEventAvro",
     "namespace": "cheetah.example.model.avrorecord",
     "fields":  [
         {
