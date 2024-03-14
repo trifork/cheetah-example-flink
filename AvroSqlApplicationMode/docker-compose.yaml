@@ -31,16 +31,10 @@ services:
       --job-classname cheetah.example.avrosqlapplicationmode.job.AvroSqlApplicationModeJob
       --kafka-bootstrap-servers kafka:19092
       --kafka-group-id AvroSqlApplicationMode-group-id
-      --sql "INSERT INTO MultiSourceOutput SELECT AvroSqlApplicationModeInputTopic.deviceId, AvroSqlApplicationModeInputTopic.`timestamp`, AvroSqlApplicationModeInputTopic.`value` FROM AvroSqlApplicationModeInputTopic JOIN AvroSqlApplicationModeOutputTopic ON AvroSqlApplicationModeInputTopic.`timestamp` = AvroSqlApplicationModeOutputTopic.`timestamp` WHERE AvroSqlApplicationModeInputTopic.`timestamp` > 2222"
-      # --source SqlApplicationModeInputTopic                For test purpose will be used "--source jsonToAvroInputTopic"
-      --source jsonToAvroInputTopic
-      --source1 SqlApplicationModeOutputTopic
-      --sink MultiSourceOutput
-      --sourceSql "deviceId STRING, `timestamp` BIGINT, `value` FLOAT"
-      --sourceSql1 "deviceId STRING, `timestamp` BIGINT, `value` FLOAT"
-      --sinkSql "deviceId STRING, `timestamp` BIGINT, `value` FLOAT"
-      --groupId Sql-group-id
-      --clientId Sql-client-id
+      --sql "INSERT INTO avroToAvroOutputSinkTopic SELECT jsonToAvroOutputTopic.deviceId, jsonToAvroOutputTopic.`value`, jsonToAvroOutputTopic.`timestamp`, jsonToAvroOutputTopic.extraField FROM jsonToAvroOutputTopic  WHERE jsonToAvroOutputTopic.`timestamp` > 1710420566423"
+      --source jsonToAvroOutputTopic
+      --sink avroToAvroOutputSinkTopic
+      --groupId jsonToAvro-group-id
       
       --sr-url http://schema-registry:8080/apis/ccompat/v7
       --token-url http://keycloak:1852/realms/local-development/protocol/openid-connect/token
@@ -48,6 +42,7 @@ services:
       --client-secret default-access-secret
       --scope schema-registry
     ports:
+      - "5005:5005"
       - "8098:8081"
 
     environment:
@@ -56,11 +51,12 @@ services:
       KAFKA_CLIENT_ID: default-access
       KAFKA_CLIENT_SECRET: default-access-secret
       KAFKA_SCOPE: kafka
-      KAFKA_TOKEN_URL: http://keycloak:1852/realms/local-development/protocol/openid-connect/token
       SCHEMA_REGISTRY_CLIENT_ID: default-access
       SCHEMA_REGISTRY_CLIENT_SECRET: default-access-secret
       SCHEMA_REGISTRY_SCOPE: schema-registry
       SCHEMA_REGISTRY_TOKEN_URL: http://keycloak:1852/realms/local-development/protocol/openid-connect/token
+      JAVA_TOOL_OPTIONS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
+      JAVA_OPTS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
 
       FLINK_PROPERTIES: |
         jobmanager.rpc.address: avrosqlapplicationmode-jobmanager
@@ -71,6 +67,8 @@ services:
         state.savepoints.dir: file:///checkpoints/processing
         execution.checkpointing.interval: 300 seconds
         execution.checkpointing.min-pause: 240 seconds
+        client.heartbeat.interval: 2000000
+        client.heartbeat.timeout: 4000000
     volumes:
       - flink:/checkpoints
     healthcheck:
