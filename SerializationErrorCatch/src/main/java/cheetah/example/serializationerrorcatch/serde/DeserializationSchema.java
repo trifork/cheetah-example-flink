@@ -1,6 +1,5 @@
 package cheetah.example.serializationerrorcatch.serde;
 
-import cheetah.example.serializationerrorcatch.model.InputEvent;
 import org.apache.flink.formats.json.JsonDeserializationSchema;
 import org.apache.flink.util.Collector;
 import org.slf4j.Logger;

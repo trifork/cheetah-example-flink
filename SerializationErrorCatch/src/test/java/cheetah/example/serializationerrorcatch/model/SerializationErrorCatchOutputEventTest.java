@@ -2,7 +2,6 @@ package cheetah.example.serializationerrorcatch.model;
 
 import org.junit.jupiter.api.Test;
 
-import static org.apache.flink.types.PojoTestUtils.assertSerializedAsPojo;
 import static org.apache.flink.types.PojoTestUtils.assertSerializedAsPojoWithoutKryo;
 
 class OutputEventTest {

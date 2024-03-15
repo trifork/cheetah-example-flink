@@ -3,8 +3,6 @@ version: "3"
 services:
   tumblingwindow-test:
     build:
-      context: ComponentTest
-      dockerfile: Dockerfile
       secrets:
         - GITHUB_TOKEN
         - GITHUB_ACTOR
@@ -19,11 +17,7 @@ services:
         condition: service_healthy
 
   tumblingwindow-job:
-    image: ${DOCKER_REGISTRY-}tumblingwindow-job
     build:
-      dockerfile: Dockerfile
-      args:
-        - MAVEN_ARGS=${EXTRA_MAVEN_ARGS-}
       secrets:
         - GITHUB_TOKEN
         - GITHUB_ACTOR
@@ -60,18 +54,13 @@ services:
       retries: 30
 
   tumblingwindow-job-taskmanager:
-    image: ${DOCKER_REGISTRY-}tumblingwindow-job
     build:
-      dockerfile: Dockerfile
-      args:
-        - MAVEN_ARGS=${EXTRA_MAVEN_ARGS-}
       secrets:
         - GITHUB_TOKEN
         - GITHUB_ACTOR
     command: taskmanager
     environment:
-      - |
-        FLINK_PROPERTIES=
+      FLINK_PROPERTIES: |
         jobmanager.rpc.address: tumblingwindow-job
         taskmanager.memory.process.size: 4gb
         taskmanager.numberOfTaskSlots: 2

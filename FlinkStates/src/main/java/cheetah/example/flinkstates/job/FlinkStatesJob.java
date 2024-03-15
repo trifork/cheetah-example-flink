@@ -43,7 +43,7 @@ public class FlinkStatesJob extends Job implements Serializable {
     public <T> void mapAndSink(KeyedStream<InputEvent, String> keyedStream, RichFlatMapFunction<InputEvent, T> function, Class<T> outputType, String kafkaPostFix){
 
         final SingleOutputStreamOperator<T> outputStream = keyedStream.flatMap(function);
-        final KafkaSink<T> sink = CheetahKafkaSinkConfig.builder(this, kafkaPostFix).toSinkBuilder(outputType).build();
+        final KafkaSink<T> sink = CheetahKafkaSinkConfig.builder(this, kafkaPostFix).toKafkaSinkBuilder(outputType).build();
 
         outputStream.sinkTo(sink);
     }

@@ -3,8 +3,6 @@ version: "3"
 services:
   multiplesideoutputexample-test:
     build:
-      context: ComponentTest
-      dockerfile: Dockerfile
       secrets:
         - GITHUB_TOKEN
         - GITHUB_ACTOR
@@ -16,11 +14,7 @@ services:
       KAFKA__OAUTH2__TOKENENDPOINT: http://keycloak:1852/realms/local-development/protocol/openid-connect/token
 
   multiplesideoutputexample-job:
-    image: ${DOCKER_REGISTRY-}multiplesideoutputexample-job
     build:
-      dockerfile: Dockerfile
-      args:
-        - MAVEN_ARGS=${EXTRA_MAVEN_ARGS-}
       secrets:
         - GITHUB_TOKEN
         - GITHUB_ACTOR
@@ -60,18 +54,13 @@ services:
       retries: 30
 
   multiplesideoutputexample-job-taskmanager:
-    image: ${DOCKER_REGISTRY-}multiplesideoutputexample-job
     build:
-      dockerfile: Dockerfile
-      args:
-        - MAVEN_ARGS=${EXTRA_MAVEN_ARGS-}
       secrets:
         - GITHUB_TOKEN
         - GITHUB_ACTOR
     command: taskmanager
     environment:
-      - |
-        FLINK_PROPERTIES=
+      FLINK_PROPERTIES: |
         jobmanager.rpc.address: multiplesideoutputexample-job
         taskmanager.memory.process.size: 4gb
         taskmanager.numberOfTaskSlots: 2
