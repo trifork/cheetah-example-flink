@@ -1,6 +1,5 @@
 package cheetah.example.avrosqlapplicationmode.job;
 
-import org.apache.flink.api.common.ExecutionConfig;
 import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.table.api.*;
@@ -9,15 +8,7 @@ import io.strimzi.kafka.oauth.client.ClientConfig;
 import io.strimzi.kafka.oauth.client.JaasClientOauthLoginCallbackHandler;
 import io.strimzi.kafka.oauth.common.Config;
 import org.apache.kafka.common.security.oauthbearer.OAuthBearerLoginModule;
-
-import io.apicurio.registry.serde.SerdeConfig;
-import org.apache.kafka.clients.producer.ProducerConfig;
-import org.apache.kafka.clients.consumer.ConsumerConfig;
-import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig;
-import io.confluent.kafka.serializers.KafkaAvroDeserializer;
 import org.apache.avro.Schema;
-
-import java.util.*;
 
 import java.lang.reflect.Method;
 import org.slf4j.Logger;
@@ -33,6 +24,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.*;
 
 /** AvroSqlApplicationModeJob sets up the data processing job. */
 public class AvroSqlApplicationModeJob implements Serializable {
@@ -50,47 +42,10 @@ public class AvroSqlApplicationModeJob implements Serializable {
         String userSQL = parameters.get("sql").replaceAll("%27", "'");
 
         String registryUrl = parameters.get("sr-url");
-//        String bootstrapServer = parameters.get("kafka-bootstrap-servers");
-//        String tokenUrl = parameters.get("token-url");
-//        String apicurioClientId = parameters.get("apicurio-client-id");
-//        String clientSecret = parameters.get("client-secret");
-//        String scope = parameters.get("scope");
-
-        //EnvironmentSettings settings = EnvironmentSettings.newInstance().inStreamingMode().build();
-
-        EnvironmentSettings envSettings = EnvironmentSettings.newInstance()
-                .inStreamingMode()
-                .build();
+        String bootstrapServer = parameters.get("kafka-bootstrap-servers");
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-//        TableEnvironment tEnv = TableEnvironment.create(envSettings);
-
-
-
-//        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-//        ExecutionConfig executionConfig = env.getConfig();
-//        executionConfig.enableForceAvro();
-
         StreamTableEnvironment tableEnv = StreamTableEnvironment.create(env);
-
-//        Properties props = new Properties();
-//
-//        props.putIfAbsent(SerdeConfig.REGISTRY_URL, registryUrl);
-//        props.putIfAbsent(SerdeConfig.AUTO_REGISTER_ARTIFACT, true);
-//        props.putIfAbsent(SerdeConfig.ARTIFACT_RESOLVER_STRATEGY, "io.apicurio.registry.serde.avro.strategy.RecordIdStrategy");
-//        props.putIfAbsent(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServer);
-//        props.putIfAbsent(ConsumerConfig.GROUP_ID_CONFIG, "Consumer-" + userSourceTopic);
-//        props.putIfAbsent(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "true");
-//        props.putIfAbsent(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, "1000");
-//        props.putIfAbsent(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
-//        props.putIfAbsent(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, KafkaAvroDeserializer.class.getName());
-//        props.putIfAbsent(AbstractKafkaSchemaSerDeConfig.BEARER_AUTH_CREDENTIALS_SOURCE, "OAUTHBEARER");
-//        props.putIfAbsent(AbstractKafkaSchemaSerDeConfig.BEARER_AUTH_ISSUER_ENDPOINT_URL, tokenUrl);
-//        props.putIfAbsent(AbstractKafkaSchemaSerDeConfig.BEARER_AUTH_CLIENT_ID, apicurioClientId);
-//        props.putIfAbsent(AbstractKafkaSchemaSerDeConfig.BEARER_AUTH_CLIENT_SECRET, clientSecret);
-//        props.putIfAbsent(AbstractKafkaSchemaSerDeConfig.BEARER_AUTH_SCOPE, scope);
-//        props.putIfAbsent(AbstractKafkaSchemaSerDeConfig.BEARER_AUTH_LOGICAL_CLUSTER, ".");
-//        props.putIfAbsent(AbstractKafkaSchemaSerDeConfig.BEARER_AUTH_IDENTITY_POOL_ID, ".");
-        logger.info("Setup parameter and config done!--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+        logger.info("Setup parameter and config done!------------------------------------------------------------------------------------------------------------------------------");
 
         // GET the subjects and take the last as reference
         String getRequestUrl = registryUrl + "/subjects";
@@ -117,38 +72,33 @@ public class AvroSqlApplicationModeJob implements Serializable {
 
         // Formatted schema achieved
         String tableMetadata = jsonSchemaToSql(schema);
-        logger.info("Metadata for the table done!--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+        logger.info("Metadata for the table done!------------------------------------------------------------------------------------------------------------------------------");
         logger.info(tableMetadata);
 
-        //Create source table / topic with normal table environment
-        createAvroTable(userSourceTopic, tableEnv, tableMetadata, groupId);
-        logger.info("Source table!--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+        //Create source table / topic with stream table environment
+        createAvroSource(userSourceTopic, tableEnv, tableMetadata, groupId, bootstrapServer);
+        logger.info("Source table!------------------------------------------------------------------------------------------------------------------------------");
 
-        // Create sink table / topic
-        createAvroTable(userSinkTopic, tableEnv, tableMetadata, groupId);
-        logger.info("Sink table!--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+        // Create sink table / topic with stream table environment
+        createSink(userSinkTopic, tableEnv, tableMetadata, groupId, bootstrapServer);
+        logger.info("Sink table!------------------------------------------------------------------------------------------------------------------------------");
 
-
-        // Execute the query
         tableEnv.executeSql(userSQL);
-        logger.info("Result executed!---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-
+        logger.info("Result executed!------------------------------------------------------------------------------------------------------------------------------");
     }
 
-    static public void createAvroTable(String topicName, StreamTableEnvironment tableEnv, String tableSql, String groupId) {
+    static public void createAvroSource(String topicName, StreamTableEnvironment tableEnv, String tableMetadata, String groupId, String bootstrapServer) {
         //Create input topic / table
-        //If topic already exists - table data is based upon that and
-        //any data inserted is inserted into topic aswell.
-        //If topic doesnt exist - new topic is created.
+        //If topic already exists - table data is based upon that and any data inserted is inserted into topic aswell.
+
         String tableSQL = "CREATE TABLE IF NOT EXISTS " + topicName + " (" +
-                tableSql +
+                tableMetadata +
                 ") WITH (" +
                 "'connector'='kafka'," +
                 "'topic'='" + topicName + "'," +
-                "'properties.bootstrap.servers' = 'kafka:19092'," +
+                "'properties.bootstrap.servers' = '" + bootstrapServer + "'," +
                 "'properties.group.id' = '" + groupId + "'," +
                 "'format' = 'avro-confluent'," +
-//                "'avro.codec' = 'null'," +
                 "'avro-confluent.url' = '" + "http://schema-registry:8080/apis/ccompat/v7" +"'," +
                 "'avro-confluent.subject' = '" + topicName + "-value'," +
                 "'avro-confluent.properties.bearer.auth.credentials.source'='OAUTHBEARER'," +
@@ -158,14 +108,7 @@ public class AvroSqlApplicationModeJob implements Serializable {
                 "'avro-confluent.properties.bearer.auth.scope'='schema-registry'," +
                 "'avro-confluent.properties.bearer.auth.logical.cluster'='.'," +
                 "'avro-confluent.properties.bearer.auth.identity.pool.id'='.'," +
-//                "'key.format' = 'avro'," +
-                "'value.format' = 'json'," +
-//                "'key.fields' = 'timestamp'," +
-//                "'key.fields-prefix' = 'times'," +
-                "'value.fields-include' = 'ALL'," +
-                //"'avro-confluent.schema' = '" + schema + "'," +
                 "'scan.startup.mode' = 'earliest-offset'," +
-                //"'scan.bounded.mode' = 'latest-offset', " +
                 "'properties.sasl.mechanism' = '" + OAuthBearerLoginModule.OAUTHBEARER_MECHANISM + "', " +
                 "'properties.security.protocol' = 'SASL_PLAINTEXT', " +
                 "'properties.sasl.login.callback.handler.class' = '" + JaasClientOauthLoginCallbackHandler.class.getName() + "', " +
@@ -176,7 +119,38 @@ public class AvroSqlApplicationModeJob implements Serializable {
                 + ClientConfig.OAUTH_TOKEN_ENDPOINT_URI + "=\"http://keycloak:1852/realms/local-development/protocol/openid-connect/token\";'" +
                 ")";
 
-        tableEnv.executeSql(tableSQL).print();
+        tableEnv.executeSql(tableSQL);
+    }
+
+    static public void createSink(String topicName, StreamTableEnvironment tableEnv, String tableMetadata, String groupId, String bootstrapServer) {
+        //Create sink topic / table
+        //If topic already exists - table data is based upon that and any data inserted is inserted into topic aswell.
+        //The format is "json" for have the same formatting as input
+        //If the format is setted to "avro" work not perfectly verifyable (the message will be a binary)
+        //If the format is setted to "avro-confluent" works either but adding information of the type for each field in the message -> Value
+        String tableSQL = "CREATE TABLE IF NOT EXISTS " + topicName + " (" +
+                tableMetadata +
+                ") WITH (" +
+                "'connector'='kafka'," +
+                "'topic'='" + topicName + "'," +
+                "'properties.bootstrap.servers' = '" + bootstrapServer + "'," +
+                "'properties.group.id' = '" + groupId + "'," +
+                "'format' = 'avro'," +
+                "'value.format' = 'avro'," +
+                "'sink.partitioner' = 'fixed'," +
+                "'sink.delivery-guarantee' = 'none'," +
+                "'scan.startup.mode' = 'earliest-offset'," +
+                "'properties.sasl.mechanism' = '" + OAuthBearerLoginModule.OAUTHBEARER_MECHANISM + "', " +
+                "'properties.security.protocol' = 'SASL_PLAINTEXT', " +
+                "'properties.sasl.login.callback.handler.class' = '" + JaasClientOauthLoginCallbackHandler.class.getName() + "', " +
+                "'properties.sasl.jaas.config' = '" + OAuthBearerLoginModule.class.getName() + " required "
+                + Config.OAUTH_CLIENT_ID + "= " + "default-access" + " "
+                + Config.OAUTH_CLIENT_SECRET + "=\"default-access-secret\" "
+                + Config.OAUTH_SCOPE + "=\"kafka\" "
+                + ClientConfig.OAUTH_TOKEN_ENDPOINT_URI + "=\"http://keycloak:1852/realms/local-development/protocol/openid-connect/token\";'" +
+                ")";
+
+        tableEnv.executeSql(tableSQL);
     }
 
     static public String sendGetRequest(String url) throws IOException {

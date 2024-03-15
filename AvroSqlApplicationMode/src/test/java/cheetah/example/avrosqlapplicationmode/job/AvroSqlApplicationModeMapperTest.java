@@ -1,21 +1,13 @@
 package cheetah.example.avrosqlapplicationmode.job;
 
-import cheetah.example.avrosqlapplicationmode.model.InputEvent;
 import com.fasterxml.jackson.databind.JsonNode;
-import org.apache.avro.Schema;
-import org.junit.Before;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.junit.jupiter.api.Test;
-
 import java.io.IOException;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 
-import static java.util.Map.entry;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class AvroSqlApplicationModeJobTest {
@@ -88,7 +80,7 @@ class AvroSqlApplicationModeJobTest {
         }
 
         @Test
-        public void testjsonSchemaToSql () throws IOException {
+        public void testJsonSchemaToSql () throws IOException {
 
             List<String> sqlMetadatas = new ArrayList<>();
 
@@ -100,7 +92,44 @@ class AvroSqlApplicationModeJobTest {
             assertEquals("deviceId VARCHAR, `value` DOUBLE, `timestamp` BIGINT, extraField VARCHAR", sqlMetadatas.get(0));
             assertEquals("deviceNo VARCHAR, `time` DOUBLE, `date` BIGINT, newField FLOAT", sqlMetadatas.get(1));
             assertEquals("devId VARCHAR, `map` FLOAT, `multiset` BIGINT, newField BINARY", sqlMetadatas.get(2));
+        }
 
+        @Test
+        void testSendGetRequest() {
+            try {
+                String url = "https://google.com";
+                String response = AvroSqlApplicationModeJob.sendGetRequest(url);
+                Assertions.assertNotNull(response);
+            } catch (IOException e) {
+                Assertions.fail("IOException occurred: " + e.getMessage());
+            }
+        }
+
+        @Test
+        void testGetJsonNode() {
+            String jsonString = "{\"key\": \"value\"}";
+            try {
+                JsonNode node = AvroSqlApplicationModeJob.getJsonNode(jsonString);
+                Assertions.assertNotNull(node);
+                assertEquals("value", node.get("key").asText());
+            } catch (IOException e) {
+                Assertions.fail("IOException occurred: " + e.getMessage());
+            }
+        }
+
+        @Test
+        void testGetStringArray() {
+            String jsonArrayString = "[\"value1\", \"value2\"]";
+            try {
+                String[] array = AvroSqlApplicationModeJob.getStringArray(jsonArrayString);
+                Assertions.assertNotNull(array);
+                assertEquals(2, array.length);
+                assertEquals("value1", array[0]);
+                assertEquals("value2", array[1]);
+                // Add more assertions as needed
+            } catch (IOException e) {
+                Assertions.fail("IOException occurred: " + e.getMessage());
+            }
         }
     }
 }

@@ -31,7 +31,7 @@ services:
       --job-classname cheetah.example.avrosqlapplicationmode.job.AvroSqlApplicationModeJob
       --kafka-bootstrap-servers kafka:19092
       --kafka-group-id AvroSqlApplicationMode-group-id
-      --sql "INSERT INTO avroToAvroOutputSinkTopic SELECT jsonToAvroOutputTopic.deviceId, jsonToAvroOutputTopic.`value`, jsonToAvroOutputTopic.`timestamp`, jsonToAvroOutputTopic.extraField FROM jsonToAvroOutputTopic  WHERE jsonToAvroOutputTopic.`timestamp` > 1710420566423"
+      --sql "INSERT INTO avroToAvroOutputSinkTopic SELECT jsonToAvroOutputTopic.deviceId, jsonToAvroOutputTopic.`value`, jsonToAvroOutputTopic.`timestamp`, jsonToAvroOutputTopic.extraField FROM jsonToAvroOutputTopic  WHERE jsonToAvroOutputTopic.`timestamp` > 1710491343730"
       --source jsonToAvroOutputTopic
       --sink avroToAvroOutputSinkTopic
       --groupId jsonToAvro-group-id
@@ -42,7 +42,6 @@ services:
       --client-secret default-access-secret
       --scope schema-registry
     ports:
-      - "5005:5005"
       - "8098:8081"
 
     environment:
