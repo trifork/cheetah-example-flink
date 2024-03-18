@@ -40,7 +40,6 @@ public class AvroSqlApplicationModeJob implements Serializable {
         String userSourceTopic = parameters.get("source");
         String userSinkTopic = parameters.get("sink");
         String userSQL = parameters.get("sql").replaceAll("%27", "'");
-
         String registryUrl = parameters.get("sr-url");
         String bootstrapServer = parameters.get("kafka-bootstrap-servers");
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
@@ -87,9 +86,9 @@ public class AvroSqlApplicationModeJob implements Serializable {
         logger.info("Result executed!------------------------------------------------------------------------------------------------------------------------------");
     }
 
+    //Create input topic / table
+    //If topic already exists - table data is based upon that and any data inserted is inserted into topic as well.
     static public void createAvroSource(String topicName, StreamTableEnvironment tableEnv, String tableMetadata, String groupId, String bootstrapServer, String registerUrl) {
-        //Create input topic / table
-        //If topic already exists - table data is based upon that and any data inserted is inserted into topic aswell.
 
         String tableSQL = "CREATE TABLE IF NOT EXISTS " + topicName + " (" +
                 tableMetadata +
@@ -98,7 +97,6 @@ public class AvroSqlApplicationModeJob implements Serializable {
                 "'topic'='" + topicName + "'," +
                 "'properties.bootstrap.servers' = '" + bootstrapServer + "'," +
                 "'properties.group.id' = '" + groupId + "'," +
-                // 'avro' and 'avro-confluent' are not compatible within deserialization
                 "'format' = 'avro-confluent'," +
                 "'avro-confluent.url' = '" + registerUrl + "'," +
                 "'avro-confluent.subject' = '" + topicName + "-value'," +
@@ -123,12 +121,9 @@ public class AvroSqlApplicationModeJob implements Serializable {
         tableEnv.executeSql(tableSQL);
     }
 
+    //Create sink topic / table
+    //If topic already exists - table data is based upon that and any data inserted is inserted into topic as well.
     static public void createSink(String topicName, StreamTableEnvironment tableEnv, String tableMetadata, String groupId, String bootstrapServer, String registerUrl) {
-        //Create sink topic / table
-        //If topic already exists - table data is based upon that and any data inserted is inserted into topic aswell.
-        //The format is "json" for have the same formatting as input
-        //If the format is setted to "avro" work not perfectly verifyable (the message will be a binary)
-        //If the format is setted to "avro-confluent" works either but adding information of the type for each field in the message -> Value
 
         String tableSQL = "CREATE TABLE IF NOT EXISTS " + topicName + " (" +
                 tableMetadata +
@@ -137,19 +132,17 @@ public class AvroSqlApplicationModeJob implements Serializable {
                 "'topic'='" + topicName + "'," +
                 "'properties.bootstrap.servers' = '" + bootstrapServer + "'," +
                 "'properties.group.id' = '" + groupId + "'," +
-                //change 'format' and 'value.format' to 'json' if required
-                //change 'format' and 'value.format' to 'avro-confluent' and uncomment the 'avro-confluent.url' and related fields if required
-//                "'avro-confluent.url' = '" + registerUrl + "'," +
-//                "'avro-confluent.subject' = '" + topicName + "-value'," +
-//                "'avro-confluent.properties.bearer.auth.credentials.source'='OAUTHBEARER'," +
-//                "'avro-confluent.properties.bearer.auth.issuer.endpoint.url'='http://keycloak:1852/realms/local-development/protocol/openid-connect/token'," +
-//                "'avro-confluent.properties.bearer.auth.client.id'='default-access'," +
-//                "'avro-confluent.properties.bearer.auth.client.secret'='default-access-secret'," +
-//                "'avro-confluent.properties.bearer.auth.scope'='schema-registry'," +
-//                "'avro-confluent.properties.bearer.auth.logical.cluster'='.'," +
-//                "'avro-confluent.properties.bearer.auth.identity.pool.id'='.'," +
-                "'format' = 'avro'," +
-                "'value.format' = 'avro'," +
+                "'format' = 'avro-confluent'," +
+                "'value.format' = 'avro-confluent'," +
+                "'avro-confluent.url' = '" + registerUrl + "'," +
+                "'avro-confluent.subject' = '" + topicName + "-value'," +
+                "'avro-confluent.properties.bearer.auth.credentials.source'='OAUTHBEARER'," +
+                "'avro-confluent.properties.bearer.auth.issuer.endpoint.url'='http://keycloak:1852/realms/local-development/protocol/openid-connect/token'," +
+                "'avro-confluent.properties.bearer.auth.client.id'='default-access'," +
+                "'avro-confluent.properties.bearer.auth.client.secret'='default-access-secret'," +
+                "'avro-confluent.properties.bearer.auth.scope'='schema-registry'," +
+                "'avro-confluent.properties.bearer.auth.logical.cluster'='.'," +
+                "'avro-confluent.properties.bearer.auth.identity.pool.id'='.'," +
                 "'sink.partitioner' = 'fixed'," +
                 "'sink.delivery-guarantee' = 'none'," +
                 "'scan.startup.mode' = 'earliest-offset'," +
@@ -186,13 +179,13 @@ public class AvroSqlApplicationModeJob implements Serializable {
         return objectMapper.readValue(string, JsonNode.class);
     }
 
-    static public String [] getStringArray(String string) throws IOException {
+    static public String [] getStringArray (String string) throws IOException {
 
         ObjectMapper objectMapper = new ObjectMapper();
         return  objectMapper.readValue(string, String[].class);
     }
 
-    static public String jsonSchemaToSql (JsonNode schema) {
+    static public String jsonSchemaToSql(JsonNode schema) {
 
         String sql = "";
 
@@ -229,7 +222,7 @@ public class AvroSqlApplicationModeJob implements Serializable {
         return sql;
     }
 
-    static private String rawFieldToSql (String type) {
+    static private String rawFieldToSql(String type) {
 
         String sql = "";
 
@@ -252,7 +245,7 @@ public class AvroSqlApplicationModeJob implements Serializable {
         return sql;
     }
 
-    static private List<String> getDdlTypes () {
+    static private List<String> getDdlTypes() {
 
         List<String> dataTypeList = new ArrayList<>();
         // Get all methods from the DataTypes class
