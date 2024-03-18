@@ -36,17 +36,20 @@ public class AvroSqlApplicationModeJob implements Serializable {
         ParameterTool parameters = ParameterTool.fromArgs(args);
 
         //Extract groupId, clientId and source for config
-        String groupId = parameters.get("groupId");
+        String groupId = parameters.get("group-id");
         String userSourceTopic = parameters.get("source");
         String userSinkTopic = parameters.get("sink");
         String userSQL = parameters.get("sql").replaceAll("%27", "'");
         String registryUrl = parameters.get("sr-url");
         String bootstrapServer = parameters.get("kafka-bootstrap-servers");
+        String inputType = parameters.get("input-type");
+        String outputType = parameters.get("output-type");
+
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         StreamTableEnvironment tableEnv = StreamTableEnvironment.create(env);
         logger.info("Setup parameter and config done!------------------------------------------------------------------------------------------------------------------------------");
 
-        // GET the subjects and take the last as reference
+        // GET the subjects and take the LAST subjects as reference
         String getRequestUrl = registryUrl + "/subjects";
         String stringSubjects = sendGetRequest(getRequestUrl);
         String [] jsonSubjects = getStringArray (stringSubjects);
@@ -54,7 +57,7 @@ public class AvroSqlApplicationModeJob implements Serializable {
         System.out.println("Subject: ");
         System.out.println(subject);
 
-        // GET the last version
+        // GET the LAST version
         getRequestUrl = registryUrl + "/subjects/" + subject + "/versions";
         String versions = sendGetRequest(getRequestUrl);
         String [] jsonVersions = getStringArray (versions);
@@ -75,20 +78,36 @@ public class AvroSqlApplicationModeJob implements Serializable {
         logger.info(tableMetadata);
 
         //Create source table / topic with stream table environment
-        createAvroSource(userSourceTopic, tableEnv, tableMetadata, groupId, bootstrapServer, registryUrl);
-        logger.info("Source table!------------------------------------------------------------------------------------------------------------------------------");
+        if (Objects.equals(inputType, "avroConfluent")) {
+            createAvroConfluentSource(userSourceTopic, tableEnv, tableMetadata, groupId, bootstrapServer, registryUrl);
+        } else if (Objects.equals(inputType, "avro")) {
+            createAvroSource(userSourceTopic, tableEnv, tableMetadata, groupId, bootstrapServer);
+        } else {
+            logger.info("Input type not valid!");
+        }
+
+        logger.info("Source table done!------------------------------------------------------------------------------------------------------------------------------");
 
         // Create sink table / topic with stream table environment
-        createSink(userSinkTopic, tableEnv, tableMetadata, groupId, bootstrapServer, registryUrl);
-        logger.info("Sink table!------------------------------------------------------------------------------------------------------------------------------");
+        if (Objects.equals(outputType, "avroConfluent")) {
+            createAvroConfluentSink(userSinkTopic, tableEnv, tableMetadata, groupId, bootstrapServer, registryUrl);
+        } else if (Objects.equals(outputType, "avro")) {
+            createAvroSink(userSinkTopic, tableEnv, tableMetadata, groupId, bootstrapServer);
+        } else if (Objects.equals(outputType, "json")) {
+            createJsonSink(userSinkTopic, tableEnv, tableMetadata, groupId, bootstrapServer);
+        } else {
+            logger.info("Output type not valid!");
+        }
+
+        logger.info("Sink table done!------------------------------------------------------------------------------------------------------------------------------");
 
         tableEnv.executeSql(userSQL);
         logger.info("Result executed!------------------------------------------------------------------------------------------------------------------------------");
     }
 
-    //Create input topic / table
+    //Create input topic / table from avro confluence input
     //If topic already exists - table data is based upon that and any data inserted is inserted into topic as well.
-    static public void createAvroSource(String topicName, StreamTableEnvironment tableEnv, String tableMetadata, String groupId, String bootstrapServer, String registerUrl) {
+    static public void createAvroConfluentSource(String topicName, StreamTableEnvironment tableEnv, String tableMetadata, String groupId, String bootstrapServer, String registerUrl) {
 
         String tableSQL = "CREATE TABLE IF NOT EXISTS " + topicName + " (" +
                 tableMetadata +
@@ -121,9 +140,34 @@ public class AvroSqlApplicationModeJob implements Serializable {
         tableEnv.executeSql(tableSQL);
     }
 
-    //Create sink topic / table
+    //Create input topic / table from avro input
+    static public void createAvroSource(String topicName, StreamTableEnvironment tableEnv, String tableMetadata, String groupId, String bootstrapServer) {
+
+        String tableSQL = "CREATE TABLE IF NOT EXISTS " + topicName + " (" +
+                tableMetadata +
+                ") WITH (" +
+                "'connector'='kafka'," +
+                "'topic'='" + topicName + "'," +
+                "'properties.bootstrap.servers' = '" + bootstrapServer + "'," +
+                "'properties.group.id' = '" + groupId + "'," +
+                "'format' = 'avro'," +
+                "'scan.startup.mode' = 'earliest-offset'," +
+                "'properties.sasl.mechanism' = '" + OAuthBearerLoginModule.OAUTHBEARER_MECHANISM + "', " +
+                "'properties.security.protocol' = 'SASL_PLAINTEXT', " +
+                "'properties.sasl.login.callback.handler.class' = '" + JaasClientOauthLoginCallbackHandler.class.getName() + "', " +
+                "'properties.sasl.jaas.config' = '" + OAuthBearerLoginModule.class.getName() + " required "
+                + Config.OAUTH_CLIENT_ID + "= " + "default-access" + " "
+                + Config.OAUTH_CLIENT_SECRET + "=\"default-access-secret\" "
+                + Config.OAUTH_SCOPE + "=\"kafka\" "
+                + ClientConfig.OAUTH_TOKEN_ENDPOINT_URI + "=\"http://keycloak:1852/realms/local-development/protocol/openid-connect/token\";'" +
+                ")";
+
+        tableEnv.executeSql(tableSQL);
+    }
+
+    //Create sink topic / table to avro confluent
     //If topic already exists - table data is based upon that and any data inserted is inserted into topic as well.
-    static public void createSink(String topicName, StreamTableEnvironment tableEnv, String tableMetadata, String groupId, String bootstrapServer, String registerUrl) {
+    static public void createAvroConfluentSink(String topicName, StreamTableEnvironment tableEnv, String tableMetadata, String groupId, String bootstrapServer, String registerUrl) {
 
         String tableSQL = "CREATE TABLE IF NOT EXISTS " + topicName + " (" +
                 tableMetadata +
@@ -143,6 +187,64 @@ public class AvroSqlApplicationModeJob implements Serializable {
                 "'avro-confluent.properties.bearer.auth.scope'='schema-registry'," +
                 "'avro-confluent.properties.bearer.auth.logical.cluster'='.'," +
                 "'avro-confluent.properties.bearer.auth.identity.pool.id'='.'," +
+                "'sink.partitioner' = 'fixed'," +
+                "'sink.delivery-guarantee' = 'none'," +
+                "'scan.startup.mode' = 'earliest-offset'," +
+                "'properties.sasl.mechanism' = '" + OAuthBearerLoginModule.OAUTHBEARER_MECHANISM + "', " +
+                "'properties.security.protocol' = 'SASL_PLAINTEXT', " +
+                "'properties.sasl.login.callback.handler.class' = '" + JaasClientOauthLoginCallbackHandler.class.getName() + "', " +
+                "'properties.sasl.jaas.config' = '" + OAuthBearerLoginModule.class.getName() + " required "
+                + Config.OAUTH_CLIENT_ID + "= " + "default-access" + " "
+                + Config.OAUTH_CLIENT_SECRET + "=\"default-access-secret\" "
+                + Config.OAUTH_SCOPE + "=\"kafka\" "
+                + ClientConfig.OAUTH_TOKEN_ENDPOINT_URI + "=\"http://keycloak:1852/realms/local-development/protocol/openid-connect/token\";'" +
+                ")";
+
+        tableEnv.executeSql(tableSQL);
+    }
+
+    //Create sink topic / table to avro
+    //If topic already exists - table data is based upon that and any data inserted is inserted into topic as well.
+    static public void createAvroSink(String topicName, StreamTableEnvironment tableEnv, String tableMetadata, String groupId, String bootstrapServer) {
+
+        String tableSQL = "CREATE TABLE IF NOT EXISTS " + topicName + " (" +
+                tableMetadata +
+                ") WITH (" +
+                "'connector'='kafka'," +
+                "'topic'='" + topicName + "'," +
+                "'properties.bootstrap.servers' = '" + bootstrapServer + "'," +
+                "'properties.group.id' = '" + groupId + "'," +
+                "'format' = 'avro'," +
+                "'value.format' = 'avro'," +
+                "'sink.partitioner' = 'fixed'," +
+                "'sink.delivery-guarantee' = 'none'," +
+                "'scan.startup.mode' = 'earliest-offset'," +
+                "'properties.sasl.mechanism' = '" + OAuthBearerLoginModule.OAUTHBEARER_MECHANISM + "', " +
+                "'properties.security.protocol' = 'SASL_PLAINTEXT', " +
+                "'properties.sasl.login.callback.handler.class' = '" + JaasClientOauthLoginCallbackHandler.class.getName() + "', " +
+                "'properties.sasl.jaas.config' = '" + OAuthBearerLoginModule.class.getName() + " required "
+                + Config.OAUTH_CLIENT_ID + "= " + "default-access" + " "
+                + Config.OAUTH_CLIENT_SECRET + "=\"default-access-secret\" "
+                + Config.OAUTH_SCOPE + "=\"kafka\" "
+                + ClientConfig.OAUTH_TOKEN_ENDPOINT_URI + "=\"http://keycloak:1852/realms/local-development/protocol/openid-connect/token\";'" +
+                ")";
+
+        tableEnv.executeSql(tableSQL);
+    }
+
+    //Create sink topic / table to json
+    //If topic already exists - table data is based upon that and any data inserted is inserted into topic as well.
+    static public void createJsonSink(String topicName, StreamTableEnvironment tableEnv, String tableMetadata, String groupId, String bootstrapServer) {
+
+        String tableSQL = "CREATE TABLE IF NOT EXISTS " + topicName + " (" +
+                tableMetadata +
+                ") WITH (" +
+                "'connector'='kafka'," +
+                "'topic'='" + topicName + "'," +
+                "'properties.bootstrap.servers' = '" + bootstrapServer + "'," +
+                "'properties.group.id' = '" + groupId + "'," +
+                "'format' = 'json'," +
+                "'value.format' = 'json'," +
                 "'sink.partitioner' = 'fixed'," +
                 "'sink.delivery-guarantee' = 'none'," +
                 "'scan.startup.mode' = 'earliest-offset'," +
