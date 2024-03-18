@@ -76,18 +76,18 @@ public class AvroSqlApplicationModeJob implements Serializable {
         logger.info(tableMetadata);
 
         //Create source table / topic with stream table environment
-        createAvroSource(userSourceTopic, tableEnv, tableMetadata, groupId, bootstrapServer);
+        createAvroSource(userSourceTopic, tableEnv, tableMetadata, groupId, bootstrapServer, registryUrl);
         logger.info("Source table!------------------------------------------------------------------------------------------------------------------------------");
 
         // Create sink table / topic with stream table environment
-        createSink(userSinkTopic, tableEnv, tableMetadata, groupId, bootstrapServer);
+        createSink(userSinkTopic, tableEnv, tableMetadata, groupId, bootstrapServer, registryUrl);
         logger.info("Sink table!------------------------------------------------------------------------------------------------------------------------------");
 
         tableEnv.executeSql(userSQL);
         logger.info("Result executed!------------------------------------------------------------------------------------------------------------------------------");
     }
 
-    static public void createAvroSource(String topicName, StreamTableEnvironment tableEnv, String tableMetadata, String groupId, String bootstrapServer) {
+    static public void createAvroSource(String topicName, StreamTableEnvironment tableEnv, String tableMetadata, String groupId, String bootstrapServer, String registerUrl) {
         //Create input topic / table
         //If topic already exists - table data is based upon that and any data inserted is inserted into topic aswell.
 
@@ -98,8 +98,9 @@ public class AvroSqlApplicationModeJob implements Serializable {
                 "'topic'='" + topicName + "'," +
                 "'properties.bootstrap.servers' = '" + bootstrapServer + "'," +
                 "'properties.group.id' = '" + groupId + "'," +
+                // 'avro' and 'avro-confluent' are not compatible within deserialization
                 "'format' = 'avro-confluent'," +
-                "'avro-confluent.url' = '" + "http://schema-registry:8080/apis/ccompat/v7" +"'," +
+                "'avro-confluent.url' = '" + registerUrl + "'," +
                 "'avro-confluent.subject' = '" + topicName + "-value'," +
                 "'avro-confluent.properties.bearer.auth.credentials.source'='OAUTHBEARER'," +
                 "'avro-confluent.properties.bearer.auth.issuer.endpoint.url'='http://keycloak:1852/realms/local-development/protocol/openid-connect/token'," +
@@ -122,12 +123,13 @@ public class AvroSqlApplicationModeJob implements Serializable {
         tableEnv.executeSql(tableSQL);
     }
 
-    static public void createSink(String topicName, StreamTableEnvironment tableEnv, String tableMetadata, String groupId, String bootstrapServer) {
+    static public void createSink(String topicName, StreamTableEnvironment tableEnv, String tableMetadata, String groupId, String bootstrapServer, String registerUrl) {
         //Create sink topic / table
         //If topic already exists - table data is based upon that and any data inserted is inserted into topic aswell.
         //The format is "json" for have the same formatting as input
         //If the format is setted to "avro" work not perfectly verifyable (the message will be a binary)
         //If the format is setted to "avro-confluent" works either but adding information of the type for each field in the message -> Value
+
         String tableSQL = "CREATE TABLE IF NOT EXISTS " + topicName + " (" +
                 tableMetadata +
                 ") WITH (" +
@@ -135,6 +137,17 @@ public class AvroSqlApplicationModeJob implements Serializable {
                 "'topic'='" + topicName + "'," +
                 "'properties.bootstrap.servers' = '" + bootstrapServer + "'," +
                 "'properties.group.id' = '" + groupId + "'," +
+                //change 'format' and 'value.format' to 'json' if required
+                //change 'format' and 'value.format' to 'avro-confluent' and uncomment the 'avro-confluent.url' and related fields if required
+//                "'avro-confluent.url' = '" + registerUrl + "'," +
+//                "'avro-confluent.subject' = '" + topicName + "-value'," +
+//                "'avro-confluent.properties.bearer.auth.credentials.source'='OAUTHBEARER'," +
+//                "'avro-confluent.properties.bearer.auth.issuer.endpoint.url'='http://keycloak:1852/realms/local-development/protocol/openid-connect/token'," +
+//                "'avro-confluent.properties.bearer.auth.client.id'='default-access'," +
+//                "'avro-confluent.properties.bearer.auth.client.secret'='default-access-secret'," +
+//                "'avro-confluent.properties.bearer.auth.scope'='schema-registry'," +
+//                "'avro-confluent.properties.bearer.auth.logical.cluster'='.'," +
+//                "'avro-confluent.properties.bearer.auth.identity.pool.id'='.'," +
                 "'format' = 'avro'," +
                 "'value.format' = 'avro'," +
                 "'sink.partitioner' = 'fixed'," +
@@ -187,6 +200,7 @@ public class AvroSqlApplicationModeJob implements Serializable {
         List<Schema.Field> listSchema =  temp.getFields();
         int numberOfElements = listSchema.size();
 
+        // Get the list of ddl instruction that has to be confronted with each field of the metadata
         List<String> ddlTypes = getDdlTypes();
 
         int i = 0;
@@ -196,7 +210,7 @@ public class AvroSqlApplicationModeJob implements Serializable {
             String value = String.valueOf(listField.name());
             String field = rawFieldToSql(String.valueOf(listField.schema().getType().getName()));
 
-            // Surround with backtick if the name of the field is the same of one of ddl sql instruction
+            // Surround with backtick if the name of the field is the same of one of ddl sql instruction to declare it as field name
             if (ddlTypes.contains(value.toLowerCase())){
                 value = "`" + value + "`";
             }
