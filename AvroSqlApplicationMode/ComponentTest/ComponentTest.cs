@@ -4,15 +4,16 @@ using Cheetah.Kafka.Testing;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Xunit;
-using jsonToAvro.ComponentTest.Models;
+using AvroSqlApplicationMode.ComponentTest.Models;
+using System.Threading;
 
-namespace jsonToAvro.ComponentTest;
+namespace AvroSqlApplicationMode.ComponentTest;
 
 [Trait("TestType", "IntegrationTests")]
 public class ComponentTest
 {
     [Fact]
-    public void Json_To_Avro_Component_Test()
+    public void Avro_Sql_Application_Mode_Component_Test()
     {
         // Arrange
         // Setup configuration. Configuration from appsettings.json is overridden by environment variables.
@@ -26,16 +27,41 @@ public class ComponentTest
 
         // Create writer and reader using a key as "timestamp"
 //        var writer = kafkaClientFactory.CreateAvroTestWriter<string, OutputEventAvro>("jsonToAvroOutputTopic", item => item.timestamp.ToString());
-        // Create writer and reader with no key
-        var writer = kafkaClientFactory.CreateAvroTestWriter<OutputEventAvro>("jsonToAvroOutputTopic");
 
-        var reader = kafkaClientFactory.CreateAvroTestReader<OutputEventAvro>("jsonToAvroOutputTopic");
+        // Create writer and reader with no key
+        var writer = kafkaClientFactory.CreateAvroTestWriter<OutputEventAvro>("avroInputTopic");
+
+        var reader = kafkaClientFactory.CreateAvroTestReader<OutputEventAvro>("avroInputTopic");
 
         // Act
         // Create InputEvent
         var inputEvent = new OutputEventAvro()
         {
             deviceId = "deviceId-1",
+            value = 12.34,
+            timestamp = DateTimeOffset.Now.ToUnixTimeMilliseconds(),
+            extraField = "ExtraFieldValue"
+        };
+
+        writer.WriteAsync(inputEvent);
+
+        Threading.Thread.Sleep(1000);
+
+        inputEvent = new OutputEventAvro()
+        {
+            deviceId = "deviceId-2",
+            value = 12.34,
+            timestamp = DateTimeOffset.Now.ToUnixTimeMilliseconds(),
+            extraField = "ExtraFieldValue"
+        };
+
+        writer.WriteAsync(inputEvent);
+
+        Threading.Thread.Sleep(1000);
+
+        inputEvent = new OutputEventAvro()
+        {
+            deviceId = "deviceId-2",
             value = 12.34,
             timestamp = DateTimeOffset.Now.ToUnixTimeMilliseconds(),
             extraField = "ExtraFieldValue"

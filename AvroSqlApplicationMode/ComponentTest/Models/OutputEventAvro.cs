@@ -5,7 +5,7 @@
 //    is regenerated
 // </auto-generated>
 // ------------------------------------------------------------------------------
-namespace jsonToAvro.ComponentTest.Models
+namespace AvroSqlApplicationMode.ComponentTest.Models
 {
 	using System;
 	using System.Collections.Generic;

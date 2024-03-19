@@ -2,7 +2,8 @@
 
 This repository contains a templated flink job. Processing is handled by Apache Flink which is a statefull scalable stream processing framework. You can find more information about Apache Flink [here](https://flink.apache.org/).
 
-The flink job consumes messages from a kafka topic with simple messages, enriches these messages and publishes the enriched messages on another kafka topic.
+The flink job consumes messages from a kafka topic with simple avro messages, apply a sql query on these message and push out to a sink the filtered messages in selectable format. 
+The job also infer the metadata of the input kafka message from the schema registry, take the last valid registry and apply the same to the sink messages.
 
 ## Project structure
 
@@ -11,7 +12,7 @@ The following list explains some of the major components of the project, in orde
 - `/src` - Java source code containing the Flink job
   - `main` - Source code for the job itself
   - `test` - Unit tests for the job
-- `/ComponentTest` - .NET test project, which is used for component testing the Flink job
+- `/ComponentTest` - .NET test project, which is used for component testing the Flink job, it sends a message in the 
   - `Dockerfile` - to allow testing within Docker
 - `Dockerfile` - for building the Flink job.
 - `docker-compose.yaml` - allows running the Flink job and component test within Docker, with necessary environment values, port bindings, etc. for local development.
@@ -83,29 +84,48 @@ When developing your job you can run/debug it like any other Java application by
     <!-- Have an empty line after the <details> tag or markdown blocks will not render. -->
 
     - A static main method, which is used to start the job itself.
-    - A setup method, which is where the main functionality resides. It sets up:
-      - A source - Determines which input source to use, in this case Kafka, and how to connect to it.
-      - An input stream - Specifies the datatype that is ingested from the source, which in this case is `InputEvent`
-      - An output stream - This is where we transform the incoming data - in this case we apply a basic mapping from `InputEvent` to `OutputEvent`. It also determines the output datatype, which in this case is `OutputEvent`
-      - A sink - Determines the destination to output the results of our job to, in this case Kafka
-      - A single call that connects the output stream to the sink
+    - 2 methods for create an source table, it is important that these parameters reflect the messages type that comes from the kafka stream:
+        - One create a source in case of avro source`--input-type = "avro"`
+        - One create a source in case of avro-confluent source`--input-type = "avroConfluent"`
+    - 3 methods for create an sink table:
+        - One create a avro sink in case of `--output-type = "avro"`
+        - One create a avro-confluent sink in case of `--output-type = "avroConfluent"`
+        - One create a json sink in case of `--output-type = "json"`
+    - A method for make a REST GET request to the APICURIO schema registry API to get the schema registry of the last message
+    - A method for JSONfy the schema registry
+    - A method for transform the schema registry and format the information to a SQL metadata for build the source and sink data tables
     </details>
+
+1. After selected the type of the input depending strictly on the type `--input-type` in the source kafka topic and preferred output type of messages `--output-type`, modify the `--sql` 
+parameters regarding the `--source`, `--sink` kafka topic inserted. Also, the `--group-id` has to be the same as the source kafka topic stream settings. An example setting is provided below.
 
 1. Create Intellij run profile for AvroSqlApplicationModeJob.java with parameters, by right-clicking the file `AvroSqlApplicationModeJob` and select `Modify Run Configuration...`.
 1. Enter the following program arguments:
 
   ```
+  --group-id jsonToAvro-group-id
+  --sql "INSERT INTO sqlSinkTopic SELECT avroInputTopic.deviceId, avroInputTopic.`value`, avroInputTopic.`timestamp`, avroInputTopic.extraField FROM avroInputTopic WHERE avroInputTopic.deviceId LIKE 'deviceId-2'"
   --kafka-bootstrap-servers localhost:9092
-  --input-kafka-topic AvroSqlApplicationModeInputTopic
-  --output-kafka-topic AvroSqlApplicationModeOutputTopic
-  --kafka-group-id AvroSqlApplicationMode-group-id
+  --source avroInputTopic
+  --sink sqlSinkTopic
+  --input-type avroConfluent
+  --output-type avroConfluent
+  --sr-url http://schema-registry:8080/apis/ccompat/v7
+  --token-url http://keycloak:1852/realms/local-development/protocol/openid-connect/token
+  --apicurio-client-id default-access
+  --client-secret default-access-secret
+  --scope schema-registry
   ```
 
   And add the following Environment variables:
 
   ```
+  - SCHEMA_REGISTRY_CLIENT_ID: default-access
+  - SCHEMA_REGISTRY_CLIENT_SECRET: default-access-secret
+  - SCHEMA_REGISTRY_SCOPE: schema-registry
+  - SCHEMA_REGISTRY_TOKEN_URL: http://keycloak:1852/realms/local-development/protocol/openid-connect/token
   - SECURITY_PROTOCOL=SASL_PLAINTEXT
-  - TOKEN_URL=http://localhost:1852/realms/local-development/protocol/openid-connect/token
+  - TOKEN_URL=http://keycloak:1852/realms/local-development/protocol/openid-connect/token
   - KAFKA_CLIENT_ID=default-access
   - KAFKA_CLIENT_SECRET=default-access-secret
   - KAFKA_SCOPE=kafka
@@ -123,19 +143,10 @@ When developing your job you can run/debug it like any other Java application by
 ## Tests
 ### Unit tests
 
-This project contains a sample Unit test in `src/test/java/cheetah/example/avrosqlapplicationmode/job/AvroSqlApplicationModeMapperTest.java`, which utilizes JUnit5.
+This project contains a sample Unit test in `src/test/java/cheetah/example/avrosqlapplicationmode/job/AvroSqlApplicationModeMapperTest.java` and
+`src/test/java/cheetah/example/avrosqlapplicationmode/job/AvroSqlApplicationModeJobTest.java` , which utilizes JUnit5.
 
 Unit tests are automatically run as part of the build processing when building the Flink job through either `mvn`, Intellij or Docker.
-
-### Component test
-
-This project contains a .NET test project under `/ComponentTest`, which you can use to verify that your job acts as you expect it to.
-
-You can run both these tests from your preferred IDE using the `.sln` file and through docker.
-
-In order to run both your job and the component tests at once, simply run `docker compose up --build` from the root directory of the repository.
-
-Alternatively, if you just want to run your job from docker compose and run the component tests manually through your IDE, run the following command:
 
 ```sh
 docker compose up avrosqlapplicationmode-jobmanager avrosqlapplicationmode-taskmanager --build
