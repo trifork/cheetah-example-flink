@@ -1,0 +1,86 @@
+---
+version: "3"
+services:
+  odataexternallookup-job:
+    image: ${DOCKER_REGISTRY-}odataexternallookup-job
+    build:
+      dockerfile: Dockerfile
+      args:
+        - MAVEN_ARGS=${EXTRA_MAVEN_ARGS-}
+      secrets:
+        - GITHUB_TOKEN
+        - GITHUB_ACTOR
+    command: |
+      standalone-job
+      --job-classname cheetah.example.odataexternallookup.job.ODataExternalLookupJob
+      --kafka-bootstrap-servers kafka:19092
+      --kafka-group-id odataexternallookup-group-id
+      --kafka-security-protocol SASL_PLAINTEXT
+      --output-kafka-topic trifork/demo/s4/cheetah
+    environment:
+      KAFKA_CLIENT_ID: default-access
+      KAFKA_CLIENT_SECRET: default-access-secret
+      KAFKA_SCOPE: kafka
+      KAFKA_TOKEN_URL: http://keycloak:1852/realms/local-development/protocol/openid-connect/token
+
+      # OData
+      ODATA_ENTITYID_PATH: "/data/SalesOrder"
+      ODATA_ENTITYURL: http://vhcals4hci.northeurope.cloudapp.azure.com:50000/sap/opu/odata/sap/API_SALES_ORDER_SRV/A_SalesOrder
+      ODATA_USERNAME: CHEETAH
+      ODATA_PASSWORD: ${CHEETAH_SAP_PASSWORD}
+
+      ODATA_QUEUENAME: "trifork/demo/s4/cheetah"
+
+      FLINK_PROPERTIES: |
+        jobmanager.rpc.address: odataexternallookup-job
+        scheduler-mode: reactive
+        rest.flamegraph.enabled: true
+        state.backend: rocksdb
+        state.checkpoints.dir: file:///checkpoints/processing
+        state.savepoints.dir: file:///checkpoints/processing
+        execution.checkpointing.interval: 300 seconds
+        execution.checkpointing.min-pause: 240 seconds
+    depends_on:
+      - odataexternallookup-job-taskmanager
+    volumes:
+      - flink:/checkpoints
+      - ./odata-external-lookup-job-config.json:/etc/odata-external-lookup-job-config.json
+    ports:
+      - "18081:8081"
+    healthcheck:
+      test: curl localhost:8081/jobs | grep -q '"status":"RUNNING"' || exit -1
+      interval: 1s
+      timeout: 1s
+      retries: 30
+
+  odataexternallookup-job-taskmanager:
+    image: ${DOCKER_REGISTRY-}odataexternallookup-job
+    build:
+      dockerfile: Dockerfile
+      args:
+        - MAVEN_ARGS=${EXTRA_MAVEN_ARGS-}
+      secrets:
+        - GITHUB_TOKEN
+        - GITHUB_ACTOR
+    command: taskmanager
+    environment:
+      FLINK_PROPERTIES: |
+        jobmanager.rpc.address: odataexternallookup-job
+        taskmanager.memory.process.size: 4gb
+        taskmanager.numberOfTaskSlots: 1
+    volumes:
+      - flink:/checkpoints
+
+volumes:
+  flink:
+
+secrets:
+  GITHUB_TOKEN:
+    environment: GITHUB_TOKEN
+  GITHUB_ACTOR:
+    environment: GITHUB_ACTOR
+
+networks:
+  default:
+    name: "cheetah-infrastructure"
+    external: true
