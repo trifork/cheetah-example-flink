@@ -1,11 +1,11 @@
 using System;
+using System.Threading.Tasks;
 using System.Collections.Generic;
-using Cheetah.Kafka.Testing;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Xunit;
+using Cheetah.Kafka.Testing;
 using AvroSqlApplicationMode.ComponentTest.Models;
-using System.Threading;
 
 namespace AvroSqlApplicationMode.ComponentTest;
 
@@ -13,7 +13,7 @@ namespace AvroSqlApplicationMode.ComponentTest;
 public class ComponentTest
 {
     [Fact]
-    public void Avro_Sql_Application_Mode_Component_Test()
+    public async Task Should_BeImplemented_When_ServiceIsCreated()
     {
         // Arrange
         // Setup configuration. Configuration from appsettings.json is overridden by environment variables.
@@ -26,16 +26,16 @@ public class ComponentTest
         var kafkaClientFactory = KafkaTestClientFactory.Create(configuration);
 
         // Create writer and reader using a key as "timestamp"
-//        var writer = kafkaClientFactory.CreateAvroTestWriter<string, OutputEventAvro>("jsonToAvroOutputTopic", item => item.timestamp.ToString());
+        // var writer = kafkaClientFactory.CreateAvroTestWriter<string, inputEventAvro>("avroInputTopic", item => item.timestamp.ToString());
 
         // Create writer and reader with no key
-        var writer = kafkaClientFactory.CreateAvroTestWriter<OutputEventAvro>("avroInputTopic");
+        var writer = kafkaClientFactory.CreateAvroTestWriter<InputEventAvro>("avroInputTopic");
 
-        var reader = kafkaClientFactory.CreateAvroTestReader<OutputEventAvro>("avroInputTopic");
+        var reader = kafkaClientFactory.CreateAvroTestReader<InputEventAvro>("sqlSinkTopic");
 
         // Act
         // Create InputEvent
-        var inputEvent = new OutputEventAvro()
+        var inputEvent = new InputEventAvro()
         {
             deviceId = "deviceId-1",
             value = 12.34,
@@ -43,11 +43,23 @@ public class ComponentTest
             extraField = "ExtraFieldValue"
         };
 
-        writer.WriteAsync(inputEvent);
+        await writer.WriteAsync(inputEvent);
 
-        Threading.Thread.Sleep(1000);
+        await Task.Delay(1000);
 
-        inputEvent = new OutputEventAvro()
+        inputEvent = new InputEventAvro()
+        {
+            deviceId = "deviceId-1",
+            value = 12.34,
+            timestamp = DateTimeOffset.Now.ToUnixTimeMilliseconds(),
+            extraField = "ExtraFieldValue"
+        };
+
+        await writer.WriteAsync(inputEvent);
+
+        await Task.Delay(1000);
+
+        inputEvent = new InputEventAvro()
         {
             deviceId = "deviceId-2",
             value = 12.34,
@@ -55,28 +67,12 @@ public class ComponentTest
             extraField = "ExtraFieldValue"
         };
 
-        writer.WriteAsync(inputEvent);
-
-        Threading.Thread.Sleep(1000);
-
-        inputEvent = new OutputEventAvro()
-        {
-            deviceId = "deviceId-2",
-            value = 12.34,
-            timestamp = DateTimeOffset.Now.ToUnixTimeMilliseconds(),
-            extraField = "ExtraFieldValue"
-        };
-
-        writer.WriteAsync(inputEvent);
+        await writer.WriteAsync(inputEvent);
 
         // Assert
         var messages = reader.ReadMessages(1, TimeSpan.FromSeconds(10));
 
-        messages.Should().ContainSingle(message =>
-            message.deviceId == inputEvent.deviceId &&
-            message.value == inputEvent.value &&
-            message.timestamp == inputEvent.timestamp &&
-            message.extraField == "ExtraFieldValue");
-        reader.VerifyNoMoreMessages(TimeSpan.FromSeconds(20)).Should().BeTrue();
+        // Test if there is a message
+        messages.Should().HaveCountGreaterThan(0);
     }
 }

@@ -1,9 +1,10 @@
  # AvroSqlApplicationMode
 
-This repository contains a templated flink job. Processing is handled by Apache Flink which is a statefull scalable stream processing framework. You can find more information about Apache Flink [here](https://flink.apache.org/).
+This repository contains a templated flink job. Processing is handled by Apache Flink which is a stateful scalable stream processing framework. You can find more information about Apache Flink [here](https://flink.apache.org/).
 
-The flink job consumes messages from a kafka topic with simple avro messages, apply a sql query on these message and push out to a sink the filtered messages in selectable format. 
-The job also infer the metadata of the input kafka message from the schema registry, take the last valid registry and apply the same to the sink messages.
+The flink job consumes messages from a kafka topic with simple avro messages, apply a sql query on these message and push out to a sink the filtered messages in selectable format. The message in input should be `avro` or `avroConfluent` 
+and the output is selectable in `avro`, `avroConfluent` or `json`.
+The job also infer the metadata of the input kafka message from the schema registry from the last created message subject, take the last valid registry and apply the same schema to the sink result messages.
 
 ## Project structure
 
@@ -79,37 +80,42 @@ When developing your job you can run/debug it like any other Java application by
     > The very first build can take a while, as maven builds up its cache.
 
 1. Navigate to the file `AvroSqlApplicationModeJob.java`, under the `src/main/java/cheetah/example/avrosqlapplicationmode/job/` folder.
+
 1. This file contains a job that performs a mapping on all incoming `InputEvents`. It consists of the following pieces:
     <details>
     <!-- Have an empty line after the <details> tag or markdown blocks will not render. -->
 
     - A static main method, which is used to start the job itself.
     - 2 methods for create an source table, it is important that these parameters reflect the messages type that comes from the kafka stream:
-        - One create a source in case of avro source`--input-type = "avro"`
-        - One create a source in case of avro-confluent source`--input-type = "avroConfluent"`
+        - One create a table in case of avro source`--input-type = "avro"`
+        - One create a table in case of avro-confluent source`--input-type = "avroConfluent"`
     - 3 methods for create an sink table:
         - One create a avro sink in case of `--output-type = "avro"`
         - One create a avro-confluent sink in case of `--output-type = "avroConfluent"`
         - One create a json sink in case of `--output-type = "json"`
     - A method for make a REST GET request to the APICURIO schema registry API to get the schema registry of the last message
     - A method for JSONfy the schema registry
-    - A method for transform the schema registry and format the information to a SQL metadata for build the source and sink data tables
+    - A method for transform the schema registry and format and clean the information to a valid SQL metadata for build the source and sink data tables
     </details>
 
 1. After selected the type of the input depending strictly on the type `--input-type` in the source kafka topic and preferred output type of messages `--output-type`, modify the `--sql` 
-parameters regarding the `--source`, `--sink` kafka topic inserted. Also, the `--group-id` has to be the same as the source kafka topic stream settings. An example setting is provided below.
+parameters regarding the `--source`, `--sink` kafka topic inserted. Important is, that the input topic `--source` contains messages only of one `--input-type` (`"avro"` or `"avroConfluent"`), otherwise the deserialization fail. An example setting is provided below.
 
 1. Create Intellij run profile for AvroSqlApplicationModeJob.java with parameters, by right-clicking the file `AvroSqlApplicationModeJob` and select `Modify Run Configuration...`.
-1. Enter the following program arguments:
 
+1. Enter the following program arguments formatted as in this example below to model the job properly:
   ```
-  --group-id jsonToAvro-group-id
   --sql "INSERT INTO sqlSinkTopic SELECT avroInputTopic.deviceId, avroInputTopic.`value`, avroInputTopic.`timestamp`, avroInputTopic.extraField FROM avroInputTopic WHERE avroInputTopic.deviceId LIKE 'deviceId-2'"
-  --kafka-bootstrap-servers localhost:9092
   --source avroInputTopic
   --sink sqlSinkTopic
   --input-type avroConfluent
   --output-type avroConfluent
+  ```
+
+1. Enter the following program arguments:
+  ```  
+  --kafka-bootstrap-servers localhost:9092
+  --group-id avroSql-group-id
   --sr-url http://schema-registry:8080/apis/ccompat/v7
   --token-url http://keycloak:1852/realms/local-development/protocol/openid-connect/token
   --apicurio-client-id default-access
@@ -118,7 +124,6 @@ parameters regarding the `--source`, `--sink` kafka topic inserted. Also, the `-
   ```
 
   And add the following Environment variables:
-
   ```
   - SCHEMA_REGISTRY_CLIENT_ID: default-access
   - SCHEMA_REGISTRY_CLIENT_SECRET: default-access-secret
