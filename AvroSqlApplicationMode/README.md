@@ -13,7 +13,7 @@ The following list explains some of the major components of the project, in orde
 - `/src` - Java source code containing the Flink job
   - `main` - Source code for the job itself
   - `test` - Unit tests for the job
-- `/ComponentTest` - .NET test project, which is used for component testing the Flink job, it sends three messages and in turn the schema registry in the 
+- `/ComponentTest` - .NET test project, which is used for component testing the Flink job, it also warm-up the system sending three messages and in turn the schema registry 
   - `Dockerfile` - to allow testing within Docker
 - `Dockerfile` - for building the Flink job.
 - `docker-compose.yaml` - allows running the Flink job and component test within Docker, with necessary environment values, port bindings, etc. for local development.
