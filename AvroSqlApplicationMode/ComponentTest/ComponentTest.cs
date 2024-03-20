@@ -26,7 +26,7 @@ public class ComponentTest
         var kafkaClientFactory = KafkaTestClientFactory.Create(configuration);
 
         // Create writer and reader using a key as "timestamp"
-        // var writer = kafkaClientFactory.CreateAvroTestWriter<string, inputEventAvro>("avroInputTopic", item => item.timestamp.ToString());
+        //var writer = kafkaClientFactory.CreateAvroTestWriter<string, InputEventAvro>("avroInputTopic", item => item.timestamp.ToString());
 
         // Create writer and reader with no key
         var writer = kafkaClientFactory.CreateAvroTestWriter<InputEventAvro>("avroInputTopic");
@@ -70,7 +70,7 @@ public class ComponentTest
         await writer.WriteAsync(inputEvent);
 
         // Assert
-        var messages = reader.ReadMessages(1, TimeSpan.FromSeconds(10));
+        var messages = reader.ReadMessages(1, TimeSpan.FromSeconds(30));
 
         // Test if there is a message
         messages.Should().HaveCountGreaterThan(0);

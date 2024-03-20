@@ -13,7 +13,7 @@ The following list explains some of the major components of the project, in orde
 - `/src` - Java source code containing the Flink job
   - `main` - Source code for the job itself
   - `test` - Unit tests for the job
-- `/ComponentTest` - .NET test project, which is used for component testing the Flink job, it sends a message in the 
+- `/ComponentTest` - .NET test project, which is used for component testing the Flink job, it sends three messages and in turn the schema registry in the 
   - `Dockerfile` - to allow testing within Docker
 - `Dockerfile` - for building the Flink job.
 - `docker-compose.yaml` - allows running the Flink job and component test within Docker, with necessary environment values, port bindings, etc. for local development.
@@ -140,10 +140,13 @@ parameters regarding the `--source`, `--sink` kafka topic inserted. Important is
   ```text
   SECURITY_PROTOCOL=SASL_PLAINTEXT;TOKEN_URL=http://localhost:1852/realms/local-development/protocol/openid-connect/token;KAFKA_CLIENT_ID=default-access;KAFKA_CLIENT_SECRET=default-access-secret;KAFKA_SCOPE=kafka
   ```
-1. Notice how the job is configured to consume events from topic `AvroSqlApplicationModeInputTopic` and output to `AvroSqlApplicationModeOutputTopic`
+1. Notice how the job is configured to consume events from topic `avroInputTopic` and output to `sqlSinkTopic`
 1. Save configuration by clicking OK
   > [!IMPORTANT]
   > When running the job you might see a warning in the console informing that *An illegal reflective access operation has occurred*, which can be ignored.
+  
+  > [!IMPORTANT]
+  > Check that the container `avrosqlapplicationmode-test` has finished before the `avrosqlapplicationmode-jobmanager` because it warm-up the system sending three messages to the source topic and so create the schema registry. In case of failure of the job by not finding the schema registry, retry the container `avrosqlapplicationmode-jobmanager` that will find the schema registry freshly created
 
 ## Tests
 ### Unit tests
@@ -164,7 +167,7 @@ docker compose up avrosqlapplicationmode-test --build
 
 If doing so, make sure to run your job locally from Intellij before starting the component test.
 
-The component test is producing a single message to `AvroSqlApplicationModeInputTopic`, and listening for any messages published to `AvroSqlApplicationModeOutputTopic`. It expects the flink job to publish the same message, enriched with a new field, on `AvroSqlApplicationModeOutputTopic`.
+The component test is producing a tree messages with different `deviceId` for the last two to `avroInputTopic`, and listening for any messages published to `sqlSinkTopic`. It expects the flink job to publish at least one message in the sink.
 You can observe the topics and produced messages at [http://localhost:9898](http://localhost:9898).
 
 #### Persisted data during development
