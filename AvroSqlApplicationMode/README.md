@@ -93,7 +93,7 @@ When developing your job you can run/debug it like any other Java application by
         - One create a avro sink in case of `--output-type = "avro"`
         - One create a avro-confluent sink in case of `--output-type = "avroConfluent"`
         - One create a json sink in case of `--output-type = "json"`
-    - A method for make a REST GET request to the APICURIO schema registry API to get the schema registry of the last message
+    - A method for make a REST GET request to the Apicurio schema registry API to get the schema registry of the last message
     - A method for JSONfy the schema registry
     - A method for transform the schema registry and format and clean the information to a valid SQL metadata for build the source and sink data tables
     </details>
@@ -105,35 +105,45 @@ parameters regarding the `--source`, `--sink` kafka topic inserted. Important is
 
 1. Enter the following program arguments formatted as in this example below to model the job properly:
   ```
-  --sql "INSERT INTO sqlSinkTopic SELECT avroInputTopic.deviceId, avroInputTopic.`value`, avroInputTopic.`timestamp`, avroInputTopic.extraField FROM avroInputTopic WHERE avroInputTopic.deviceId LIKE 'deviceId-2'"
-  --source avroInputTopic
-  --sink sqlSinkTopic
-  --input-type avroConfluent
-  --output-type avroConfluent
+   --sql "INSERT INTO sqlSinkTopic SELECT avroInputTopic.deviceId, avroInputTopic.`value`, avroInputTopic.`timestamp`, avroInputTopic.extraField FROM avroInputTopic WHERE avroInputTopic.deviceId LIKE 'deviceId-2'"
+   --source avroInputTopic
+   --sink sqlSinkTopic
+   --input-type avroConfluent
+   --output-type avroConfluent
   ```
 
 1. Enter the following program arguments:
   ```  
-  --kafka-bootstrap-servers localhost:9092
-  --group-id avroSql-group-id
+  --kafka-bootstrap-servers kafka:19092
   --sr-url http://schema-registry:8080/apis/ccompat/v7
   --token-url http://keycloak:1852/realms/local-development/protocol/openid-connect/token
   --apicurio-client-id default-access
   --client-secret default-access-secret
   --scope schema-registry
+  --group-id avroSql-group-id
   ```
 
-  And add the following Environment variables:
+  And add the following Environment variables for docker container label `avrosqlapplicationmode-jobmanager`:
   ```
-  - SCHEMA_REGISTRY_CLIENT_ID: default-access
-  - SCHEMA_REGISTRY_CLIENT_SECRET: default-access-secret
-  - SCHEMA_REGISTRY_SCOPE: schema-registry
-  - SCHEMA_REGISTRY_TOKEN_URL: http://keycloak:1852/realms/local-development/protocol/openid-connect/token
-  - SECURITY_PROTOCOL=SASL_PLAINTEXT
-  - TOKEN_URL=http://keycloak:1852/realms/local-development/protocol/openid-connect/token
-  - KAFKA_CLIENT_ID=default-access
-  - KAFKA_CLIENT_SECRET=default-access-secret
-  - KAFKA_SCOPE=kafka
+   - SECURITY_PROTOCOL: SASL_PLAINTEXT
+   - TOKEN_URL: http://keycloak:1852/realms/local-development/protocol/openid-connect/token
+   - KAFKA_CLIENT_ID: default-access
+   - KAFKA_CLIENT_SECRET: default-access-secret
+   - KAFKA_SCOPE: kafka
+   - SCHEMA_REGISTRY_CLIENT_ID: default-access
+   - SCHEMA_REGISTRY_CLIENT_SECRET: default-access-secret
+   - SCHEMA_REGISTRY_SCOPE: schema-registry
+   - SCHEMA_REGISTRY_TOKEN_URL: http://keycloak:1852/realms/local-development/protocol/openid-connect/token
+  ```
+
+  And add the following Environment variables for docker container label `avrosqlapplicationmode-test`:
+  ```
+  - KAFKA__URL: kafka:19092
+  - KAFKA__OAUTH2__CLIENTID: default-access
+  - KAFKA__OAUTH2__CLIENTSECRET: default-access-secret
+  - KAFKA__OAUTH2__SCOPE: kafka schema-registry
+  - KAFKA__OAUTH2__TOKENENDPOINT: http://keycloak:1852/realms/local-development/protocol/openid-connect/token
+  - KAFKA__SCHEMAREGISTRYURL: http://schema-registry:8080/apis/ccompat/v7
   ```
   You can insert the following string in the `Environment variables` field:
 
@@ -146,7 +156,10 @@ parameters regarding the `--source`, `--sink` kafka topic inserted. Important is
   > When running the job you might see a warning in the console informing that *An illegal reflective access operation has occurred*, which can be ignored.
   
   > [!IMPORTANT]
-  > Check that the container `avrosqlapplicationmode-test` has finished before the `avrosqlapplicationmode-jobmanager` because it warm-up the system sending three messages to the source topic and so create the schema registry. In case of failure of the job by not finding the schema registry, retry the container `avrosqlapplicationmode-jobmanager` that will find the schema registry freshly created
+  > Check that the container `avrosqlapplicationmode-test` has finished before the `avrosqlapplicationmode-jobmanager`, because it warm-up the system sending three messages to the source topic and so create the schema registry. In case of failure of the job by not finding the schema registry, retry the container `avrosqlapplicationmode-jobmanager` that will find the schema registry freshly created.
+
+  > [!IMPORTANT]
+  > If is `avro` the result outputted in the sink will be visible as binary from Redpanda and is not translated into a human-readable format. 
 
 ## Tests
 ### Unit tests
@@ -167,7 +180,7 @@ docker compose up avrosqlapplicationmode-test --build
 
 If doing so, make sure to run your job locally from Intellij before starting the component test.
 
-The component test is producing a tree messages with different `deviceId` for the last two to `avroInputTopic`, and listening for any messages published to `sqlSinkTopic`. It expects the flink job to publish at least one message in the sink.
+The component test is producing a tree messages with different `deviceId` for the last two and pass them to `avroInputTopic`, after 30 seconds listen for any messages published to `sqlSinkTopic`. It expects the flink job to publish at least one message in the sink.
 You can observe the topics and produced messages at [http://localhost:9898](http://localhost:9898).
 
 #### Persisted data during development
