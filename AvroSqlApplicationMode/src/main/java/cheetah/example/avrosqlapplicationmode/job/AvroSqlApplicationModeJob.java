@@ -39,12 +39,14 @@ final public class AvroSqlApplicationModeJob implements Serializable {
         ParameterTool parameters = ParameterTool.fromArgs(args);
 
         //Extract groupId, clientId and source for config
-        String groupId = parameters.get("group-id");
-        String userSourceTopic = parameters.get("source");
-        String userSinkTopic = parameters.get("sink");
+        // Create a map parameters for provide information for create the tables
+        Map<String, String> tableParams = new HashMap<>();
+        tableParams.put("userSourceTopic", parameters.get("source"));
+        tableParams.put("userSinkTopic", parameters.get("sink"));
+        tableParams.put("groupId", parameters.get("group-id"));
+        tableParams.put("bootstrapServer", parameters.get("kafka-bootstrap-servers"));
+        tableParams.put("registryUrl", parameters.get("sr-url"));
         String userSQL = parameters.get("sql").replaceAll("%27", "'");
-        String registryUrl = parameters.get("sr-url");
-        String bootstrapServer = parameters.get("kafka-bootstrap-servers");
         String inputType = parameters.get("input-type");
         String outputType = parameters.get("output-type");
 
@@ -53,7 +55,7 @@ final public class AvroSqlApplicationModeJob implements Serializable {
         LOGGER.info("Setup parameter and config done!------------------------------------------------------------------------------------------------------------------------------");
 
         // GET the subjects and take the LAST subjects as reference
-        String getRequestUrl = registryUrl + "/subjects";
+        String getRequestUrl = tableParams.get("registryUrl") + "/subjects";
         String stringSubjects = sendGetRequest(getRequestUrl);
         String [] jsonSubjects = getStringArray (stringSubjects);
         String subject = jsonSubjects [jsonSubjects.length - 1];
@@ -61,7 +63,7 @@ final public class AvroSqlApplicationModeJob implements Serializable {
         System.out.println(subject);
 
         // GET the LAST version
-        getRequestUrl = registryUrl + "/subjects/" + subject + "/versions";
+        getRequestUrl = tableParams.get("registryUrl") + "/subjects/" + subject + "/versions";
         String versions = sendGetRequest(getRequestUrl);
         String [] jsonVersions = getStringArray (versions);
         String version = jsonVersions [jsonVersions.length - 1];
@@ -69,7 +71,7 @@ final public class AvroSqlApplicationModeJob implements Serializable {
         System.out.println(version);
 
         // GET the raw registry
-        getRequestUrl = registryUrl + "/schemas/ids/" + version;
+        getRequestUrl = tableParams.get("registryUrl") + "/schemas/ids/" + version;
         String stringSchema = sendGetRequest(getRequestUrl);
 
         // Transform the registry into JSON
@@ -77,17 +79,9 @@ final public class AvroSqlApplicationModeJob implements Serializable {
 
         // Formatted schema achieved
         String tableMetadata = jsonSchemaToSql(schema);
+        tableParams.put("tableMetadata", tableMetadata);
         LOGGER.info(tableMetadata);
         LOGGER.info("Metadata for the table done!------------------------------------------------------------------------------------------------------------------------------");
-
-        // Create a map parameters for provide information for create the tables
-        Map<String, String> tableParams = new HashMap<>();
-        tableParams.put("userSourceTopic", userSourceTopic);
-        tableParams.put("userSinkTopic", userSinkTopic);
-        tableParams.put("tableMetadata", tableMetadata);
-        tableParams.put("groupId", groupId);
-        tableParams.put("bootstrapServer", bootstrapServer);
-        tableParams.put("registryUrl", registryUrl);
 
         //Create source table / topic with stream table environment
         if (Objects.equals(inputType, "avroConfluent")) {
