@@ -20,6 +20,7 @@ class InputEventTest {
 
         assertSerializedAsPojo(InputEvent.class);
     }
+
     @Test
     void isSerializedAsPojoWithoutKryo() {
 
