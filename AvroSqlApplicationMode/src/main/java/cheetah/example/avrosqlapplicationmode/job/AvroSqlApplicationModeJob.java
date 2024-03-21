@@ -25,7 +25,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.*;
 
 /** AvroSqlApplicationModeJob sets up the data processing job. */
-public class AvroSqlApplicationModeJob implements Serializable {
+final public class AvroSqlApplicationModeJob implements Serializable {
 
     private AvroSqlApplicationModeJob() {
     }

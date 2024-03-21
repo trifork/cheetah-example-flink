@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /** SqlApplicationModeJob sets up the data processing job. */
-public class SqlApplicationModeJob implements Serializable {
+final public class SqlApplicationModeJob implements Serializable {
 
     private SqlApplicationModeJob() {
     }
