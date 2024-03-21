@@ -2,7 +2,7 @@
 
 This repository contains a templated flink job. Processing is handled by Apache Flink which is a statefull scalable stream processing framework. You can find more information about Apache Flink [here](https://flink.apache.org/).
 
-The flink job consumes messages from a kafka topic with simple messages, enriches these messages and publishes the enriched messages on another kafka topic.
+The flink job consumes messages from a kafka topic with simple messages from two similar topic but with a different field. Using the messages of the two input topics apply a modifiable SQL query and output the result into a sink topic.
 
 ## Project structure
 
@@ -84,31 +84,57 @@ When developing your job you can run/debug it like any other Java application by
 
     - A static main method, which is used to start the job itself.
     - A setup method, which is where the main functionality resides. It sets up:
-      - A source - Determines which input source to use, in this case Kafka, and how to connect to it.
-      - An input stream - Specifies the datatype that is ingested from the source, which in this case is `InputEvent`
-      - An output stream - This is where we transform the incoming data - in this case we apply a basic mapping from `InputEvent` to `OutputEvent`. It also determines the output datatype, which in this case is `OutputEvent`
-      - A sink - Determines the destination to output the results of our job to, in this case Kafka
-      - A single call that connects the output stream to the sink
+      - A source - Determines which source topic to use from the topics `--source` and the second `--source1`, in this case Kafka, and how to connect to it.
+      - A source table that will be created depending on the metadata `--sourceSql` and the name from `--source` or `--sourceSql1` and the name from `--source1`
+      - A sink - Determines the sink source to the topic `--sink`, in this case Kafka, and how to connect to it.
+      - A sink table that will be created depending on the metadata `--sinkSql` and the name from `--sink` and apply a SQL query in `--sql` using the sources tables previously created and sent it into the `--sink` topic
     </details>
 
 1. Create Intellij run profile for SqlApplicationModeJob.java with parameters, by right-clicking the file `SqlApplicationModeJob` and select `Modify Run Configuration...`.
-1. Enter the following program arguments:
+1. An example is provided below for the program arguments:
 
   ```
-  --kafka-bootstrap-servers localhost:9092
-  --input-kafka-topic SqlApplicationModeInputTopic
-  --output-kafka-topic SqlApplicationModeOutputTopic
-  --kafka-group-id SqlApplicationMode-group-id
+   --job-classname cheetah.example.sqlapplicationmode.job.SqlApplicationModeJob
+   --kafka-bootstrap-servers kafka:19092
+   --kafka-group-id SqlApplicationMode-group-id
+   --sql "INSERT INTO MultiSourceOutput SELECT SqlApplicationModeInputTopic.deviceId, SqlApplicationModeInputTopic.`timestamp`, SqlApplicationModeInputTopic.`value` FROM SqlApplicationModeInputTopic JOIN SqlApplicationModeOutputTopic ON SqlApplicationModeInputTopic.`timestamp` = SqlApplicationModeOutputTopic.`timestamp` WHERE SqlApplicationModeInputTopic.`timestamp` > 2222"
+   --source SqlApplicationModeInputTopic
+   --source1 SqlApplicationModeOutputTopic
+   --sink MultiSourceOutput
+   --sourceSql "deviceId STRING, `timestamp` BIGINT, `value` FLOAT"
+   --sourceSql1 "deviceId STRING, `timestamp` BIGINT, `value` FLOAT"
+   --sinkSql "deviceId STRING, `timestamp` BIGINT, `value` FLOAT"
+   --groupId Sql-group-id
+   --clientId Sql-client-id
   ```
 
-  And add the following Environment variables:
+ And add the following Environment variables for docker container label `sqlapplicationmode-test`:
 
   ```
-  - SECURITY_PROTOCOL=SASL_PLAINTEXT
-  - TOKEN_URL=http://localhost:1852/realms/local-development/protocol/openid-connect/token
-  - KAFKA_CLIENT_ID=default-access
-  - KAFKA_CLIENT_SECRET=default-access-secret
-  - KAFKA_SCOPE=kafka
+  - KAFKA__URL: kafka:19092
+  - KAFKA__OAUTH2__CLIENTID: default-access
+  - KAFKA__OAUTH2__CLIENTSECRET: default-access-secret
+  - KAFKA__OAUTH2__SCOPE: kafka
+  - KAFKA__OAUTH2__TOKENENDPOINT: http://keycloak:1852/realms/local-development/protocol/openid-connect/token
+  ```
+
+  And add the following Environment variables for docker container label `sqlapplicationmode-jobmanager`:
+
+  ```
+  - SECURITY_PROTOCOL: SASL_PLAINTEXT
+  - TOKEN_URL: http://keycloak:1852/realms/local-development/protocol/openid-connect/token
+  - KAFKA_CLIENT_ID: default-access
+  - KAFKA_CLIENT_SECRET: default-access-secret
+  - KAFKA_SCOPE: kafka
+  - FLINK_PROPERTIES: |
+        jobmanager.rpc.address: sqlapplicationmode-jobmanager
+        scheduler-mode: reactive
+        rest.flamegraph.enabled: true
+        state.backend: hashmap
+        state.checkpoints.dir: file:///checkpoints/processing
+        state.savepoints.dir: file:///checkpoints/processing
+        execution.checkpointing.interval: 30 seconds
+        execution.checkpointing.min-pause: 10 seconds
   ```
   You can insert the following string in the `Environment variables` field:
 
@@ -119,6 +145,8 @@ When developing your job you can run/debug it like any other Java application by
 1. Save configuration by clicking OK
   > [!IMPORTANT]
   > When running the job you might see a warning in the console informing that *An illegal reflective access operation has occurred*, which can be ignored.
+  > [!IMPORTANT]
+  > Ensure that in the first source topic and second source topic is preexistent at least one message.
 
 ## Tests
 ### Unit tests
@@ -155,7 +183,7 @@ You can observe the topics and produced messages at [http://localhost:9898](http
 
 You might encounter failing component tests due to your job receiving more messages than expected. This occurs if you've previously run the job and component tests and data is still present in Kafka. The component test will then, in some cases, re-read the output of previous runs.
 
-To fix this, you'll need to delete the data in Kafka by running: `docker compose down` in the `cheetah-development-infrastructure` repository and then starting it again using the command in [Local development with docker-compose](#local-development-with-docker-compose). This deletes the volume containing Kafka's data and starts everything up again.
+To fix this, you'll need to delete the data in Kafka by running: `docker compose down` in the `cheetah-development-infrastructure` repository and then starting it again using the command in [Local development with docker-compose](#local-development). This deletes the volume containing Kafka's data and starts everything up again.
 
 #### Concurrent tests
 

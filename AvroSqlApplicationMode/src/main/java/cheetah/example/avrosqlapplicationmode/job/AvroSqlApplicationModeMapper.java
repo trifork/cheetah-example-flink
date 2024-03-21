@@ -13,7 +13,7 @@ public class AvroSqlApplicationModeMapper implements MapFunction<InputEvent, Out
     }
 
     @Override
-    public OutputEvent map(final InputEvent InputEvent) {
-        return new OutputEvent(InputEvent, extraField);
+    public OutputEvent map(final InputEvent inputEvent) {
+        return new OutputEvent(inputEvent, extraField);
     }
 }
