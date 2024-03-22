@@ -89,9 +89,9 @@ class AvroSqlApplicationModeJobTest {
                 sqlMetadatas.add(AvroSqlApplicationModeJob.jsonSchemaToSql(jsonSchema));
             }
 
-            assertEquals("deviceId VARCHAR, `value` DOUBLE, `timestamp` BIGINT, extraField VARCHAR", sqlMetadatas.get(0));
-            assertEquals("deviceNo VARCHAR, `time` DOUBLE, `date` BIGINT, newField FLOAT", sqlMetadatas.get(1));
-            assertEquals("devId VARCHAR, `map` FLOAT, `multiset` BIGINT, newField BINARY", sqlMetadatas.get(2));
+            assertEquals("`deviceId` VARCHAR, `value` DOUBLE, `timestamp` BIGINT, `extraField` VARCHAR", sqlMetadatas.get(0));
+            assertEquals("`deviceNo` VARCHAR, `time` DOUBLE, `date` BIGINT, `newField` FLOAT", sqlMetadatas.get(1));
+            assertEquals("`devId` VARCHAR, `map` FLOAT, `multiset` BIGINT, `newField` BINARY", sqlMetadatas.get(2));
         }
 
         @Test

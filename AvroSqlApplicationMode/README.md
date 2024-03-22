@@ -160,6 +160,9 @@ parameters regarding the `--source`, `--sink` kafka topic inserted. Important is
 
   > [!IMPORTANT]
   > If is `avro` the result outputted in the sink will be visible as binary from Redpanda and is not translated into a human-readable format. 
+  
+> [!IMPORTANT]
+  > When you run a SQL query, surround the name of the field with backticks if is equal to a Flink SQL dlls directives
 
 ## Tests
 ### Unit tests

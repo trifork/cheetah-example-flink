@@ -147,7 +147,8 @@ When developing your job you can run/debug it like any other Java application by
   > When running the job you might see a warning in the console informing that *An illegal reflective access operation has occurred*, which can be ignored.
   > [!IMPORTANT]
   > Ensure that in the first source topic and second source topic is preexistent at least one message.
-
+  > [!IMPORTANT]
+  > When you run a SQL query, surround the name of the field with backticks if is equal to a Flink SQL dlls directives
 ## Tests
 ### Unit tests
 

@@ -295,26 +295,26 @@ final public class AvroSqlApplicationModeJob implements Serializable {
 
     static public String jsonSchemaToSql(JsonNode schema) {
 
+        // Initialize the sql result variable
         String sql = "";
 
+        // Extract all the fields from the schema and put into a list
         Schema temp = new Schema.Parser().parse(schema.get("schema").asText());
         List<Schema.Field> listSchema =  temp.getFields();
         int numberOfElements = listSchema.size();
-
-        // Get the list of ddl instruction that has to be confronted with each field of the metadata
-        List<String> ddlTypes = getDdlTypes();
 
         int i = 0;
 
         for (Schema.Field listField : listSchema) {
 
+            // Transform a Schema.Field type into a string
             String value = String.valueOf(listField.name());
+
+            // Translate all the field type formatted as avro schema into a field type formatted as SQL
             String field = rawFieldToSql(String.valueOf(listField.schema().getType().getName()));
 
-            // Surround with backtick if the name of the field is the same of one of ddl sql instruction to declare it as field name
-            if (ddlTypes.contains(value.toLowerCase())){
-                value = "`" + value + "`";
-            }
+            // Add backticks for avoid to have a field named with a Flink SQL ddls
+            value = "`" + value + "`";
 
             // Manage the end the start and the other statements of a sql query
             if (i == numberOfElements - 1) {
@@ -352,44 +352,5 @@ final public class AvroSqlApplicationModeJob implements Serializable {
 
         return sql;
     }
-
-    static private List<String> getDdlTypes() {
-
-        List<String> dataTypeList = new ArrayList<>();
-        // Get all methods from the DataTypes class
-        Method[] methods = DataTypes.class.getDeclaredMethods();
-
-        for (Method method : methods) {
-            // Ensure the method is public and static
-            if (java.lang.reflect.Modifier.isPublic(method.getModifiers()) && java.lang.reflect.Modifier.isStatic(method.getModifiers())) {
-
-                    String dataTypeMethodNames = getLowerCaseMethodNamesOrEmpty(method);
-                    // Ensure that ddls are unique and valid
-                    if (!dataTypeList.contains(dataTypeMethodNames) && !Objects.equals(dataTypeMethodNames, "")) {
-                        dataTypeList.add("value");
-                        dataTypeList.add(dataTypeMethodNames.toLowerCase());
-                    }
-            }
-        }
-
-        return dataTypeList;
-    }
-
-    private static String getLowerCaseMethodNamesOrEmpty(Method method) {
-        String cleanedMethodName = "";
-
-        // Check if method name is written entirely in uppercase letters as ddl instruction should be
-        if (method.getName().equals(method.getName().toUpperCase())) {
-            cleanedMethodName = cleanMethodName(method.getName().toLowerCase());
-        }
-
-        return cleanedMethodName;
-    }
-
-    private static String cleanMethodName(String methodName) {
-        // Replace all symbols other than underscores with empty string
-        return methodName.replaceAll("[^a-zA-Z0-9_]", "");
-    }
-
 }
 
