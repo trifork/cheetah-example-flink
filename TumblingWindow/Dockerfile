@@ -37,7 +37,12 @@ RUN --mount=type=secret,id=GITHUB_TOKEN \
 #
 FROM flink:1.18.1-scala_2.12-java17 as runtime
 
-COPY --from=build /app/target/tumblingwindow*.jar /opt/flink/usrlib/artifacts/
+COPY --from=build /app/target/tumblingwindow*.jar /opt/flink/usrlib/artifacts/tumblingwindow.jar
+
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+# Add support for structured JSON logging
+RUN log4jVersion=$(find /opt/flink/lib/ -name 'log4j-core-*.jar' -exec basename {} \; | grep -oP '(\d+\.\d+\.\d+)') && \
+    wget --progress=dot:giga -P /opt/flink/lib "https://repo1.maven.org/maven2/org/apache/logging/log4j/log4j-layout-template-json/$log4jVersion/log4j-layout-template-json-$log4jVersion.jar"
 
 RUN mkdir /opt/flink/plugins/s3-fs-hadoop/; \
     mkdir /opt/flink/plugins/s3-fs-presto/; \

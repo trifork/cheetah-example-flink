@@ -1,0 +1,97 @@
+---
+version: "3"
+services:
+  avrotojson-test:
+    build:
+      context: ComponentTest
+      dockerfile: Dockerfile
+      secrets:
+        - GITHUB_TOKEN
+        - GITHUB_ACTOR
+    environment:
+      KAFKA__URL: kafka:19092
+      KAFKA__OAUTH2__CLIENTID: default-access
+      KAFKA__OAUTH2__CLIENTSECRET: default-access-secret
+      KAFKA__OAUTH2__SCOPE: kafka schema-registry
+      KAFKA__OAUTH2__TOKENENDPOINT: http://keycloak:1852/realms/local-development/protocol/openid-connect/token
+      KAFKA__SCHEMAREGISTRYURL: http://schema-registry:8080/apis/ccompat/v7
+    depends_on:
+      avrotojson-jobmanager:
+        condition: service_healthy
+
+  avrotojson-jobmanager:
+    image: ${DOCKER_REGISTRY-}avrotojson-job
+    build:
+      dockerfile: Dockerfile
+      args:
+        - MAVEN_ARGS=${EXTRA_MAVEN_ARGS-}
+      secrets:
+        - GITHUB_TOKEN
+        - GITHUB_ACTOR
+    command: |
+      standalone-job
+      --job-classname cheetah.example.job.AvroToJsonJob
+      --kafka-bootstrap-servers kafka:19092
+      --kafka-group-id AvroToJson-group-id
+      --schema-registry-url http://schema-registry:8080/apis/ccompat/v7
+      --input-kafka-topic AvroToJsonInputTopic
+      --output-kafka-topic AvroToJsonOutputTopic
+    environment:
+      SECURITY_PROTOCOL: SASL_PLAINTEXT
+      TOKEN_URL: http://keycloak:1852/realms/local-development/protocol/openid-connect/token
+      KAFKA_CLIENT_ID: default-access
+      KAFKA_CLIENT_SECRET: default-access-secret
+      KAFKA_SCOPE: kafka
+      SCHEMA_REGISTRY_CLIENT_ID: default-access
+      SCHEMA_REGISTRY_CLIENT_SECRET: default-access-secret
+      SCHEMA_REGISTRY_SCOPE: schema-registry
+      FLINK_PROPERTIES: |
+        jobmanager.rpc.address: avrotojson-jobmanager
+        scheduler-mode: reactive
+        rest.flamegraph.enabled: true
+        state.backend: hashmap
+        state.checkpoints.dir: file:///checkpoints/processing
+        state.savepoints.dir: file:///checkpoints/processing
+        execution.checkpointing.interval: 300 seconds
+        execution.checkpointing.min-pause: 240 seconds
+    volumes:
+      - flink:/checkpoints
+    healthcheck:
+      test: curl localhost:8081/jobs | grep -q '"status":"RUNNING"' || exit -1
+      interval: 1s
+      timeout: 1s
+      retries: 30
+    depends_on:
+      - avrotojson-taskmanager
+
+  avrotojson-taskmanager:
+    image: ${DOCKER_REGISTRY-}avrotojson-job
+    build:
+      dockerfile: Dockerfile
+      args:
+        - MAVEN_ARGS=${EXTRA_MAVEN_ARGS-}
+      secrets:
+        - GITHUB_TOKEN
+        - GITHUB_ACTOR
+    command: taskmanager
+    environment:
+      FLINK_PROPERTIES: |
+        jobmanager.rpc.address: avrotojson-jobmanager
+        taskmanager.memory.process.size: 4gb
+        taskmanager.numberOfTaskSlots: 2
+    volumes:
+      - flink:/checkpoints
+
+networks:
+  default:
+    name: "cheetah-infrastructure"
+    external: true
+
+volumes:
+  flink:
+
+secrets:
+  GITHUB_TOKEN:
+    environment: GITHUB_TOKEN
+  GITHUB_ACTOR:
+    environment: GITHUB_ACTOR

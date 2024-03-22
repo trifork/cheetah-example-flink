@@ -14,10 +14,6 @@
         {
             "name": "timestamp",
             "type": "long"
-        },
-        {
-            "name": "extraField",
-            "type": "string"
         }
     ]
 }

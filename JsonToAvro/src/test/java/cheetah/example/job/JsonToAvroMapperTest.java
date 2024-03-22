@@ -8,7 +8,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class JsonToAvroMapperTest {
-    private final JsonToAvroMapper mapper = new JsonToAvroMapper("extraFieldValue");
+    private final JsonToAvroMapper mapper = new JsonToAvroMapper();
 
     @Test
     public void testEnrichment() {
@@ -22,6 +22,5 @@ class JsonToAvroMapperTest {
         assertEquals(deviceId, actual.getDeviceId());
         assertEquals(value, actual.getValue());
         assertEquals(timestamp, actual.getTimestamp());
-        assertEquals("extraFieldValue", actual.getExtraField());
     }
 }
