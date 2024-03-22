@@ -1,0 +1,23 @@
+{
+    "type": "record",
+    "name": "InputEventAvro",
+    "namespace": "cheetah.example.model.avrorecord",
+    "fields":  [
+        {
+            "name": "deviceId",
+            "type": "string"
+        },
+        {
+            "name": "value",
+            "type": "double"
+        },
+        {
+            "name": "timestamp",
+            "type": "long"
+        },
+        {
+            "name": "extraField",
+            "type": "string"
+        }
+    ]
+}
