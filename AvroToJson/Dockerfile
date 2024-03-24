@@ -38,7 +38,7 @@ RUN \
 #
 #  Install jars onto clean runtime system.
 #
-FROM flink:1.18.1-scala_2.12-java17 AS runtime
+FROM flink:1.19.0-scala_2.12-java17 AS runtime
 
 COPY --from=build /app/target/AvroToJson*.jar /opt/flink/usrlib/artifacts/AvroToJson.jar
 
