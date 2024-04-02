@@ -2,8 +2,10 @@ package cheetah.example.flinkstates.job;
 
 import cheetah.example.flinkstates.function.*;
 import cheetah.example.flinkstates.model.InputEvent;
+import com.trifork.cheetah.processing.connector.kafka.CheetahKafkaSink;
 import com.trifork.cheetah.processing.connector.kafka.CheetahKafkaSource;
 import com.trifork.cheetah.processing.connector.kafka.config.CheetahKafkaSinkConfig;
+import com.trifork.cheetah.processing.connector.kafka.config.CheetahKafkaSinkConfigBuilder;
 import com.trifork.cheetah.processing.connector.kafka.config.CheetahKafkaSourceConfig;
 import com.trifork.cheetah.processing.job.Job;
 import org.apache.flink.api.common.functions.RichFlatMapFunction;
@@ -45,7 +47,9 @@ public class FlinkStatesJob extends Job implements Serializable {
         final SingleOutputStreamOperator<T> outputStream = keyedStream.flatMap(function)
                 .name("FlinkStatesMapper")
                 .uid("FlinkStatesMapper");
-        final KafkaSink<T> sink = CheetahKafkaSinkConfig.builder(this, kafkaPostFix).toSinkBuilder(outputType).build();
+
+        final KafkaSink<T> sink = CheetahKafkaSink.builder(outputType, this)
+                .build();
 
         outputStream.sinkTo(sink)
                 .name("FlinkStatesKafkaSink")
