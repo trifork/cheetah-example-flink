@@ -84,7 +84,6 @@ services:
   # Copied from AvroToJson project
   # Start of AvroToJson service
   avrotojson-jobmanager:
-    image: ${DOCKER_REGISTRY-}avrotojson-job
     build:
       context: ../../AvroToJson
       secrets:
@@ -130,7 +129,6 @@ services:
       - avrotojson-taskmanager
 
   avrotojson-taskmanager:
-    image: ${DOCKER_REGISTRY-}avrotojson-job
     build:
       context: ../../AvroToJson
       secrets:

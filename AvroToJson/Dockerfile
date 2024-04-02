@@ -33,6 +33,6 @@ RUN --mount=type=secret,id=GITHUB_TOKEN \
 #
 FROM ghcr.io/trifork/cheetah-lib-processing:4.2.0-feature-lib-processing-image-snapshot36-flink-1.18.1-java17
 
-COPY --from=build /app/target/avrotojson*.jar /opt/flink/usrlib/artifacts/avrotojson.jar
+COPY --from=build /app/target/AvroToJson*.jar /opt/flink/usrlib/artifacts/AvroToJson.jar
 
 USER flink
