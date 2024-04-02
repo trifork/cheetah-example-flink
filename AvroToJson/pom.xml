@@ -49,7 +49,8 @@
         <dependency>
             <groupId>com.trifork.cheetah.processing</groupId>
             <artifactId>cheetah-lib-processing</artifactId>
-            <version>4.1.1</version>
+            <version>4.2.0-feature-lib-processing-image-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.flink</groupId>
@@ -94,7 +95,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.2.5</version>
             </plugin>
-            
+
             <!-- Java Compiler -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -105,7 +106,7 @@
                     <target>17</target>
                 </configuration>
             </plugin>
-            
+
             <!-- We use the maven-shade plugin to create a fat jar that contains all necessary dependencies. -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
