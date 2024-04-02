@@ -3,6 +3,7 @@ services:
 
   jsontoavro-test:
     build:
+      context: ComponentTest
       secrets:
         - GITHUB_TOKEN
         - GITHUB_ACTOR

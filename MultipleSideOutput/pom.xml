@@ -35,7 +35,7 @@ under the License.
 
     <repositories>
         <repository>
-            <id>github</id>
+            <id>trifork-github</id>
             <url>https://maven.pkg.github.com/trifork/cheetah-lib-processing</url>
             <snapshots>
                 <enabled>true</enabled>
@@ -141,24 +141,6 @@ under the License.
                                     </excludes>
                                 </filter>
                             </filters>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>3.6.1</version>
-                <executions>
-                    <execution>
-                        <id>copy-dependencies</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>copy-dependencies</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
-                            <includeScope>runtime</includeScope>
                         </configuration>
                     </execution>
                 </executions>

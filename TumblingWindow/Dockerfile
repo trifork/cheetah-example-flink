@@ -12,7 +12,7 @@ COPY .mvn .mvn
 # Download dependencies (with docker cache)
 RUN --mount=type=secret,id=GITHUB_TOKEN \
     --mount=type=secret,id=GITHUB_ACTOR \
-    --mount=type=cache,target=/root/.m2,sharing=locked \
+    --mount=type=cache,target=/root/.m2/repository,sharing=locked \
     GITHUB_TOKEN="$(cat /run/secrets/GITHUB_TOKEN)" \
     GITHUB_ACTOR="$(cat /run/secrets/GITHUB_ACTOR)" \
     mvn dependency:go-offline -B
@@ -23,7 +23,7 @@ COPY src ./src
 # Finally compile, test, and jar up
 RUN --mount=type=secret,id=GITHUB_TOKEN \
     --mount=type=secret,id=GITHUB_ACTOR \
-    --mount=type=cache,target=/root/.m2,sharing=locked \
+    --mount=type=cache,target=/root/.m2/repository,sharing=locked \
     GITHUB_TOKEN="$(cat /run/secrets/GITHUB_TOKEN)" \
     GITHUB_ACTOR="$(cat /run/secrets/GITHUB_ACTOR)" \
     mvn package -B

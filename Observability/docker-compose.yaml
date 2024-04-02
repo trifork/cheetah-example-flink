@@ -3,6 +3,7 @@ version: "3"
 services:
   observability-test:
     build:
+      context: ComponentTest
       secrets:
         - GITHUB_TOKEN
         - GITHUB_ACTOR
@@ -26,7 +27,6 @@ services:
       --job-classname cheetah.example.observability.job.ObservabilityJob
       --kafka-bootstrap-servers kafka:19092
       --input-kafka-topic ObservabilityInputTopic
-      --output-kafka-topic ObservabilityOutputTopic
       --kafka-group-id Observability-group-id
       --kafka-security-protocol SASL_PLAINTEXT
     environment:
