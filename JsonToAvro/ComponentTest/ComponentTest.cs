@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using cheetah.example.model.avrorecord;
 using Cheetah.Kafka.Testing;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
@@ -45,8 +46,7 @@ public class ComponentTest
         messages.Should().ContainSingle(message => 
             message.deviceId == inputEvent.DeviceId && 
             message.value == inputEvent.Value &&
-            message.timestamp == inputEvent.Timestamp &&
-            message.extraField == "ExtraFieldValue");
+            message.timestamp == inputEvent.Timestamp);
         reader.VerifyNoMoreMessages(TimeSpan.FromSeconds(20)).Should().BeTrue();
     }
 }

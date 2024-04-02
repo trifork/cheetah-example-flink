@@ -28,6 +28,12 @@ jobs:
     strategy:
       matrix:
         include:
+          - folder: AvroToJson
+            initial-kafka-topics: "AvroToJsonInputTopic AvroToJsonOutputTopic"
+
+          - folder: DockerComposeExamples/RunMultipleFlinkJobs
+            initial-kafka-topics: "JsonToAvroInputTopic JsonToAvroOutputTopic"
+
           - folder: EnrichStream
             initial-kafka-topics: "EnrichStreamEnrichTopic EnrichStreamInputTopic EnrichStreamOutputTopic"
             
@@ -54,13 +60,13 @@ jobs:
             
           - folder: TumblingWindow
             initial-kafka-topics: "TumblingWindowInputTopic TumblingWindowOutputTopic"
-
+            
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Check if files have changed
-        uses: tj-actions/changed-files@v42
+        uses: tj-actions/changed-files@v44
         id: changed-files
         with: 
           files: |
