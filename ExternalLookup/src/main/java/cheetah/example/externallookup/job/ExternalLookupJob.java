@@ -47,13 +47,17 @@ public class ExternalLookupJob extends Job implements Serializable {
 
         // Transform stream
         final SingleOutputStreamOperator<OutputEvent> outputStream =
-                AsyncDataStream.unorderedWait(inputStream, new ExternalLookupMapper(idServiceHost, tokenUrl, clientId, clientSecret, scope), 1000, TimeUnit.MILLISECONDS, 100);
+                AsyncDataStream.unorderedWait(inputStream, new ExternalLookupMapper(idServiceHost, tokenUrl, clientId, clientSecret, scope), 1000, TimeUnit.MILLISECONDS, 100)
+                .name("ExternalLookupMapper")
+                .uid("ExternalLookupMapper");
 
         // Output sink
         final KafkaSink<OutputEvent> kafkaSink =
                 CheetahKafkaSinkConfig.builder(this).toKafkaSinkBuilder(OutputEvent.class).build();
 
         // Connect transformed stream to sink
-        outputStream.sinkTo(kafkaSink).name(ExternalLookupJob.class.getSimpleName());
+        outputStream.sinkTo(kafkaSink).name(ExternalLookupJob.class.getSimpleName())
+                .name("ExternalLookupKafkaSink")
+                .uid("ExternalLookupKafkaSink");
     }
 }

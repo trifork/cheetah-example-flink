@@ -31,13 +31,24 @@ public class ObservabilityJob extends Job implements Serializable {
 
         //Use three distinct mappers to add the different types of metrics, that are available
         final SingleOutputStreamOperator<InputEvent> countedStream =
-                inputStream.map(new CounterMapper());
+                inputStream.map(new CounterMapper())
+                .name("ObservabilityJobCounter")
+                .uid("ObservabilityJobCounter");
+
         final SingleOutputStreamOperator<InputEvent> gaugedStream =
-                countedStream.map(new GaugeMapper());
+                countedStream.map(new GaugeMapper())
+                .name("ObservabilityJobGauge")
+                .uid("ObservabilityJobGauge");
+
         final SingleOutputStreamOperator<InputEvent> histogramStream =
-                gaugedStream.map(new HistogramMapper());
+                gaugedStream.map(new HistogramMapper())
+                .name("ObservabilityJobHistogram")
+                .uid("ObservabilityJobHistogram");
+
         final SingleOutputStreamOperator<InputEvent> cheetahHistogramStream =
-                histogramStream.map(new CheetahHistogramMapper());
+                histogramStream.map(new CheetahHistogramMapper())
+                .name("ObservabilityJobCheetahHistogram")
+                .uid("ObservabilityJobCheetahHistogram");
 
         cheetahHistogramStream.name(ObservabilityJob.class.getSimpleName());
     }

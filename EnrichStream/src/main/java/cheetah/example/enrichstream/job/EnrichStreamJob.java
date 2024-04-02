@@ -50,13 +50,17 @@ public class EnrichStreamJob extends Job implements Serializable {
         final SingleOutputStreamOperator<OutputEvent> outputStream = enrichingStream
                 .connect(inputStream)
                 .keyBy(EnrichEvent::getDeviceId, InputEvent::getDeviceId)
-                .process(new EventEnricher());
+                .process(new EventEnricher())
+                .name("EnrichStreamProcessor")
+                .uid("EnrichStreamProcessor");
 
         // Output the result to a new Stream
        final KafkaSink<OutputEvent> kafkaSink = CheetahKafkaSink.builder(OutputEvent.class, this)
                .build();
 
         // Connect transformed stream to sink
-        outputStream.sinkTo(kafkaSink).name(EnrichStreamJob.class.getSimpleName());
+        outputStream.sinkTo(kafkaSink).name(EnrichStreamJob.class.getSimpleName())
+                .name("EnrichStreamKafkaSink")
+                .uid("EnrichStreamKafkaSink");
     }
 }

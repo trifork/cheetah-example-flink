@@ -32,13 +32,17 @@ public class JsonToAvroJob extends Job implements Serializable {
 
         // Transform stream
         final SingleOutputStreamOperator<OutputEventAvro> outputStream =
-                inputStream.map(new JsonToAvroMapper());
+                inputStream.map(new JsonToAvroMapper())
+                .name("JsonToAvroMapper")
+                .uid("JsonToAvroMapper");
 
         // Output sink
         KafkaSink<OutputEventAvro> kafkaSink = CheetahKafkaSink.avroSpecificBuilder(OutputEventAvro.class, this)
                 .build();
 
         // Connect transformed stream to sink
-        outputStream.sinkTo(kafkaSink);
+        outputStream.sinkTo(kafkaSink)
+                .name("JsonToAvroKafkaSink")
+                .uid("JsonToAvroKafkaSink");
     }
 }
