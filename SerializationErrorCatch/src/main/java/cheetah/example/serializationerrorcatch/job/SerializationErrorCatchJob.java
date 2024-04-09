@@ -37,6 +37,8 @@ public class SerializationErrorCatchJob extends Job implements Serializable {
         // Transform stream
         final SingleOutputStreamOperator<OutputEvent> outputStream = inputStream
                 .filter(new FilterAndCountFailedSerializations())
+                .name("SerializationErrorCatchFilter")
+                .uid("SerializationErrorCatchFilter")
                 .map(new SerializationErrorCatchMapper("ExtraFieldValue"))
                 .name("SerializationErrorCatchMapper")
                 .uid("SerializationErrorCatchMapper");
