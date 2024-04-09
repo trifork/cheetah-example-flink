@@ -42,7 +42,9 @@ public class TransformAndStoreJob extends Job implements Serializable {
 
         // Transform stream
         final SingleOutputStreamOperator<OutputEvent> outputStream =
-                inputStream.map(new TransformAndStoreMapper());
+                inputStream.map(new TransformAndStoreMapper())
+                        .name("TransformAndStoreMapper")
+                        .uid("TransformAndStoreMapper");
 
         // Store the transformed object in OpenSearch using the OpenSearchSink.
         // In this process, the output is serialized to JSON. The index name is constructed using the indexBaseName
@@ -56,6 +58,8 @@ public class TransformAndStoreJob extends Job implements Serializable {
                 .build();
 
         // Connect transformed stream to openSearchSink
-        outputStream.sinkTo(openSearchSink).name(TransformAndStoreJob.class.getSimpleName());
+        outputStream.sinkTo(openSearchSink).
+                name("TransformAndStoreKafkaSink")
+                .uid("TransformAndStoreKafkaSink");
     }
 }

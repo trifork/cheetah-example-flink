@@ -37,13 +37,17 @@ public class SerializationErrorCatchJob extends Job implements Serializable {
         // Transform stream
         final SingleOutputStreamOperator<OutputEvent> outputStream = inputStream
                 .filter(new FilterAndCountFailedSerializations())
-                .map(new SerializationErrorCatchMapper("ExtraFieldValue"));
+                .map(new SerializationErrorCatchMapper("ExtraFieldValue"))
+                .name("SerializationErrorCatchMapper")
+                .uid("SerializationErrorCatchMapper");
 
         // Output sink
         KafkaSink<OutputEvent> kafkaSink = CheetahKafkaSink.builder(OutputEvent.class, this)
                 .build();
 
         // Connect transformed stream to sink
-        outputStream.sinkTo(kafkaSink);
+        outputStream.sinkTo(kafkaSink)
+                .name("SerializationErrorCatchKafkaSink")
+                .uid("SerializationErrorCatchKafkaSink");
     }
 }
