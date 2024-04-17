@@ -1,10 +1,9 @@
 ---
-version: "3"
+version: "3.8"
 services:
   avrotojson-test:
     build:
       context: ComponentTest
-      dockerfile: Dockerfile
       secrets:
         - GITHUB_TOKEN
         - GITHUB_ACTOR
@@ -20,11 +19,7 @@ services:
         condition: service_healthy
 
   avrotojson-jobmanager:
-    image: ${DOCKER_REGISTRY-}avrotojson-job
     build:
-      dockerfile: Dockerfile
-      args:
-        - MAVEN_ARGS=${EXTRA_MAVEN_ARGS-}
       secrets:
         - GITHUB_TOKEN
         - GITHUB_ACTOR
@@ -65,11 +60,7 @@ services:
       - avrotojson-taskmanager
 
   avrotojson-taskmanager:
-    image: ${DOCKER_REGISTRY-}avrotojson-job
     build:
-      dockerfile: Dockerfile
-      args:
-        - MAVEN_ARGS=${EXTRA_MAVEN_ARGS-}
       secrets:
         - GITHUB_TOKEN
         - GITHUB_ACTOR

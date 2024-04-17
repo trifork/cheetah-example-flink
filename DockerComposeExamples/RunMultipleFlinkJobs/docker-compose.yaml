@@ -5,7 +5,6 @@ services:
   jsontoavro-test:
     build:
       context: ../../JsonToAvro/ComponentTest
-      dockerfile: Dockerfile
       secrets:
         - GITHUB_TOKEN
         - GITHUB_ACTOR
@@ -21,12 +20,8 @@ services:
         condition: service_healthy
 
   jsontoavro-jobmanager:
-    image: ${DOCKER_REGISTRY-}jsontoavro-job
     build:
       context: ../../JsonToAvro
-      dockerfile: Dockerfile
-      args:
-        - MAVEN_ARGS=${EXTRA_MAVEN_ARGS-}
       secrets:
         - GITHUB_TOKEN
         - GITHUB_ACTOR
@@ -73,16 +68,12 @@ services:
     image: ${DOCKER_REGISTRY-}jsontoavro-job
     build:
       context: ../../JsonToAvro
-      dockerfile: Dockerfile
-      args:
-        - MAVEN_ARGS=${EXTRA_MAVEN_ARGS-}
       secrets:
         - GITHUB_TOKEN
         - GITHUB_ACTOR
     command: taskmanager
     environment:
-      - |
-        FLINK_PROPERTIES=
+      FLINK_PROPERTIES: |
         jobmanager.rpc.address: jsontoavro-jobmanager
         taskmanager.memory.process.size: 4gb
         taskmanager.numberOfTaskSlots: 2
@@ -93,12 +84,8 @@ services:
   # Copied from AvroToJson project
   # Start of AvroToJson service
   avrotojson-jobmanager:
-    image: ${DOCKER_REGISTRY-}avrotojson-job
     build:
       context: ../../AvroToJson
-      dockerfile: Dockerfile
-      args:
-        - MAVEN_ARGS=${EXTRA_MAVEN_ARGS-}
       secrets:
         - GITHUB_TOKEN
         - GITHUB_ACTOR
@@ -142,12 +129,8 @@ services:
       - avrotojson-taskmanager
 
   avrotojson-taskmanager:
-    image: ${DOCKER_REGISTRY-}avrotojson-job
     build:
       context: ../../AvroToJson
-      dockerfile: Dockerfile
-      args:
-        - MAVEN_ARGS=${EXTRA_MAVEN_ARGS-}
       secrets:
         - GITHUB_TOKEN
         - GITHUB_ACTOR

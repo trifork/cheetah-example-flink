@@ -48,7 +48,7 @@ public class FlinkStatesJob extends Job implements Serializable {
                 .name("FlinkStates"+kafkaPostFix)
                 .uid("FlinkStates"+kafkaPostFix);
 
-        final KafkaSink<T> sink = CheetahKafkaSink.builder(outputType, CheetahKafkaSinkConfig.defaultConfig(this, kafkaPostFix))
+        final KafkaSink<T> sink = CheetahKafkaSinkConfig.builder(this, kafkaPostFix).toKafkaSinkBuilder(outputType)
                 .build();
 
         outputStream.sinkTo(sink)
