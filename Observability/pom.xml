@@ -30,7 +30,7 @@ under the License.
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <flink.version>1.18.1</flink.version>
+        <flink.version>1.19.0</flink.version>
     </properties>
 
     <repositories>
@@ -67,7 +67,7 @@ under the License.
         <dependency>
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-metrics-dropwizard</artifactId>
-            <version>1.18.1</version>
+            <version>1.19.0</version>
         </dependency>
 
         <!-- Util -->
