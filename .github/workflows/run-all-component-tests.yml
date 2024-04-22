@@ -3,6 +3,10 @@ name: Run All Component Tests
 on:
   workflow_dispatch:
     inputs:
+      cheetah-flink-image-tag:
+        description: The image tag to use for the cheetah-flink image when running the component tests
+        required: false
+        default: latest
       development-infrastructure-ref:
         description: Which branch to run development infrastructure from
         required: false
@@ -61,6 +65,12 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Set cheetah-flink image tag
+        run: |
+          find . -type f -name '*.Dockerfile' | while read -r file; do
+            sed -i "s/FROM ghcr.io\/trifork\/cheetah-flink:XXX/FROM ghcr.io\/trifork\/cheetah-flink:${{ inputs.cheetah-flink-image-tag }}/" "$file"
+          done
 
       - name: Build Flink States example image and run component test
         uses: ./.github/actions/component-test
