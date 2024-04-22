@@ -44,7 +44,8 @@ public class FlinkStatesJob extends Job implements Serializable {
 
     public <T> void mapAndSink(KeyedStream<InputEvent, String> keyedStream, RichFlatMapFunction<InputEvent, T> function, Class<T> outputType, String kafkaPostFix){
 
-        final SingleOutputStreamOperator<T> outputStream = keyedStream.flatMap(function)
+        final SingleOutputStreamOperator<T> outputStream = keyedStream
+                .flatMap(function)
                 .name("FlinkStates"+kafkaPostFix)
                 .uid("FlinkStates"+kafkaPostFix);
 
