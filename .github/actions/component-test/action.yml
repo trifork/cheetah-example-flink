@@ -11,6 +11,9 @@ inputs:
   initial-kafka-topics:
     description: Initial topics to create in kafka
     required: false
+  development-infrastructure-ref:
+    description: The development infrastructure ref to check out. This can be a branch or a tag
+    required: true
     
 runs:
   using: composite
@@ -26,7 +29,7 @@ runs:
       uses: actions/checkout@v4
       with:
         repository: trifork/cheetah-development-infrastructure
-        ref: v2.0.0
+        ref: ${{ inputs.development-infrastructure-ref }}
         token: ${{ inputs.access-token }}
         path: development-infrastructure
 

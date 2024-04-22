@@ -3,6 +3,11 @@ name: Run Component Tests
 on:
   workflow_call:
   workflow_dispatch:
+    inputs:
+      development-infrastructure-ref:
+        description: Which branch to run development infrastructure from
+        required: false
+        default: v2.0.0
   schedule:
     - cron: "0 3 * * *"
   push:
@@ -79,6 +84,7 @@ jobs:
           context-path: ./${{ matrix.folder }}/
           access-token: ${{ secrets.PACKAGE_PAT }}
           initial-kafka-topics: ${{ matrix.initial-kafka-topics }}
+          development-infrastructure-ref: ${{ inputs.development-infrastructure-ref }}
 
   success:
     name: Success
