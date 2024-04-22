@@ -47,14 +47,19 @@ public class TumblingWindowJob extends Job implements Serializable {
 
         SingleOutputStreamOperator<EventWindow> outputStream = inputStream
                 .assignTimestampsAndWatermarks(watermarkStrategy)
+                .name("AssignTimestampsAndWatermarks")
+                .uid("AssignTimestampsAndWatermarks")
                 .map(message -> {
                     System.out.println(message);
                     return message;
                 })
+                .name("PrintMapper")
+                .uid("PrintMapper")
                 .keyBy(InputEvent::getDeviceId)
                 .window(TumblingEventTimeWindows.of(Time.minutes(5)))
                 .aggregate(new TumblingWindowAggregate(), new TumblingWindowFunction())
-                .name("TumblingWindowOperator");
+                .name("WindowAggregate")
+                .uid("WindowAggregate");
 
         // Output sink
         final KafkaSink<EventWindow> kafkaSink = CheetahKafkaSinkConfig.builder(this).toKafkaSinkBuilder(EventWindow.class)
@@ -63,6 +68,6 @@ public class TumblingWindowJob extends Job implements Serializable {
         // Connect transformed stream to sink
         outputStream.sinkTo(kafkaSink)
                 .name(TumblingWindowJob.class.getSimpleName())
-                .uid("TumblingWindowKafkaSink");
+                .uid("KafkaSink");
     }
 }
