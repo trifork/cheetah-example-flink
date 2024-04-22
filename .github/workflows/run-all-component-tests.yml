@@ -66,12 +66,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set cheetah-flink image tag
-        run: |
-          find . -type f -name '*.Dockerfile' | while read -r file; do
-            sed -i "s/FROM ghcr.io\/trifork\/cheetah-flink:XXX/FROM ghcr.io\/trifork\/cheetah-flink:${{ inputs.cheetah-flink-image-tag }}/" "$file"
-          done
-
       - name: Build Flink States example image and run component test
         uses: ./.github/actions/component-test
         with:
