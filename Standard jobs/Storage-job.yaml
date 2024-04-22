@@ -16,18 +16,17 @@ services:
 
       --opensearch-hosts http://opensearch:9200
     environment:
-      - KAFKA_SECURITY_PROTOCOL=SASL_PLAINTEXT
-      - INPUT_KAFKA_CLIENT_ID=default-access
-      - INPUT_KAFKA_CLIENT_SECRET=default-access-secret
-      - KAFKA_SCOPE=kafka
-      - INPUT_KAFKA_TOKEN_URL=http://keycloak:1852/realms/local-development/protocol/openid-connect/token
-      - OPENSEARCH_SECURITY_PROTOCOL=SASL_PLAINTEXT
-      - OPENSEARCH_CLIENT_ID=default-access
-      - OPENSEARCH_CLIENT_SECRET=default-access-secret
-      - OPENSEARCH_SCOPE=opensearch
-      - OPENSEARCH_TOKEN_URL=http://keycloak:1852/realms/local-development/protocol/openid-connect/token
-      - |
-        FLINK_PROPERTIES=
+      KAFKA_SECURITY_PROTOCOL: SASL_PLAINTEXT
+      INPUT_KAFKA_CLIENT_ID: default-access
+      INPUT_KAFKA_CLIENT_SECRET: default-access-secret
+      KAFKA_SCOPE: kafka
+      INPUT_KAFKA_TOKEN_URL: http://keycloak:1852/realms/local-development/protocol/openid-connect/token
+      OPENSEARCH_SECURITY_PROTOCOL: SASL_PLAINTEXT
+      OPENSEARCH_CLIENT_ID: default-access
+      OPENSEARCH_CLIENT_SECRET: default-access-secret
+      OPENSEARCH_SCOPE: opensearch
+      OPENSEARCH_TOKEN_URL: http://keycloak:1852/realms/local-development/protocol/openid-connect/token
+      FLINK_PROPERTIES: |
         jobmanager.rpc.address: storage-job-jobmanager
         scheduler-mode: reactive
         rest.flamegraph.enabled: true
@@ -47,8 +46,7 @@ services:
     image: ghcr.io/trifork/cheetah-app-jobs:3.0.0
     command: taskmanager
     environment:
-      - |
-        FLINK_PROPERTIES=
+      FLINK_PROPERTIES: |
         jobmanager.rpc.address: storage-job-jobmanager
         taskmanager.memory.process.size: 4gb
         taskmanager.numberOfTaskSlots: 2

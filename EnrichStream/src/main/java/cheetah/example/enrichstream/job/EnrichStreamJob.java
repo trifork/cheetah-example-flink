@@ -8,8 +8,6 @@ import com.trifork.cheetah.processing.connector.kafka.CheetahKafkaSink;
 import com.trifork.cheetah.processing.connector.kafka.CheetahKafkaSource;
 import com.trifork.cheetah.processing.connector.kafka.config.CheetahKafkaSourceConfig;
 import com.trifork.cheetah.processing.job.Job;
-import org.apache.flink.connector.kafka.sink.KafkaRecordSerializationSchema;
-import org.apache.flink.connector.kafka.sink.KafkaRecordSerializationSchemaBuilder;
 import org.apache.flink.connector.kafka.sink.KafkaSink;
 import org.apache.flink.connector.kafka.source.KafkaSource;
 import org.apache.flink.streaming.api.datastream.DataStream;
@@ -50,13 +48,17 @@ public class EnrichStreamJob extends Job implements Serializable {
         final SingleOutputStreamOperator<OutputEvent> outputStream = enrichingStream
                 .connect(inputStream)
                 .keyBy(EnrichEvent::getDeviceId, InputEvent::getDeviceId)
-                .process(new EventEnricher());
+                .process(new EventEnricher())
+                .name("EnrichStreamProcessor")
+                .uid("EnrichStreamProcessor");
 
         // Output the result to a new Stream
        final KafkaSink<OutputEvent> kafkaSink = CheetahKafkaSink.builder(OutputEvent.class, this)
                .build();
 
         // Connect transformed stream to sink
-        outputStream.sinkTo(kafkaSink).name(EnrichStreamJob.class.getSimpleName());
+        outputStream.sinkTo(kafkaSink).name(EnrichStreamJob.class.getSimpleName())
+                .name("EnrichStreamKafkaSink")
+                .uid("EnrichStreamKafkaSink");
     }
 }

@@ -2,8 +2,10 @@ package cheetah.example.flinkstates.job;
 
 import cheetah.example.flinkstates.function.*;
 import cheetah.example.flinkstates.model.InputEvent;
+import com.trifork.cheetah.processing.connector.kafka.CheetahKafkaSink;
 import com.trifork.cheetah.processing.connector.kafka.CheetahKafkaSource;
 import com.trifork.cheetah.processing.connector.kafka.config.CheetahKafkaSinkConfig;
+import com.trifork.cheetah.processing.connector.kafka.config.CheetahKafkaSinkConfigBuilder;
 import com.trifork.cheetah.processing.connector.kafka.config.CheetahKafkaSourceConfig;
 import com.trifork.cheetah.processing.job.Job;
 import org.apache.flink.api.common.functions.RichFlatMapFunction;
@@ -42,9 +44,15 @@ public class FlinkStatesJob extends Job implements Serializable {
 
     public <T> void mapAndSink(KeyedStream<InputEvent, String> keyedStream, RichFlatMapFunction<InputEvent, T> function, Class<T> outputType, String kafkaPostFix){
 
-        final SingleOutputStreamOperator<T> outputStream = keyedStream.flatMap(function);
-        final KafkaSink<T> sink = CheetahKafkaSinkConfig.builder(this, kafkaPostFix).toSinkBuilder(outputType).build();
+        final SingleOutputStreamOperator<T> outputStream = keyedStream.flatMap(function)
+                .name("FlinkStates"+kafkaPostFix)
+                .uid("FlinkStates"+kafkaPostFix);
 
-        outputStream.sinkTo(sink);
+        final KafkaSink<T> sink = CheetahKafkaSinkConfig.builder(this, kafkaPostFix).toKafkaSinkBuilder(outputType)
+                .build();
+
+        outputStream.sinkTo(sink)
+                .name(String.format("FlinkStates%sKafkaSink", kafkaPostFix))
+                .uid(String.format("FlinkStates%sKafkaSink", kafkaPostFix));
     }
 }
