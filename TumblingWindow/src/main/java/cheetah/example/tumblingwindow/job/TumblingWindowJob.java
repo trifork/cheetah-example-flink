@@ -38,8 +38,12 @@ public class TumblingWindowJob extends Job implements Serializable {
                 .eventTimestampSupplier(input -> Instant.ofEpochMilli(input.getTimestamp()))
                 .build();
 
-        final KafkaSource<InputEvent> kafkaSource = CheetahKafkaSourceConfig.builder(this).toKafkaSourceBuilder(InputEvent.class).setStartingOffsets(OffsetsInitializer.earliest()).build();
-        final DataStream<InputEvent> inputStream = CheetahKafkaSource.toDataStream(this, kafkaSource, watermarkStrategy,"Input Event Source");
+        final KafkaSource<InputEvent> kafkaSource = CheetahKafkaSourceConfig
+                .builder(this)
+                .toKafkaSourceBuilder(InputEvent.class)
+                .setStartingOffsets(OffsetsInitializer.earliest())
+                .build();
+        final DataStream<InputEvent> inputStream = CheetahKafkaSource.toDataStream(this, kafkaSource, watermarkStrategy, "Input Event Source");
 
         SingleOutputStreamOperator<EventWindow> outputStream = inputStream
                 .assignTimestampsAndWatermarks(watermarkStrategy)
@@ -49,12 +53,16 @@ public class TumblingWindowJob extends Job implements Serializable {
                 })
                 .keyBy(InputEvent::getDeviceId)
                 .window(TumblingEventTimeWindows.of(Time.minutes(5)))
-                .aggregate(new TumblingWindowAggregate(), new TumblingWindowFunction());
+                .aggregate(new TumblingWindowAggregate(), new TumblingWindowFunction())
+                .name("TumblingWindowOperator");
 
         // Output sink
-        final KafkaSink<EventWindow> kafkaSink = CheetahKafkaSinkConfig.builder(this).toKafkaSinkBuilder(EventWindow.class).build();
+        final KafkaSink<EventWindow> kafkaSink = CheetahKafkaSinkConfig.builder(this).toKafkaSinkBuilder(EventWindow.class)
+                .build();
 
         // Connect transformed stream to sink
-        outputStream.sinkTo(kafkaSink).name(TumblingWindowJob.class.getSimpleName());
+        outputStream.sinkTo(kafkaSink)
+                .name(TumblingWindowJob.class.getSimpleName())
+                .uid("TumblingWindowKafkaSink");
     }
 }
