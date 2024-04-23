@@ -49,7 +49,7 @@
         <dependency>
             <groupId>com.trifork.cheetah.processing</groupId>
             <artifactId>cheetah-lib-processing</artifactId>
-            <version>4.2.0-feature-lib-processing-image-SNAPSHOT</version>
+            <version>5.0.1</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
