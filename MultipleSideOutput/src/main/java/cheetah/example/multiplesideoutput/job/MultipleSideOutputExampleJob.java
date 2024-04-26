@@ -39,7 +39,7 @@ public class MultipleSideOutputExampleJob extends Job implements Serializable {
     protected void setup() {
         // Input source
         final KafkaSource<InputEvent> kafkaSource = CheetahKafkaSourceConfig.builder(this).toKafkaSourceBuilder(InputEvent.class).build();
-        final DataStream<InputEvent> inputStream = CheetahKafkaSource.toDataStream(this, kafkaSource, "my-source-name");
+        final DataStream<InputEvent> inputStream = CheetahKafkaSource.toDataStream(this, kafkaSource, "MultipleSideOutput-source", "MultipleSideOutput-source");
 
         // Process element
         final SingleOutputStreamOperator<InputEvent> dataStream = inputStream.keyBy(InputEvent::getDeviceId)

@@ -43,7 +43,7 @@ public class TumblingWindowJob extends Job implements Serializable {
                 .toKafkaSourceBuilder(InputEvent.class)
                 .setStartingOffsets(OffsetsInitializer.earliest())
                 .build();
-        final DataStream<InputEvent> inputStream = CheetahKafkaSource.toDataStream(this, kafkaSource, watermarkStrategy, "Input Event Source");
+        final DataStream<InputEvent> inputStream = CheetahKafkaSource.toDataStream(this, kafkaSource, watermarkStrategy, "Input Event Source", "Input Event Source");
 
         SingleOutputStreamOperator<EventWindow> outputStream = inputStream
                 .assignTimestampsAndWatermarks(watermarkStrategy)
