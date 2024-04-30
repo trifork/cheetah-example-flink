@@ -41,7 +41,7 @@ public class EnrichStreamJob extends Job implements Serializable {
                 .toKafkaSourceBuilder(InputEvent.class)
                 .build();
 
-        final DataStream<InputEvent> inputStream = CheetahKafkaSource.toDataStream(this, inputKafkaSource, "input-kafka-stream", "enriching-kafka-stream");
+        final DataStream<InputEvent> inputStream = CheetahKafkaSource.toDataStream(this, inputKafkaSource, "input-kafka-stream", "input-kafka-stream");
 
         // Merge the two streams by connecting them, giving the KeyBy, which tells which fields to merge by.
         // Final processing is done by the Enricher
