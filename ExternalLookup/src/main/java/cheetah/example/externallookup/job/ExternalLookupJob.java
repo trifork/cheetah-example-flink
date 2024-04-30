@@ -41,12 +41,11 @@ public class ExternalLookupJob extends Job implements Serializable {
         final DataStream<InputEvent> inputStream = CheetahKafkaSource.toDataStream(this, kafkaSource, "Event Input Source", "Event Input Source");
 
         // Get configuration from ENV
-        ParameterTool parameters = getParameters();
-        final String idServiceHost = Objects.requireNonNull(parameters.get("ID_SERVICE_URL", "ID_SERVICE_URL required"));
-        final String tokenUrl = Objects.requireNonNull(parameters.get("ID_SERVICE_TOKEN_URL", "ID_SERVICE_TOKEN_URL required"));
-        final String clientId = Objects.requireNonNull(parameters.get("ID_SERVICE_CLIENT_ID", "ID_SERVICE_CLIENT_ID required"));
-        final String clientSecret = Objects.requireNonNull(parameters.get("ID_SERVICE_CLIENT_SECRET", "ID_SERVICE_CLIENT_SECRET required"));
-        final String scope = Objects.requireNonNull(parameters.get("ID_SERVICE_SCOPE", "ID_SERVICE_SCOPE required"));
+        final String idServiceHost = Objects.requireNonNull(System.getenv("ID_SERVICE_URL"), "ID_SERVICE_URL required");
+        final String tokenUrl = Objects.requireNonNull(System.getenv("ID_SERVICE_TOKEN_URL"), "ID_SERVICE_TOKEN_URL required");
+        final String clientId = Objects.requireNonNull(System.getenv("ID_SERVICE_CLIENT_ID"), "ID_SERVICE_CLIENT_ID required");
+        final String clientSecret = Objects.requireNonNull(System.getenv("ID_SERVICE_CLIENT_SECRET"), "ID_SERVICE_CLIENT_SECRET required");
+        final String scope = Objects.requireNonNull(System.getenv("ID_SERVICE_SCOPE"), "ID_SERVICE_SCOPE required");
 
         // Transform stream
         final SingleOutputStreamOperator<OutputEvent> outputStream =
