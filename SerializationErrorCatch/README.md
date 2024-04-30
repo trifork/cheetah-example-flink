@@ -1,4 +1,4 @@
- # SerializationErrorCatch
+# SerializationErrorCatch
 
 This repository contains a templated flink job. Processing is handled by Apache Flink which is a statefull scalable stream processing framework. You can find more information about Apache Flink [here](https://flink.apache.org/).
 
@@ -43,7 +43,7 @@ docker compose build
 
 ## Local development
 
-For local development, you will need to clone the [cheetah-development-infrastructure](https://github.com/trifork/cheetah-development-infrastructure) repository. 
+For local development, you will need to clone the [cheetah-development-infrastructure](https://github.com/trifork/cheetah-development-infrastructure) repository.
 
 You'll then be able to run necessary infrastructure with the following command from within that repository:
 
@@ -51,18 +51,20 @@ You'll then be able to run necessary infrastructure with the following command f
 docker compose --profile kafka up -d
 ```
 
-This will start `kafka`, `keycloak` , `schema-registry` (used for AVRO schemas) and `redpanda`, which can be used to inspect what topics and messages exist in `kafka`. 
+This will start `kafka`, `keycloak` , `schema-registry` (used for AVRO schemas) and `redpanda`, which can be used to inspect what topics and messages exist in `kafka`.
 
 Redpanda can be accessed on [http://localhost:9898](http://localhost:9898).
 
 You need to create the source topics which the flink job reads from. This is done by setting the `INITIAL_KAFKA_TOPICS` to `SerializationErrorCatchInputTopic SerializationErrorCatchOutputTopic` before running the `kafka-setup` container in `cheetah-development-infrastructure`:
+
 ```powershell
 $env:INITIAL_KAFKA_TOPICS="SerializationErrorCatchInputTopic SerializationErrorCatchOutputTopic"; docker compose up kafka-setup -d
 ```
+
 The `kafka-setup` service is also run when starting kafka using the above command, but running it seperately enables you to create the topics with an already running Kafka.
 Alternatively you can create the topics manually in Redpanda.
 
-`cheetah-development-infrastructure` contains more than just the services that the above command starts, but running the entire infrastructure setup takes up a fair amount of resources on your local system. 
+`cheetah-development-infrastructure` contains more than just the services that the above command starts, but running the entire infrastructure setup takes up a fair amount of resources on your local system.
 
 If you need to run other services like OpenSearch, please see the documentation in the `development-infrastructure` repository.
 
@@ -94,7 +96,7 @@ When developing your job you can run/debug it like any other Java application by
 1. Create Intellij run profile for SerializationErrorCatchJob.java with parameters, by right-clicking the file `SerializationErrorCatchJob` and select `Modify Run Configuration...`.
 1. Enter the following program arguments:
 
-  ```
+  ``` bash
   --kafka-bootstrap-servers localhost:9092
   --input-kafka-topic SerializationErrorCatchInputTopic
   --output-kafka-topic SerializationErrorCatchOutputTopic
@@ -103,7 +105,7 @@ When developing your job you can run/debug it like any other Java application by
 
   And add the following Environment variables:
 
-  ```
+  ```bash
   - KAFKA_CLIENT_ID=default-access
   - KAFKA_CLIENT_SECRET=default-access-secret
   - KAFKA_SCOPE=kafka
@@ -111,6 +113,7 @@ When developing your job you can run/debug it like any other Java application by
   ```
   
 ## Tests
+
 ### Unit tests
 
 This project contains a sample Unit test in `src/test/java/cheetah/example/serializationerrorcatch/job/SerializationErrorCatchMapperTest.java`, which utilizes JUnit5.
@@ -132,6 +135,7 @@ docker compose up serializationerrorcatch-jobmanager serializationerrorcatch-tas
 ```
 
 Similarly, you can run just the component test through docker compose using:
+
 ```sh
 docker compose up serializationerrorcatch-test --build
 ```
@@ -157,7 +161,7 @@ The general recommendation is to avoid running multiple component tests at the s
 
 Because of this component testing should, in most scenarios, be kept to testing the job generally (primary functionality, correct input/output models, etc.) while ensuring the finer details of the implementation with unit tests.
 
-# Implementing a new Flink job
+## Implementing a new Flink job
 
 ## What is a job?
 
@@ -175,7 +179,7 @@ Besides the main stream returned from a process function, some type of functions
 
 The job should have minimum responsibility and business logic. Better to have multiple, simple jobs with a small amount of responsibility, than a single, complex job.
 
-In most scenarios, output data should be stored in a Kafka topic. This makes it possible for others to consume the data your job outputs. 
+In most scenarios, output data should be stored in a Kafka topic. This makes it possible for others to consume the data your job outputs.
 
 If data needs to be persisted in a database for direct query by some other service, this should be done by the standard storage job.
 

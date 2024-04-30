@@ -1,4 +1,4 @@
- # jsonToAvro
+# jsonToAvro
 
 This repository contains a templated flink job. Processing is handled by Apache Flink which is a statefull scalable stream processing framework. You can find more information about Apache Flink [here](https://flink.apache.org/).
 
@@ -215,9 +215,9 @@ The general recommendation is to avoid running multiple component tests at the s
 
 Because of this component testing should, in most scenarios, be kept to testing the job generally (primary functionality, correct input/output models, etc.) while ensuring the finer details of the implementation with unit tests.
 
-# Implementing a new Flink job
+## Implementing a new Flink job
 
-## What is a job?
+### What is a job?
 
 A job in Flink consists of a number of sources, a number of sinks, and a number of transformation steps.
 
@@ -229,7 +229,7 @@ Besides the main stream returned from a process function, some type of functions
 
 ![example of dataflow](./images/program_dataflow.svg)
 
-## KISS
+### KISS
 
 The job should have minimum responsibility and business logic. Better to have multiple, simple jobs with a small amount of responsibility, than a single, complex job.
 
@@ -237,7 +237,7 @@ In most scenarios, output data should be stored in a Kafka topic. This makes it 
 
 If data needs to be persisted in a database for direct query by some other service, this should be done by the standard storage job.
 
-## TDD
+### TDD
 
 An approach proven to be good, is to start by writing a unit test for the processing job under development.
 Then proceed in micro iterations, carefully assert expected output and behavior.
