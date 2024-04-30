@@ -1,5 +1,6 @@
 package cheetah.example.serializationerrorcatch.model;
 
+import com.trifork.cheetah.processing.util.deserialization.MaybeParsable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,7 +11,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class InputEvent {
+public class InputEvent implements MaybeParsable {
     private String deviceId;
     private double value;
     private long timestamp;

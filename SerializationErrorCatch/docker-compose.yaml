@@ -27,6 +27,7 @@ services:
       --kafka-bootstrap-servers kafka:19092
       --input-kafka-topic SerializationErrorCatchInputTopic
       --output-kafka-topic SerializationErrorCatchOutputTopic
+      --output-kafka-topic-un-parsed SerializationErrorCatchOutputTopicUnParsed
       --kafka-group-id SerializationErrorCatch-group-id
       --kafka-security-protocol SASL_PLAINTEXT
     environment:
