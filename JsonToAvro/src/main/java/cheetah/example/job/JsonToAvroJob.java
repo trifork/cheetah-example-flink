@@ -28,7 +28,7 @@ public class JsonToAvroJob extends Job implements Serializable {
                 .toKafkaSourceBuilder(InputEvent.class)
                 .build();
 
-        final DataStream<InputEvent> inputStream = CheetahKafkaSource.toDataStream(this, kafkaSource, "jsonToAvro-source");
+        final DataStream<InputEvent> inputStream = CheetahKafkaSource.toDataStream(this, kafkaSource, "jsonToAvro-source", "jsonToAvro-source");
 
         // Transform stream
         final SingleOutputStreamOperator<OutputEventAvro> outputStream =

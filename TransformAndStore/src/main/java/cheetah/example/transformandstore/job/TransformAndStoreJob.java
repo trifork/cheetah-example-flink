@@ -38,7 +38,7 @@ public class TransformAndStoreJob extends Job implements Serializable {
         // Setup reading from input stream
         final KafkaSource<InputEvent> kafkaSource = CheetahKafkaSource.builder(InputEvent.class, this)
                 .build();
-        final DataStream<InputEvent> inputStream = CheetahKafkaSource.toDataStream(this, kafkaSource, "transform-and-store-source");
+        final DataStream<InputEvent> inputStream = CheetahKafkaSource.toDataStream(this, kafkaSource, "transform-and-store-source", "transform-and-store-source");
 
         // Transform stream
         final SingleOutputStreamOperator<OutputEvent> outputStream =

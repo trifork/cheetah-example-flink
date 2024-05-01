@@ -32,7 +32,7 @@ public class SerializationErrorCatchJob extends Job implements Serializable {
                 .setValueOnlyDeserializer(new DeserializationSchema<>(InputEvent.class))
                 .build();
 
-        final DataStream<InputEvent> inputStream = CheetahKafkaSource.toDataStream(this, kafkaSource, "SerializationErrorCatch-source");
+        final DataStream<InputEvent> inputStream = CheetahKafkaSource.toDataStream(this, kafkaSource, "SerializationErrorCatch-source", "SerializationErrorCatch-source");
 
         // Transform stream
         final SingleOutputStreamOperator<OutputEvent> outputStream = inputStream

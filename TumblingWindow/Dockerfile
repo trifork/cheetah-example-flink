@@ -31,7 +31,7 @@ RUN --mount=type=secret,id=GITHUB_TOKEN \
 #
 #  Install jar onto clean runtime system.
 #
-FROM ghcr.io/trifork/cheetah-flink:5.0.0-flink-1.18.1-java17
+FROM ghcr.io/trifork/cheetah-flink:5.0.2-flink-1.18.1-java17
 
 COPY --from=build /app/target/tumblingwindow*.jar /opt/flink/usrlib/artifacts/tumblingwindow.jar
 
