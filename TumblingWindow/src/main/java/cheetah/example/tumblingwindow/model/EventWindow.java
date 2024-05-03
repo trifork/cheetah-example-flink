@@ -15,4 +15,10 @@ public class EventWindow {
     private long startTime;
     private long endTime;
     private Double[] value;
+
+    // Ensure no sensitive data is logged by overriding toString. Eg. Value is printed as ***
+    @Override
+    public String toString() {
+        return "DeviceId: %s, StartTime: %d, EndTime: %d, Value: ***".formatted(deviceId, startTime, endTime);
+    }
 }

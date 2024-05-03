@@ -26,4 +26,9 @@ public class OutputEvent {
         this.extraField = extraFieldValue;
     }
 
+    // Ensure no sensitive data is logged by overriding toString. Eg. Value is printed as ***
+    @Override
+    public String toString() {
+        return "DeviceId: %s, Value: ***, Timestamp: %d, ExtraField: %s".formatted(deviceId, timestamp, extraField);
+    }
 }
