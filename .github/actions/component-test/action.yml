@@ -13,7 +13,8 @@ inputs:
     required: false
   development-infrastructure-ref:
     description: The development infrastructure ref to check out. This can be a branch or a tag
-    required: true
+    required: false
+    default: v2.0.0
     
 runs:
   using: composite
