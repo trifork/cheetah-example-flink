@@ -42,7 +42,7 @@ public class TumblingWindowJob extends Job implements Serializable {
                 .build();
 
         final KafkaSource<InputEvent> kafkaSource = CheetahKafkaSourceConfig
-                .builder(this)
+                .builder(this, "main-source")
                 .toKafkaSourceBuilder(InputEvent.class)
                 .setStartingOffsets(OffsetsInitializer.earliest())
                 .build();
@@ -65,7 +65,7 @@ public class TumblingWindowJob extends Job implements Serializable {
                 .uid("WindowAggregate");
 
         // Output sink
-        final KafkaSink<EventWindow> kafkaSink = CheetahKafkaSinkConfig.builder(this).toKafkaSinkBuilder(EventWindow.class)
+        final KafkaSink<EventWindow> kafkaSink = CheetahKafkaSinkConfig.builder(this, "main-sink").toKafkaSinkBuilder(EventWindow.class)
                 .build();
 
         // Connect transformed stream to sink

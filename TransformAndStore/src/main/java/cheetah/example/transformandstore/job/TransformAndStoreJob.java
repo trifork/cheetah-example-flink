@@ -36,7 +36,7 @@ public class TransformAndStoreJob extends Job implements Serializable {
         String indexBaseName = Objects.requireNonNull(parameters.get("index-base-name"), "--index-base-name is required");
 
         // Setup reading from input stream
-        final KafkaSource<InputEvent> kafkaSource = CheetahKafkaSource.builder(InputEvent.class, this)
+        final KafkaSource<InputEvent> kafkaSource = CheetahKafkaSource.builder(InputEvent.class, this, "main-source")
                 .build();
         final DataStream<InputEvent> inputStream = CheetahKafkaSource.toDataStream(this, kafkaSource, "transform-and-store-source", "transform-and-store-source");
 
