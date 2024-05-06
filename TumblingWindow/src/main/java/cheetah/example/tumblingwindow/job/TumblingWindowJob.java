@@ -17,12 +17,15 @@ import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows;
 import org.apache.flink.streaming.api.windowing.time.Time;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.time.Instant;
 
 /** TumblingWindowJob sets up the data processing job. */
 public class TumblingWindowJob extends Job implements Serializable {
+    private static final Logger LOG = LoggerFactory.getLogger(TumblingWindowJob.class);
 
     @SuppressWarnings("PMD.SignatureDeclareThrowsException") // Fix once lib-processing is fixed
     public static void main(final String[] args) throws Exception {
@@ -50,7 +53,7 @@ public class TumblingWindowJob extends Job implements Serializable {
                 .name("AssignTimestampsAndWatermarks")
                 .uid("AssignTimestampsAndWatermarks")
                 .map(message -> {
-                    System.out.println(message);
+                    LOG.info(message.toString());
                     return message;
                 })
                 .name("PrintMapper")
