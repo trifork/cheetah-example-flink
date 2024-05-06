@@ -32,7 +32,7 @@ services:
       standalone-job
       --job-classname cheetah.example.transformandstore.job.TransformAndStoreJob
       --kafka-bootstrap-servers kafka:19092
-      --input-kafka-topic TransformAndStoreInputTopic
+      --input-kafka-topic-main-source TransformAndStoreInputTopic
       --kafka-group-id transform-and-store-group-id
       --kafka-security-protocol SASL_PLAINTEXT
       --opensearch-hosts http://opensearch:9200

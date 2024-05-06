@@ -33,7 +33,7 @@ public class ExternalLookupJob extends Job implements Serializable {
     protected void setup() {
 
         // Setup input stream
-        final KafkaSource<InputEvent> kafkaSource = CheetahKafkaSourceConfig.builder(this)
+        final KafkaSource<InputEvent> kafkaSource = CheetahKafkaSourceConfig.builder(this, "main-source")
                 .toKafkaSourceBuilder(InputEvent.class)
                 .setStartingOffsets(OffsetsInitializer.earliest())
                 .build();
@@ -54,8 +54,8 @@ public class ExternalLookupJob extends Job implements Serializable {
                 .uid("ExternalLookupMapper");
 
         // Output sink
-        final KafkaSink<OutputEvent> kafkaSink =
-                CheetahKafkaSinkConfig.builder(this).toKafkaSinkBuilder(OutputEvent.class).build();
+        final KafkaSink<OutputEvent> kafkaSink = CheetahKafkaSinkConfig.builder(this, "main-sink")
+                .toKafkaSinkBuilder(OutputEvent.class).build();
 
         // Connect transformed stream to sink
         outputStream.sinkTo(kafkaSink).name(ExternalLookupJob.class.getSimpleName())
