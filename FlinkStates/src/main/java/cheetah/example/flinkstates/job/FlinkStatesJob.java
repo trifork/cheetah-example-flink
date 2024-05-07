@@ -31,7 +31,7 @@ public class FlinkStatesJob extends Job implements Serializable {
 
         // Input source
         final KafkaSource<InputEvent> kafkaSource = CheetahKafkaSourceConfig.builder(this).toKafkaSourceBuilder(InputEvent.class).build();
-        final KeyedStream<InputEvent, String> keyedByStream = CheetahKafkaSource.toDataStream(this, kafkaSource, "Event Input Source")
+        final KeyedStream<InputEvent, String> keyedByStream = CheetahKafkaSource.toDataStream(this, kafkaSource, "Event Input Source", "Event Input Source")
                 .keyBy(InputEvent::getDeviceId);
 
         // Setup each mapper and corresponding sink
