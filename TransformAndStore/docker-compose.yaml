@@ -37,7 +37,7 @@ services:
       --kafka-security-protocol SASL_PLAINTEXT
       --opensearch-hosts http://opensearch:9200
       --opensearch-security-protocol SASL_PLAINTEXT
-      --index-base-name transformandstore-index_
+      --opensearch-index-base-name transformandstore-index_
     environment:
       KAFKA_CLIENT_ID: default-access
       KAFKA_CLIENT_SECRET: default-access-secret
@@ -47,6 +47,7 @@ services:
       OPENSEARCH_CLIENT_SECRET: default-access-secret
       OPENSEARCH_SCOPE: opensearch
       OPENSEARCH_TOKEN_URL: http://keycloak:1852/realms/local-development/protocol/openid-connect/token
+      OPENSERACH_OPTIONAL: optionalParam
       FLINK_PROPERTIES: |
         jobmanager.rpc.address: transformandstore-jobmanager
         scheduler-mode: reactive

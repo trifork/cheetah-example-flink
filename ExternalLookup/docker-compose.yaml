@@ -40,6 +40,7 @@ services:
       ID_SERVICE_CLIENT_ID: default-access
       ID_SERVICE_CLIENT_SECRET: default-access-secret
       ID_SERVICE_SCOPE: openid
+      ID_SERVICE_OPTIONAL: optionalParam
       FLINK_PROPERTIES: |
         jobmanager.rpc.address: externallookup-job
         scheduler-mode: reactive
