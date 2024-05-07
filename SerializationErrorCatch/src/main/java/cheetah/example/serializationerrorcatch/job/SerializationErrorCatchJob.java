@@ -4,24 +4,15 @@ import cheetah.example.serializationerrorcatch.function.FilterAndCountFailedSeri
 import cheetah.example.serializationerrorcatch.function.SerializationErrorCatchMapper;
 import cheetah.example.serializationerrorcatch.model.InputEvent;
 import cheetah.example.serializationerrorcatch.model.OutputEvent;
-import cheetah.example.serializationerrorcatch.serde.DeserializationSchema;
-import com.trifork.cheetah.processing.connector.kafka.config.CheetahKafkaSinkConfig;
-import com.trifork.cheetah.processing.connector.kafka.serde.CheetahSerdeSchemas;
 import com.trifork.cheetah.processing.job.Job;
-import com.trifork.cheetah.processing.util.deserialization.MaybeParsable;
-import com.trifork.cheetah.processing.util.deserialization.MaybeUnParsableDeserializationSchema;
-import com.trifork.cheetah.processing.util.deserialization.UnParsable;
-import com.trifork.cheetah.processing.util.deserialization.UnParsableToSideOutputProcessor;
-import org.apache.flink.api.connector.sink2.Sink;
+import com.trifork.cheetah.processing.util.deserialization.*;
 import org.apache.flink.connector.kafka.sink.KafkaSink;
 import org.apache.flink.connector.kafka.source.KafkaSource;
 import com.trifork.cheetah.processing.connector.kafka.CheetahKafkaSink;
 import com.trifork.cheetah.processing.connector.kafka.CheetahKafkaSource;
-import org.apache.flink.formats.json.JsonSerializationSchema;
+import org.apache.flink.formats.json.JsonDeserializationSchema;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
-import org.apache.flink.util.OutputTag;
-
 import java.io.Serializable;
 
 /**
@@ -39,22 +30,20 @@ public class SerializationErrorCatchJob extends Job implements Serializable {
     @Override
     protected void setup() {
         // Input source
-        final KafkaSource<MaybeParsable> kafkaSource = CheetahKafkaSource.builder(MaybeParsable.class, this)
-                .setValueOnlyDeserializer(new MaybeUnParsableDeserializationSchema<>(InputEvent.class))
+        final KafkaSource<MaybeParsable> kafkaSource = CheetahKafkaSource.builder(MaybeParsable.class, this, "main-source")
+                .setDeserializer(new MaybeUnParsableKafkaValueOnlyDeserializationSchema<>(new JsonDeserializationSchema<>(InputEvent.class)))
                 .build();
 
         final DataStream<MaybeParsable> unFilteredInputStream = CheetahKafkaSource.toDataStream(this, kafkaSource, "SerializationErrorCatch-source", "SerializationErrorCatch-source");
 
-        final OutputTag<UnParsable> unParsedOutputTag = new OutputTag<>("un-parsed"){};
-        final SingleOutputStreamOperator<InputEvent> inputStream = unFilteredInputStream.process(new UnParsableToSideOutputProcessor<>(unParsedOutputTag, InputEvent.class)).returns(InputEvent.class).uid("UnParsableToSideOutputProcessor");
-
-        CheetahKafkaSinkConfig unParsedKafkaSinkConfig = CheetahKafkaSinkConfig.defaultConfig(this, "un-parsed");
-        final Sink<UnParsable> unParsedKafkaSink = CheetahKafkaSink.builder(UnParsable.class, unParsedKafkaSinkConfig)
-                .setRecordSerializer(CheetahSerdeSchemas.kafkaRecordSerializationSchema(
-                        unParsedKafkaSinkConfig,
-                        UnParsable::getMessage
-                )).build();
-
+        final SingleOutputStreamOperator<InputEvent> inputStream = UnParsableHelper.filterToSideTopic(this,
+                unFilteredInputStream,
+                InputEvent.class,
+                "unParsedProcessor",
+                "unParsedProcessor",
+                "unParsedSink",
+                "unParsedSink",
+                "un-parsed");
 
         // Transform stream
         final SingleOutputStreamOperator<OutputEvent> outputStream = inputStream
@@ -66,14 +55,8 @@ public class SerializationErrorCatchJob extends Job implements Serializable {
                 .uid("SerializationErrorCatchMapper");
 
         // Output sink
-        KafkaSink<OutputEvent> kafkaSink = CheetahKafkaSink.builder(OutputEvent.class, this)
+        KafkaSink<OutputEvent> kafkaSink = CheetahKafkaSink.builder(OutputEvent.class, this, "main-sink")
                 .build();
-
-        inputStream
-                .getSideOutput(unParsedOutputTag)
-                .sinkTo(unParsedKafkaSink)
-                .uid("unParsedKafkaSink")
-                .name("unParsedKafkaSink");
 
         // Connect transformed stream to sink
         outputStream.sinkTo(kafkaSink)

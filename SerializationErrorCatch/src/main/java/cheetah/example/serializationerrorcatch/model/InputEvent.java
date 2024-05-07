@@ -6,7 +6,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-/** InputEvent represents the events to be processed. */
+/**
+ * InputEvent represents the events to be processed.
+ */
 @Getter
 @Setter
 @AllArgsConstructor

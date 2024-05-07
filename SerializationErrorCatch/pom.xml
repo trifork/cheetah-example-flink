@@ -49,7 +49,7 @@ under the License.
         <dependency>
             <groupId>com.trifork.cheetah.processing</groupId>
             <artifactId>cheetah-lib-processing</artifactId>
-            <version>5.1.0-feature-unparsable-deserialization-handling-SNAPSHOT</version>
+            <version>5.1.1</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
