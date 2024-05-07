@@ -1,5 +1,6 @@
 package cheetah.example.transformandstore.job;
 
+import cheetah.example.transformandstore.config.ConfigProvider;
 import cheetah.example.transformandstore.model.InputEvent;
 import cheetah.example.transformandstore.model.OutputEvent;
 import com.trifork.cheetah.processing.connector.opensearch.serde.SimpleEmitter;
@@ -32,8 +33,9 @@ public class TransformAndStoreJob extends Job implements Serializable {
     @Override
     protected void setup() {
         // Get index-base-name from parameters
-        ParameterTool parameters = getParameters();
-        String indexBaseName = Objects.requireNonNull(parameters.get("index-base-name"), "--index-base-name is required");
+        final ConfigProvider configProvider = new ConfigProvider(this);
+
+        String indexBaseName = configProvider.getOpensearchIndexBaseName();
 
         // Setup reading from input stream
         final KafkaSource<InputEvent> kafkaSource = CheetahKafkaSource.builder(InputEvent.class, this, "main-source")
