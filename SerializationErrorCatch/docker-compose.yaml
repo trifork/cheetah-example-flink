@@ -25,9 +25,8 @@ services:
       standalone-job
       --job-classname cheetah.example.serializationerrorcatch.job.SerializationErrorCatchJob
       --kafka-bootstrap-servers kafka:19092
-      --input-kafka-topic-main-source SerializationErrorCatchInputTopic
-      --output-kafka-topic-main-sink SerializationErrorCatchOutputTopic
-      --output-kafka-topic-un-parsed SerializationErrorCatchOutputTopicUnParsed
+      --input-kafka-topic SerializationErrorCatchInputTopic
+      --output-kafka-topic SerializationErrorCatchOutputTopic
       --kafka-group-id SerializationErrorCatch-group-id
       --kafka-security-protocol SASL_PLAINTEXT
     environment:

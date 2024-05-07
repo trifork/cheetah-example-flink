@@ -4,22 +4,20 @@ import cheetah.example.serializationerrorcatch.function.FilterAndCountFailedSeri
 import cheetah.example.serializationerrorcatch.function.SerializationErrorCatchMapper;
 import cheetah.example.serializationerrorcatch.model.InputEvent;
 import cheetah.example.serializationerrorcatch.model.OutputEvent;
+import cheetah.example.serializationerrorcatch.serde.DeserializationSchema;
 import com.trifork.cheetah.processing.job.Job;
-import com.trifork.cheetah.processing.util.deserialization.*;
 import org.apache.flink.connector.kafka.sink.KafkaSink;
 import org.apache.flink.connector.kafka.source.KafkaSource;
 import com.trifork.cheetah.processing.connector.kafka.CheetahKafkaSink;
 import com.trifork.cheetah.processing.connector.kafka.CheetahKafkaSource;
-import org.apache.flink.formats.json.JsonDeserializationSchema;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
+
 import java.io.Serializable;
 
-/**
- * The SerializationErrorCatchJob exemplifies the creation of a custom deserialization method,
+/** The SerializationErrorCatchJob exemplifies the creation of a custom deserialization method,
  * its integration with the KafkaSource, and the handling of deserialization errors in a tailored manner.
- * In this demonstration, an error log message is displayed also accompanied by the incrementation of a metric counter.
- */
+ * In this demonstration, an error log message is displayed also accompanied by the incrementation of a metric counter. */
 public class SerializationErrorCatchJob extends Job implements Serializable {
 
     @SuppressWarnings("PMD.SignatureDeclareThrowsException") // Fix once lib-processing is fixed
@@ -30,20 +28,11 @@ public class SerializationErrorCatchJob extends Job implements Serializable {
     @Override
     protected void setup() {
         // Input source
-        final KafkaSource<MaybeParsable> kafkaSource = CheetahKafkaSource.builder(MaybeParsable.class, this, "main-source")
-                .setDeserializer(new MaybeUnParsableKafkaValueOnlyDeserializationSchema<>(new JsonDeserializationSchema<>(InputEvent.class)))
+        final KafkaSource<InputEvent> kafkaSource = CheetahKafkaSource.builder(InputEvent.class, this)
+                .setValueOnlyDeserializer(new DeserializationSchema<>(InputEvent.class))
                 .build();
 
-        final DataStream<MaybeParsable> unFilteredInputStream = CheetahKafkaSource.toDataStream(this, kafkaSource, "SerializationErrorCatch-source", "SerializationErrorCatch-source");
-
-        final SingleOutputStreamOperator<InputEvent> inputStream = UnParsableHelper.filterToSideTopic(this,
-                unFilteredInputStream,
-                InputEvent.class,
-                "unParsedProcessor",
-                "unParsedProcessor",
-                "unParsedSink",
-                "unParsedSink",
-                "un-parsed");
+        final DataStream<InputEvent> inputStream = CheetahKafkaSource.toDataStream(this, kafkaSource, "SerializationErrorCatch-source", "SerializationErrorCatch-source");
 
         // Transform stream
         final SingleOutputStreamOperator<OutputEvent> outputStream = inputStream
@@ -55,7 +44,7 @@ public class SerializationErrorCatchJob extends Job implements Serializable {
                 .uid("SerializationErrorCatchMapper");
 
         // Output sink
-        KafkaSink<OutputEvent> kafkaSink = CheetahKafkaSink.builder(OutputEvent.class, this, "main-sink")
+        KafkaSink<OutputEvent> kafkaSink = CheetahKafkaSink.builder(OutputEvent.class, this)
                 .build();
 
         // Connect transformed stream to sink
