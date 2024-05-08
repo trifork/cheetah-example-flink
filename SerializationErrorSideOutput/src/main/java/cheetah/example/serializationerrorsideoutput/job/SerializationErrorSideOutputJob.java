@@ -1,6 +1,5 @@
 package cheetah.example.serializationerrorsideoutput.job;
 
-import cheetah.example.serializationerrorsideoutput.function.FilterAndCountFailedSerializations;
 import cheetah.example.serializationerrorsideoutput.function.SerializationErrorSideOutputMapper;
 import cheetah.example.serializationerrorsideoutput.model.InputEvent;
 import cheetah.example.serializationerrorsideoutput.model.OutputEvent;
@@ -13,12 +12,13 @@ import com.trifork.cheetah.processing.connector.kafka.CheetahKafkaSource;
 import org.apache.flink.formats.json.JsonDeserializationSchema;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
+
 import java.io.Serializable;
 
 /**
- * The SerializationErrorSideOutputJob exemplifies the creation of a custom deserialization method,
- * its integration with the KafkaSource, and the handling of deserialization errors in a tailored manner.
- * In this demonstration, an error log message is displayed also accompanied by the incrementation of a metric counter.
+ * The SerializationErrorSideOutputJob exemplifies the using the MaybeUnParsableKafkaValueOnlyDeserializationSchema and
+ * UnParsableHelper.filterToSideTopic to filter un-parsable elements to a separate kafka topic
+ * A warning log is produces for every un-parsable message accompanied by the incrementation of a metric counter.
  */
 public class SerializationErrorSideOutputJob extends Job implements Serializable {
 
@@ -47,9 +47,6 @@ public class SerializationErrorSideOutputJob extends Job implements Serializable
 
         // Transform stream
         final SingleOutputStreamOperator<OutputEvent> outputStream = inputStream
-                .filter(new FilterAndCountFailedSerializations())
-                .name("SerializationErrorSideOutputFilter")
-                .uid("SerializationErrorSideOutputFilter")
                 .map(new SerializationErrorSideOutputMapper("ExtraFieldValue"))
                 .name("SerializationErrorSideOutputMapper")
                 .uid("SerializationErrorSideOutputMapper");
