@@ -6,9 +6,6 @@
             <env name="KAFKA_CLIENT_ID" value="default-access" />
             <env name="KAFKA_CLIENT_SECRET" value="default-access-secret" />
             <env name="KAFKA_SCOPE" value="kafka" />
-            <env name="SCHEMA_REGISTRY_CLIENT_ID" value="default-access" />
-            <env name="SCHEMA_REGISTRY_CLIENT_SECRET" value="default-access-secret" />
-            <env name="SCHEMA_REGISTRY_SCOPE" value="schema-registry" />
         </envs>
         <option name="INCLUDE_PROVIDED_SCOPE" value="true" />
         <option name="MAIN_CLASS_NAME" value="cheetah.example.job.FlinkStatesJob" />
