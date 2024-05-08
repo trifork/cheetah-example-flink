@@ -6,9 +6,12 @@
             <env name="KAFKA_CLIENT_ID" value="default-access" />
             <env name="KAFKA_CLIENT_SECRET" value="default-access-secret" />
             <env name="KAFKA_SCOPE" value="kafka" />
-            <env name="SCHEMA_REGISTRY_CLIENT_ID" value="default-access" />
-            <env name="SCHEMA_REGISTRY_CLIENT_SECRET" value="default-access-secret" />
-            <env name="SCHEMA_REGISTRY_SCOPE" value="schema-registry" />
+            <env name="OPENSEARCH_CLIENT_ID" value="default-access" />
+            <env name="OPENSEARCH_CLIENT_SECRET" value="default-access-secret" />
+            <env name="OPENSEARCH_SCOPE" value="opensearch" />
+            <env name="OPENSEARCH_TOKEN_URL" value="http://keycloak:1852/realms/local-development/protocol/openid-connect/token" />
+            <env name="OPENSERACH_OPTIONAL" value="optionalParam" />
+        </envs>
         </envs>
         <option name="INCLUDE_PROVIDED_SCOPE" value="true" />
         <option name="MAIN_CLASS_NAME" value="cheetah.example.job.TransformAndStoreJob" />
