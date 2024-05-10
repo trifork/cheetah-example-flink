@@ -52,8 +52,11 @@ jobs:
             initial-kafka-topics: "ObservabilityInputTopic"
             
           - folder: SerializationErrorCatch
-            initial-kafka-topics: "SerializationErrorCatchInputTopic SerializationErrorCatchInputTopic SerializationErrorCatchOutputTopic"
+            initial-kafka-topics: "SerializationErrorCatchInputTopic SerializationErrorCatchOutputTopic"
             
+          - folder: SerializationErrorSideOutput
+            initial-kafka-topics: "SerializationErrorSideOutputInputTopic SerializationErrorSideOutputOutputTopic SerializationErrorSideOutputOutputTopicUnParsed"
+
           - folder: TransformAndStore
             initial-kafka-topics: "TransformAndStoreInputTopic"
             
