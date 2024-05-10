@@ -12,7 +12,6 @@
             <env name="OPENSEARCH_TOKEN_URL" value="http://keycloak:1852/realms/local-development/protocol/openid-connect/token" />
             <env name="OPENSERACH_OPTIONAL" value="optionalParam" />
         </envs>
-        </envs>
         <option name="INCLUDE_PROVIDED_SCOPE" value="true" />
         <option name="MAIN_CLASS_NAME" value="cheetah.example.job.TransformAndStoreJob" />
         <module name="${lowerCaseJobName}" />
