@@ -1,19 +1,16 @@
 <component name="ProjectRunConfigurationManager">
-    <configuration name="AvroToJsonJob" type="Application" factoryName="Application" nameIsGenerated="true">
+    <configuration name="MultipleSideOutputExampleJob" type="Application" factoryName="Application" nameIsGenerated="true">
         <envs>
             <env name="SECURITY_PROTOCOL" value="SASL_PLAINTEXT" />
             <env name="TOKEN_URL" value="http://localhost:1852/realms/local-development/protocol/openid-connect/token" />
             <env name="KAFKA_CLIENT_ID" value="default-access" />
             <env name="KAFKA_CLIENT_SECRET" value="default-access-secret" />
             <env name="KAFKA_SCOPE" value="kafka" />
-            <env name="SCHEMA_REGISTRY_CLIENT_ID" value="default-access" />
-            <env name="SCHEMA_REGISTRY_CLIENT_SECRET" value="default-access-secret" />
-            <env name="SCHEMA_REGISTRY_SCOPE" value="schema-registry" />
         </envs>
         <option name="INCLUDE_PROVIDED_SCOPE" value="true" />
-        <option name="MAIN_CLASS_NAME" value="cheetah.example.job.AvroToJsonJob" />
+        <option name="MAIN_CLASS_NAME" value="cheetah.example.job.MultipleSideOutputExampleJob" />
         <module name="${lowerCaseJobName}" />
-        <option name="PROGRAM_PARAMETERS" value="--kafka-bootstrap-servers localhost:9092 --kafka-group-id AvroToJson-group-id --schema-registry-url http://localhost:8081/apis/ccompat/v7 --input-kafka-topic-main-source AvroToJsonInputTopic --output-kafka-topic-main-sink AvroToJsonOutputTopic" />
+        <option name="PROGRAM_PARAMETERS" value="--kafka-bootstrap-servers localhost:9092 --kafka-group-id MultipleSideOutput-group-id --schema-registry-url http://localhost:8081/apis/ccompat/v7 --input-kafka-topic-main-source MultipleSideOutputExampleInputTopic --output-kafka-topic-a OutputA-events --output-kafka-topic-b OutputB-events --output-kafka-topic-cd OutputCD-events" />
         <option name="VM_PARAMETERS" value="--add-exports=java.base/sun.net.util=ALL-UNNAMED --add-exports=java.rmi/sun.rmi.registry=ALL-UNNAMED --add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED --add-exports=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED --add-exports=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED --add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED --add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED --add-exports=java.security.jgss/sun.security.krb5=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.net=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-opens=java.base/java.nio=ALL-UNNAMED --add-opens=java.base/sun.nio.ch=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED --add-opens=java.base/java.text=ALL-UNNAMED --add-opens=java.base/java.time=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.util.concurrent=ALL-UNNAMED --add-opens=java.base/java.util.concurrent.atomic=ALL-UNNAMED --add-opens=java.base/java.util.concurrent.locks=ALL-UNNAMED" />
         <method v="2">
             <option name="Make" enabled="true" />

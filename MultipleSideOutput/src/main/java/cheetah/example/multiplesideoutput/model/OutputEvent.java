@@ -14,4 +14,9 @@ public class OutputEvent {
     public double value;
     private long timestamp;
 
+    // Ensure no sensitive data is logged by overriding toString. Eg. Value is printed as ***
+    @Override
+    public String toString() {
+        return "DeviceId: %s, Value: ***, Timestamp: %d".formatted(deviceId, timestamp);
+    }
 }
