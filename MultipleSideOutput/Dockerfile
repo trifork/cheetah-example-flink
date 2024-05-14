@@ -33,6 +33,6 @@ RUN --mount=type=secret,id=GITHUB_TOKEN \
 #
 FROM ghcr.io/trifork/cheetah-flink:5.2.0-renovate-flink-flink-snapshot52-flink-1.19.0-java17
 
-COPY --from=build /app/target/multiplesideoutput*.jar /opt/flink/usrlib/artifacts/multiplesideoutput.jar
+COPY --from=build /app/target/multiplesideoutput*.jar /opt/flink/usrlib/multiplesideoutput.jar
 
 USER flink

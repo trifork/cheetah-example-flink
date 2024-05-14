@@ -33,6 +33,6 @@ RUN --mount=type=secret,id=GITHUB_TOKEN \
 #
 FROM ghcr.io/trifork/cheetah-flink:5.1.1-flink-1.18.1-java17
 
-COPY --from=build /app/target/SerializationErrorSideOutput*.jar /opt/flink/usrlib/artifacts/SerializationErrorSideOutput.jar
+COPY --from=build /app/target/SerializationErrorSideOutput*.jar /opt/flink/usrlib/SerializationErrorSideOutput.jar
 
 USER flink
