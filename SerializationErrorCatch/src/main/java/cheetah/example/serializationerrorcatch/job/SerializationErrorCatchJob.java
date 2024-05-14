@@ -28,11 +28,11 @@ public class SerializationErrorCatchJob extends Job implements Serializable {
     @Override
     protected void setup() {
         // Input source
-        final KafkaSource<InputEvent> kafkaSource = CheetahKafkaSource.builder(InputEvent.class, this)
+        final KafkaSource<InputEvent> kafkaSource = CheetahKafkaSource.builder(InputEvent.class, this, "main-source")
                 .setValueOnlyDeserializer(new DeserializationSchema<>(InputEvent.class))
                 .build();
 
-        final DataStream<InputEvent> inputStream = CheetahKafkaSource.toDataStream(this, kafkaSource, "SerializationErrorCatch-source");
+        final DataStream<InputEvent> inputStream = CheetahKafkaSource.toDataStream(this, kafkaSource, "SerializationErrorCatch-source", "SerializationErrorCatch-source");
 
         // Transform stream
         final SingleOutputStreamOperator<OutputEvent> outputStream = inputStream
@@ -44,7 +44,7 @@ public class SerializationErrorCatchJob extends Job implements Serializable {
                 .uid("SerializationErrorCatchMapper");
 
         // Output sink
-        KafkaSink<OutputEvent> kafkaSink = CheetahKafkaSink.builder(OutputEvent.class, this)
+        KafkaSink<OutputEvent> kafkaSink = CheetahKafkaSink.builder(OutputEvent.class, this, "main-sink")
                 .build();
 
         // Connect transformed stream to sink
