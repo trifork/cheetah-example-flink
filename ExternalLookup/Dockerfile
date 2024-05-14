@@ -31,7 +31,7 @@ RUN --mount=type=secret,id=GITHUB_TOKEN \
 #
 #  Install jar onto clean runtime system.
 #
-FROM ghcr.io/trifork/cheetah-flink:5.2.0-renovate-flink-flink-snapshot51-flink-1.19.0-java17
+FROM ghcr.io/trifork/cheetah-flink:5.2.0-renovate-flink-flink-snapshot52-flink-1.19.0-java17
 
 COPY --from=build /app/target/externallookup*.jar /opt/flink/usrlib/artifacts/externallookup.jar
 
