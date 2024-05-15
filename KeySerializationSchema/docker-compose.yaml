@@ -31,8 +31,8 @@ services:
       --job-classname com.cheetah.example.job.KeySerializationSchemaJob
       --kafka-bootstrap-servers kafka:19092
       --kafka-group-id KeySerializationSchema-group-id
-      --input-kafka-topic KeySerializationSchemaInputTopic
-      --output-kafka-topic KeySerializationSchemaOutputTopic
+      --input-kafka-topic-main-source KeySerializationSchemaInputTopic
+      --output-kafka-topic-main-sink KeySerializationSchemaOutputTopic
     environment:
       SECURITY_PROTOCOL: SASL_PLAINTEXT
       TOKEN_URL: http://keycloak:1852/realms/local-development/protocol/openid-connect/token

@@ -25,20 +25,22 @@ public class KeySerializationSchemaJob extends Job implements Serializable {
     @Override
     protected void setup() {
         // Input source
-        final KafkaSource<InputEvent> kafkaSource = CheetahKafkaSource.builder(InputEvent.class, this)
+        final KafkaSource<InputEvent> kafkaSource = CheetahKafkaSource.builder(InputEvent.class, this, "main-source")
                 .build();
 
-        final DataStream<InputEvent> inputStream = CheetahKafkaSource.toDataStream(this, kafkaSource, "KeySerializationSchema-source");
+        final DataStream<InputEvent> inputStream = CheetahKafkaSource.toDataStream(this, kafkaSource, "KeySerializationSchema-source", "KeySerializationSchema-source");
 
         // Transform stream
         final SingleOutputStreamOperator<OutputEvent> outputStream = inputStream
-                .map(new KeySerializationSchemaMapper("ExtraFieldValue"));
+                .map(new KeySerializationSchemaMapper("ExtraFieldValue"))
+                .name("KeySerializationSchemaMapper")
+                .uid("KeySerializationSchemaMapper");
 
         // Kafka sink config
-        CheetahKafkaSinkConfig kafkaSinkConfig = CheetahKafkaSinkConfig.defaultConfig(this);
+        CheetahKafkaSinkConfig kafkaSinkConfig = CheetahKafkaSinkConfig.defaultConfig(this, "main-sink");
 
         // Output sink
-        KafkaSink<OutputEvent> kafkaSink = CheetahKafkaSink.builder(OutputEvent.class, this)
+        KafkaSink<OutputEvent> kafkaSink = CheetahKafkaSink.builder(OutputEvent.class, kafkaSinkConfig)
                 .setRecordSerializer(CheetahSerdeSchemas.kafkaRecordSerializationSchema(
                         kafkaSinkConfig,
                         message -> message.getKeys().getBytes(),
@@ -46,6 +48,8 @@ public class KeySerializationSchemaJob extends Job implements Serializable {
                 .build();
 
         // Connect transformed stream to sink
-        outputStream.sinkTo(kafkaSink);
+        outputStream.sinkTo(kafkaSink)
+                .name("KeySerializationSchemaSink")
+                .uid("KeySerializationSchemaSink");
     }
 }

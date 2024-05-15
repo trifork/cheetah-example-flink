@@ -10,7 +10,7 @@
     <option name="INCLUDE_PROVIDED_SCOPE" value="true" />
     <option name="MAIN_CLASS_NAME" value="com.cheetah.example.job.KeySerializationSchemaJob" />
     <module name="KeySerializationSchema" />
-    <option name="PROGRAM_PARAMETERS" value="--kafka-bootstrap-servers localhost:9092 --kafka-group-id KeySerializationSchema-group-id --input-kafka-topic KeySerializationSchemaInputTopic --output-kafka-topic KeySerializationSchemaOutputTopic" />
+    <option name="PROGRAM_PARAMETERS" value="--kafka-bootstrap-servers localhost:9092 --kafka-group-id KeySerializationSchema-group-id --input-kafka-topic-main-source KeySerializationSchemaInputTopic --output-kafka-topic-main-sink KeySerializationSchemaOutputTopic" />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>
