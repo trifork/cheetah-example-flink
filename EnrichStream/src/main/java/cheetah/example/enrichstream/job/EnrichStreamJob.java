@@ -8,8 +8,6 @@ import com.trifork.cheetah.processing.connector.kafka.CheetahKafkaSink;
 import com.trifork.cheetah.processing.connector.kafka.CheetahKafkaSource;
 import com.trifork.cheetah.processing.connector.kafka.config.CheetahKafkaSourceConfig;
 import com.trifork.cheetah.processing.job.Job;
-import org.apache.flink.connector.kafka.sink.KafkaRecordSerializationSchema;
-import org.apache.flink.connector.kafka.sink.KafkaRecordSerializationSchemaBuilder;
 import org.apache.flink.connector.kafka.sink.KafkaSink;
 import org.apache.flink.connector.kafka.source.KafkaSource;
 import org.apache.flink.streaming.api.datastream.DataStream;
@@ -36,27 +34,31 @@ public class EnrichStreamJob extends Job implements Serializable {
                 .toKafkaSourceBuilder(EnrichEvent.class)
                 .build();
 
-        final DataStream<EnrichEvent> enrichingStream  = CheetahKafkaSource.toDataStream(this, enrichingKafkaSource, "enriching-kafka-stream");
+        final DataStream<EnrichEvent> enrichingStream  = CheetahKafkaSource.toDataStream(this, enrichingKafkaSource, "enriching-kafka-stream", "enriching-kafka-stream");
 
         // Setup reading from Stream B
-        final KafkaSource<InputEvent> inputKafkaSource = CheetahKafkaSourceConfig.builder(this, "main")
+        final KafkaSource<InputEvent> inputKafkaSource = CheetahKafkaSourceConfig.builder(this, "main-source")
                 .toKafkaSourceBuilder(InputEvent.class)
                 .build();
 
-        final DataStream<InputEvent> inputStream = CheetahKafkaSource.toDataStream(this, inputKafkaSource, "input-kafka-stream");
+        final DataStream<InputEvent> inputStream = CheetahKafkaSource.toDataStream(this, inputKafkaSource, "input-kafka-stream", "input-kafka-stream");
 
         // Merge the two streams by connecting them, giving the KeyBy, which tells which fields to merge by.
         // Final processing is done by the Enricher
         final SingleOutputStreamOperator<OutputEvent> outputStream = enrichingStream
                 .connect(inputStream)
                 .keyBy(EnrichEvent::getDeviceId, InputEvent::getDeviceId)
-                .process(new EventEnricher());
+                .process(new EventEnricher())
+                .name("EnrichStreamProcessor")
+                .uid("EnrichStreamProcessor");
 
         // Output the result to a new Stream
-       final KafkaSink<OutputEvent> kafkaSink = CheetahKafkaSink.builder(OutputEvent.class, this)
+       final KafkaSink<OutputEvent> kafkaSink = CheetahKafkaSink.builder(OutputEvent.class, this, "main-sink")
                .build();
 
         // Connect transformed stream to sink
-        outputStream.sinkTo(kafkaSink).name(EnrichStreamJob.class.getSimpleName());
+        outputStream.sinkTo(kafkaSink).name(EnrichStreamJob.class.getSimpleName())
+                .name("EnrichStreamKafkaSink")
+                .uid("EnrichStreamKafkaSink");
     }
 }

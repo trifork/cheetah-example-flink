@@ -1,4 +1,4 @@
- # Observability
+# Observability
 
 This repository contains a flink job showing how you can add your own metrics. Processing is handled by Apache Flink which is a statefull scalable stream processing framework. You can find more information about Apache Flink [here](https://flink.apache.org/).
 
@@ -43,12 +43,12 @@ docker compose build
 
 ## Local development
 
-For local development, you will need to clone the [cheetah-development-infrastructure](https://github.com/trifork/cheetah-development-infrastructure) repository. 
+For local development, you will need to clone the [cheetah-development-infrastructure](https://github.com/trifork/cheetah-development-infrastructure) repository.
 
 You'll then be able to run necessary infrastructure with the following command from within that repository:
 
 ```bash
-docker compose up --profile kafka -d
+docker compose --profile kafka up -d
 ```
 
 This will start `kafka`, `keycloak` , `schema-registry` (used for AVRO schemas) and `redpanda`, which can be used to inspect what topics and messages exist in `kafka`.  
@@ -56,13 +56,15 @@ This will start `kafka`, `keycloak` , `schema-registry` (used for AVRO schemas) 
 Redpanda can be accessed on [http://localhost:9898](http://localhost:9898).
 
 You need to create the source topics which the flink job reads from. This is done by setting the `INITIAL_KAFKA_TOPICS` to `ObservabilityInputTopic` before running the `kafka-setup` container in `cheetah-development-infrastructure`:
+
 ```powershell
 $env:INITIAL_KAFKA_TOPICS="ObservabilityInputTopic"; docker compose up kafka-setup -d
 ```
+
 The `kafka-setup` service is also run when starting kafka using the above command, but running it seperately enables you to create the topics with an already running Kafka.
 Alternatively you can create the topics manually in Redpanda.
 
-`cheetah-development-infrastructure` contains more than just the services that the above command starts, but running the entire infrastructure setup takes up a fair amount of resources on your local system. 
+`cheetah-development-infrastructure` contains more than just the services that the above command starts, but running the entire infrastructure setup takes up a fair amount of resources on your local system.
 
 If you need to run other services like OpenSearch, please see the documentation in the `development-infrastructure` repository.
 
@@ -73,12 +75,15 @@ When developing your job you can run/debug it like any other Java application by
 ### Create intellij run profile for ObservabilityJob.java with parameters
 
 Program arguments:
-```
+
+``` bash
 --kafka-bootstrap-servers localhost:9092
 --input-kafka-topic ObservabilityInputTopic
 ```
+
 Environment variables:
-```
+
+``` bash
   - KAFKA_CLIENT_ID=default-access
   - KAFKA_CLIENT_SECRET=default-access-secret
   - KAFKA_SCOPE=kafka
@@ -86,6 +91,7 @@ Environment variables:
 ```
 
 ## Tests
+
 ### Unit tests
 
 Unit tests are automatically run as part of the build processing when building the Flink job through either `mvn`, IntelliJ or Docker.
@@ -105,6 +111,7 @@ docker compose up observability-job observability-job-taskmanager --build
 ```
 
 Similarly, you can run just the component test through docker compose using:
+
 ```sh
 docker compose up observability-test --build
 ```
@@ -127,9 +134,9 @@ The general recommendation is to avoid running multiple component tests at the s
 
 Because of this component testing should, in most scenarios, be kept to testing the job generally (primary functionality, correct input/output models, etc.) while ensuring the finer details of the implementation with unit tests.
 
-# Implementing a new Flink job
+## Implementing a new Flink job
 
-## What is a job?
+### What is a job?
 
 A job in Flink consists of a number of sources, a number of sinks, and a number of transformation steps.
 
@@ -141,15 +148,15 @@ Besides the main stream returned from a process function, some type of functions
 
 ![example of dataflow](./images/program_dataflow.svg)
 
-## KISS
+### KISS
 
 The job should have minimum responsibility and business logic. Better to have multiple, simple jobs with a small amount of responsibility, than a single, complex job.
 
-In most scenarios, output data should be stored in a Kafka topic. This makes it possible for others to consume the data your job outputs. 
+In most scenarios, output data should be stored in a Kafka topic. This makes it possible for others to consume the data your job outputs.
 
 If data needs to be persisted in a database for direct query by some other service, this should be done by the standard storage job.
 
-## TDD
+### TDD
 
 An approach proven to be good, is to start by writing a unit test for the processing job under development.
 Then proceed in micro iterations, carefully assert expected output and behavior.

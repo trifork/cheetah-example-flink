@@ -1,4 +1,4 @@
- # EnrichStream
+# EnrichStream
 
 This repository contains a flink job used for showing how to merge information from two separate streams into one.
 
@@ -43,15 +43,15 @@ docker compose build
 
 ## Local development
 
-For local development, you will need to clone the [cheetah-development-infrastructure](https://github.com/trifork/cheetah-development-infrastructure) repository. 
+For local development, you will need to clone the [cheetah-development-infrastructure](https://github.com/trifork/cheetah-development-infrastructure) repository.
 
 You'll then be able to run necessary infrastructure with the following command from within that repository:
 
 ```bash
-docker compose up --profile kafka -d
+docker compose --profile kafka up -d
 ```
 
-This will start `kafka`, `keycloak` , `schema-registry` (used for AVRO schemas) and `redpanda`, which can be used to inspect what topics and messages exist in `kafka`. 
+This will start `kafka`, `keycloak` , `schema-registry` (used for AVRO schemas) and `redpanda`, which can be used to inspect what topics and messages exist in `kafka`.
 
 Redpanda can be accessed on [http://localhost:9898](http://localhost:9898).
 

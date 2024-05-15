@@ -1,10 +1,9 @@
 ---
-version: "3"
+version: "3.8"
 services:
   tumblingwindow-test:
     build:
       context: ComponentTest
-      dockerfile: Dockerfile
       secrets:
         - GITHUB_TOKEN
         - GITHUB_ACTOR
@@ -19,11 +18,7 @@ services:
         condition: service_healthy
 
   tumblingwindow-job:
-    image: ${DOCKER_REGISTRY-}tumblingwindow-job
     build:
-      dockerfile: Dockerfile
-      args:
-        - MAVEN_ARGS=${EXTRA_MAVEN_ARGS-}
       secrets:
         - GITHUB_TOKEN
         - GITHUB_ACTOR
@@ -33,8 +28,8 @@ services:
       --kafka-bootstrap-servers kafka:19092
       --kafka-group-id tumbling-window-group
       --kafka-security-protocol SASL_PLAINTEXT
-      --input-kafka-topic TumblingWindowInputTopic
-      --output-kafka-topic TumblingWindowOutputTopic
+      --input-kafka-topic-main-source TumblingWindowInputTopic
+      --output-kafka-topic-main-sink TumblingWindowOutputTopic
     environment:
       KAFKA_CLIENT_ID: default-access
       KAFKA_CLIENT_SECRET: default-access-secret
@@ -60,18 +55,13 @@ services:
       retries: 30
 
   tumblingwindow-job-taskmanager:
-    image: ${DOCKER_REGISTRY-}tumblingwindow-job
     build:
-      dockerfile: Dockerfile
-      args:
-        - MAVEN_ARGS=${EXTRA_MAVEN_ARGS-}
       secrets:
         - GITHUB_TOKEN
         - GITHUB_ACTOR
     command: taskmanager
     environment:
-      - |
-        FLINK_PROPERTIES=
+      FLINK_PROPERTIES: |
         jobmanager.rpc.address: tumblingwindow-job
         taskmanager.memory.process.size: 4gb
         taskmanager.numberOfTaskSlots: 2

@@ -25,19 +25,30 @@ public class ObservabilityJob extends Job implements Serializable {
     @Override
     protected void setup() {
         // Input source
-        final KafkaSource<InputEvent> kafkaSource = CheetahKafkaSourceConfig.builder(this).toKafkaSourceBuilder(InputEvent.class).build();
+        final KafkaSource<InputEvent> kafkaSource = CheetahKafkaSourceConfig.builder(this, "main-source").toKafkaSourceBuilder(InputEvent.class).build();
 
-        final DataStream<InputEvent> inputStream = CheetahKafkaSource.toDataStream(this, kafkaSource,"my-source-name");
+        final DataStream<InputEvent> inputStream = CheetahKafkaSource.toDataStream(this, kafkaSource,"Observability-source", "Observability-source");
 
         //Use three distinct mappers to add the different types of metrics, that are available
         final SingleOutputStreamOperator<InputEvent> countedStream =
-                inputStream.map(new CounterMapper());
+                inputStream.map(new CounterMapper())
+                .name("ObservabilityJobCounter")
+                .uid("ObservabilityJobCounter");
+
         final SingleOutputStreamOperator<InputEvent> gaugedStream =
-                countedStream.map(new GaugeMapper());
+                countedStream.map(new GaugeMapper())
+                .name("ObservabilityJobGauge")
+                .uid("ObservabilityJobGauge");
+
         final SingleOutputStreamOperator<InputEvent> histogramStream =
-                gaugedStream.map(new HistogramMapper());
+                gaugedStream.map(new HistogramMapper())
+                .name("ObservabilityJobHistogram")
+                .uid("ObservabilityJobHistogram");
+
         final SingleOutputStreamOperator<InputEvent> cheetahHistogramStream =
-                histogramStream.map(new CheetahHistogramMapper());
+                histogramStream.map(new CheetahHistogramMapper())
+                .name("ObservabilityJobCheetahHistogram")
+                .uid("ObservabilityJobCheetahHistogram");
 
         cheetahHistogramStream.name(ObservabilityJob.class.getSimpleName());
     }

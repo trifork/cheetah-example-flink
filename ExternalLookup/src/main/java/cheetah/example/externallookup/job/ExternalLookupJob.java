@@ -1,5 +1,6 @@
 package cheetah.example.externallookup.job;
 
+import cheetah.example.externallookup.config.ConfigProvider;
 import cheetah.example.externallookup.function.ExternalLookupMapper;
 import cheetah.example.externallookup.model.InputEvent;
 import cheetah.example.externallookup.model.OutputEvent;
@@ -31,29 +32,35 @@ public class ExternalLookupJob extends Job implements Serializable {
     protected void setup() {
 
         // Setup input stream
-        final KafkaSource<InputEvent> kafkaSource = CheetahKafkaSourceConfig.builder(this)
+        final KafkaSource<InputEvent> kafkaSource = CheetahKafkaSourceConfig.builder(this, "main-source")
                 .toKafkaSourceBuilder(InputEvent.class)
                 .setStartingOffsets(OffsetsInitializer.earliest())
                 .build();
 
-        final DataStream<InputEvent> inputStream = CheetahKafkaSource.toDataStream(this, kafkaSource, "Event Input Source");
+        final DataStream<InputEvent> inputStream = CheetahKafkaSource.toDataStream(this, kafkaSource, "Event Input Source", "Event Input Source");
+
+        final ConfigProvider configProvider = new ConfigProvider(this);
 
         // Get configuration from ENV
-        final String idServiceHost = System.getenv("ID_SERVICE_URL");
-        final String tokenUrl = System.getenv("ID_SERVICE_TOKEN_URL");
-        final String clientId = System.getenv("ID_SERVICE_CLIENT_ID");
-        final String clientSecret = System.getenv("ID_SERVICE_CLIENT_SECRET");
-        final String scope = System.getenv("ID_SERVICE_SCOPE");
+        final String idServiceHost = configProvider.getIdServiceUrl();
+        final String tokenUrl = configProvider.getIdServiceToken();
+        final String clientId = configProvider.getIdServiceClientId();
+        final String clientSecret = configProvider.getIdServiceClientSecret();
+        final String scope = configProvider.getIdServiceScope();
 
         // Transform stream
         final SingleOutputStreamOperator<OutputEvent> outputStream =
-                AsyncDataStream.unorderedWait(inputStream, new ExternalLookupMapper(idServiceHost, tokenUrl, clientId, clientSecret, scope), 1000, TimeUnit.MILLISECONDS, 100);
+                AsyncDataStream.unorderedWait(inputStream, new ExternalLookupMapper(idServiceHost, tokenUrl, clientId, clientSecret, scope), 1000, TimeUnit.MILLISECONDS, 100)
+                .name("ExternalLookupMapper")
+                .uid("ExternalLookupMapper");
 
         // Output sink
-        final KafkaSink<OutputEvent> kafkaSink =
-                CheetahKafkaSinkConfig.builder(this).toKafkaSinkBuilder(OutputEvent.class).build();
+        final KafkaSink<OutputEvent> kafkaSink = CheetahKafkaSinkConfig.builder(this, "main-sink")
+                .toKafkaSinkBuilder(OutputEvent.class).build();
 
         // Connect transformed stream to sink
-        outputStream.sinkTo(kafkaSink).name(ExternalLookupJob.class.getSimpleName());
+        outputStream.sinkTo(kafkaSink).name(ExternalLookupJob.class.getSimpleName())
+                .name("ExternalLookupKafkaSink")
+                .uid("ExternalLookupKafkaSink");
     }
 }

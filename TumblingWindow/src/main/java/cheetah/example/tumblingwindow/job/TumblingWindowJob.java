@@ -17,12 +17,15 @@ import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows;
 import org.apache.flink.streaming.api.windowing.time.Time;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.time.Instant;
 
 /** TumblingWindowJob sets up the data processing job. */
 public class TumblingWindowJob extends Job implements Serializable {
+    private static final Logger LOG = LoggerFactory.getLogger(TumblingWindowJob.class);
 
     @SuppressWarnings("PMD.SignatureDeclareThrowsException") // Fix once lib-processing is fixed
     public static void main(final String[] args) throws Exception {
@@ -38,23 +41,36 @@ public class TumblingWindowJob extends Job implements Serializable {
                 .eventTimestampSupplier(input -> Instant.ofEpochMilli(input.getTimestamp()))
                 .build();
 
-        final KafkaSource<InputEvent> kafkaSource = CheetahKafkaSourceConfig.builder(this).toKafkaSourceBuilder(InputEvent.class).setStartingOffsets(OffsetsInitializer.earliest()).build();
-        final DataStream<InputEvent> inputStream = CheetahKafkaSource.toDataStream(this, kafkaSource, watermarkStrategy,"Input Event Source");
+        final KafkaSource<InputEvent> kafkaSource = CheetahKafkaSourceConfig
+                .builder(this, "main-source")
+                .toKafkaSourceBuilder(InputEvent.class)
+                .setStartingOffsets(OffsetsInitializer.earliest())
+                .build();
+        final DataStream<InputEvent> inputStream = CheetahKafkaSource.toDataStream(this, kafkaSource, watermarkStrategy, "Input Event Source", "Input Event Source");
 
         SingleOutputStreamOperator<EventWindow> outputStream = inputStream
                 .assignTimestampsAndWatermarks(watermarkStrategy)
+                .name("AssignTimestampsAndWatermarks")
+                .uid("AssignTimestampsAndWatermarks")
                 .map(message -> {
-                    System.out.println(message);
+                    LOG.info(message.toString());
                     return message;
                 })
+                .name("PrintMapper")
+                .uid("PrintMapper")
                 .keyBy(InputEvent::getDeviceId)
                 .window(TumblingEventTimeWindows.of(Time.minutes(5)))
-                .aggregate(new TumblingWindowAggregate(), new TumblingWindowFunction());
+                .aggregate(new TumblingWindowAggregate(), new TumblingWindowFunction())
+                .name("WindowAggregate")
+                .uid("WindowAggregate");
 
         // Output sink
-        final KafkaSink<EventWindow> kafkaSink = CheetahKafkaSinkConfig.builder(this).toSinkBuilder(EventWindow.class).build();
+        final KafkaSink<EventWindow> kafkaSink = CheetahKafkaSinkConfig.builder(this, "main-sink").toKafkaSinkBuilder(EventWindow.class)
+                .build();
 
         // Connect transformed stream to sink
-        outputStream.sinkTo(kafkaSink).name(TumblingWindowJob.class.getSimpleName());
+        outputStream.sinkTo(kafkaSink)
+                .name(TumblingWindowJob.class.getSimpleName())
+                .uid("KafkaSink");
     }
 }

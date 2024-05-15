@@ -4,7 +4,6 @@ services:
   enrichstream-test:
     build:
       context: ComponentTest
-      dockerfile: Dockerfile
       secrets:
         - GITHUB_TOKEN
         - GITHUB_ACTOR
@@ -19,11 +18,7 @@ services:
         condition: service_healthy
 
   enrichstream-jobmanager:
-    image: ${DOCKER_REGISTRY-}enrichstream-job
     build:
-      dockerfile: Dockerfile
-      args:
-        - MAVEN_ARGS=${EXTRA_MAVEN_ARGS-}
       secrets:
         - GITHUB_TOKEN
         - GITHUB_ACTOR
@@ -34,8 +29,8 @@ services:
       --kafka-group-id EnrichStream-group-id
       --kafka-security-protocol SASL_PLAINTEXT
       --input-kafka-topic-enriching EnrichStreamEnrichTopic
-      --input-kafka-topic-main EnrichStreamInputTopic
-      --output-kafka-topic EnrichStreamOutputTopic
+      --input-kafka-topic-main-source EnrichStreamInputTopic
+      --output-kafka-topic-main-sink EnrichStreamOutputTopic
     environment:
       KAFKA_CLIENT_ID: default-access
       KAFKA_CLIENT_SECRET: default-access-secret
@@ -61,18 +56,13 @@ services:
       retries: 30
 
   enrichstream-taskmanager:
-    image: ${DOCKER_REGISTRY-}enrichstream-job
     build:
-      dockerfile: Dockerfile
-      args:
-        - MAVEN_ARGS=${EXTRA_MAVEN_ARGS-}
       secrets:
         - GITHUB_TOKEN
         - GITHUB_ACTOR
     command: taskmanager
     environment:
-      - |
-        FLINK_PROPERTIES=
+      FLINK_PROPERTIES: |
         jobmanager.rpc.address: enrichstream-jobmanager
         taskmanager.memory.process.size: 4gb
         taskmanager.numberOfTaskSlots: 2

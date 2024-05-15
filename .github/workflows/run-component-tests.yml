@@ -2,7 +2,6 @@ name: Run Component Tests
 
 on:
   workflow_call:
-  workflow_dispatch:
   schedule:
     - cron: "0 3 * * *"
   push:
@@ -28,6 +27,12 @@ jobs:
     strategy:
       matrix:
         include:
+          - folder: AvroToJson
+            initial-kafka-topics: "AvroToJsonInputTopic AvroToJsonOutputTopic"
+
+          - folder: DockerComposeExamples/RunMultipleFlinkJobs
+            initial-kafka-topics: "JsonToAvroInputTopic JsonToAvroOutputTopic"
+
           - folder: EnrichStream
             initial-kafka-topics: "EnrichStreamEnrichTopic EnrichStreamInputTopic EnrichStreamOutputTopic"
             
@@ -47,8 +52,11 @@ jobs:
             initial-kafka-topics: "ObservabilityInputTopic"
             
           - folder: SerializationErrorCatch
-            initial-kafka-topics: "SerializationErrorCatchInputTopic SerializationErrorCatchInputTopic SerializationErrorCatchOutputTopic"
+            initial-kafka-topics: "SerializationErrorCatchInputTopic SerializationErrorCatchOutputTopic"
             
+          - folder: SerializationErrorSideOutput
+            initial-kafka-topics: "SerializationErrorSideOutputInputTopic SerializationErrorSideOutputOutputTopic SerializationErrorSideOutputOutputTopicUnParsed"
+
           - folder: TransformAndStore
             initial-kafka-topics: "TransformAndStoreInputTopic"
             
@@ -57,13 +65,13 @@ jobs:
 
           - folder: KeySerializationSchema
             initial-kafka-topics: "KeySerializationSchemaInputTopic KeySerializationSchemaOutputTopic"
-
+            
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Check if files have changed
-        uses: tj-actions/changed-files@v42
+        uses: tj-actions/changed-files@v44
         id: changed-files
         with: 
           files: |

@@ -5,17 +5,19 @@
  */
 package cheetah.example.model.avrorecord;
 
+import org.apache.avro.generic.GenericArray;
 import org.apache.avro.specific.SpecificData;
+import org.apache.avro.util.Utf8;
 import org.apache.avro.message.BinaryMessageEncoder;
 import org.apache.avro.message.BinaryMessageDecoder;
 import org.apache.avro.message.SchemaStore;
 
 @org.apache.avro.specific.AvroGenerated
 public class OutputEventAvro extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  private static final long serialVersionUID = 4353547672469829137L;
+  private static final long serialVersionUID = -7501648990002563427L;
 
 
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"OutputEventAvro\",\"namespace\":\"cheetah.exmaple.model.avrorecord\",\"fields\":[{\"name\":\"deviceId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"value\",\"type\":\"double\"},{\"name\":\"timestamp\",\"type\":\"long\"},{\"name\":\"extraField\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"OutputEventAvro\",\"namespace\":\"cheetah.example.model.avrorecord\",\"fields\":[{\"name\":\"deviceId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"value\",\"type\":\"double\"},{\"name\":\"timestamp\",\"type\":\"long\"}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
 
   private static final SpecificData MODEL$ = new SpecificData();
@@ -74,7 +76,6 @@ public class OutputEventAvro extends org.apache.avro.specific.SpecificRecordBase
   private java.lang.String deviceId;
   private double value;
   private long timestamp;
-  private java.lang.String extraField;
 
   /**
    * Default constructor.  Note that this does not initialize fields
@@ -88,13 +89,11 @@ public class OutputEventAvro extends org.apache.avro.specific.SpecificRecordBase
    * @param deviceId The new value for deviceId
    * @param value The new value for value
    * @param timestamp The new value for timestamp
-   * @param extraField The new value for extraField
    */
-  public OutputEventAvro(java.lang.String deviceId, java.lang.Double value, java.lang.Long timestamp, java.lang.String extraField) {
+  public OutputEventAvro(java.lang.String deviceId, java.lang.Double value, java.lang.Long timestamp) {
     this.deviceId = deviceId;
     this.value = value;
     this.timestamp = timestamp;
-    this.extraField = extraField;
   }
 
   @Override
@@ -110,7 +109,6 @@ public class OutputEventAvro extends org.apache.avro.specific.SpecificRecordBase
     case 0: return deviceId;
     case 1: return value;
     case 2: return timestamp;
-    case 3: return extraField;
     default: throw new IndexOutOfBoundsException("Invalid index: " + field$);
     }
   }
@@ -123,7 +121,6 @@ public class OutputEventAvro extends org.apache.avro.specific.SpecificRecordBase
     case 0: deviceId = value$ != null ? value$.toString() : null; break;
     case 1: value = (java.lang.Double)value$; break;
     case 2: timestamp = (java.lang.Long)value$; break;
-    case 3: extraField = value$ != null ? value$.toString() : null; break;
     default: throw new IndexOutOfBoundsException("Invalid index: " + field$);
     }
   }
@@ -180,23 +177,6 @@ public class OutputEventAvro extends org.apache.avro.specific.SpecificRecordBase
   }
 
   /**
-   * Gets the value of the 'extraField' field.
-   * @return The value of the 'extraField' field.
-   */
-  public java.lang.String getExtraField() {
-    return extraField;
-  }
-
-
-  /**
-   * Sets the value of the 'extraField' field.
-   * @param value the value to set.
-   */
-  public void setExtraField(java.lang.String value) {
-    this.extraField = value;
-  }
-
-  /**
    * Creates a new OutputEventAvro RecordBuilder.
    * @return A new OutputEventAvro RecordBuilder
    */
@@ -240,7 +220,6 @@ public class OutputEventAvro extends org.apache.avro.specific.SpecificRecordBase
     private java.lang.String deviceId;
     private double value;
     private long timestamp;
-    private java.lang.String extraField;
 
     /** Creates a new Builder */
     private Builder() {
@@ -265,10 +244,6 @@ public class OutputEventAvro extends org.apache.avro.specific.SpecificRecordBase
         this.timestamp = data().deepCopy(fields()[2].schema(), other.timestamp);
         fieldSetFlags()[2] = other.fieldSetFlags()[2];
       }
-      if (isValidValue(fields()[3], other.extraField)) {
-        this.extraField = data().deepCopy(fields()[3].schema(), other.extraField);
-        fieldSetFlags()[3] = other.fieldSetFlags()[3];
-      }
     }
 
     /**
@@ -288,10 +263,6 @@ public class OutputEventAvro extends org.apache.avro.specific.SpecificRecordBase
       if (isValidValue(fields()[2], other.timestamp)) {
         this.timestamp = data().deepCopy(fields()[2].schema(), other.timestamp);
         fieldSetFlags()[2] = true;
-      }
-      if (isValidValue(fields()[3], other.extraField)) {
-        this.extraField = data().deepCopy(fields()[3].schema(), other.extraField);
-        fieldSetFlags()[3] = true;
       }
     }
 
@@ -413,46 +384,6 @@ public class OutputEventAvro extends org.apache.avro.specific.SpecificRecordBase
       return this;
     }
 
-    /**
-      * Gets the value of the 'extraField' field.
-      * @return The value.
-      */
-    public java.lang.String getExtraField() {
-      return extraField;
-    }
-
-
-    /**
-      * Sets the value of the 'extraField' field.
-      * @param value The value of 'extraField'.
-      * @return This builder.
-      */
-    public cheetah.example.model.avrorecord.OutputEventAvro.Builder setExtraField(java.lang.String value) {
-      validate(fields()[3], value);
-      this.extraField = value;
-      fieldSetFlags()[3] = true;
-      return this;
-    }
-
-    /**
-      * Checks whether the 'extraField' field has been set.
-      * @return True if the 'extraField' field has been set, false otherwise.
-      */
-    public boolean hasExtraField() {
-      return fieldSetFlags()[3];
-    }
-
-
-    /**
-      * Clears the value of the 'extraField' field.
-      * @return This builder.
-      */
-    public cheetah.example.model.avrorecord.OutputEventAvro.Builder clearExtraField() {
-      extraField = null;
-      fieldSetFlags()[3] = false;
-      return this;
-    }
-
     @Override
     @SuppressWarnings("unchecked")
     public OutputEventAvro build() {
@@ -461,7 +392,6 @@ public class OutputEventAvro extends org.apache.avro.specific.SpecificRecordBase
         record.deviceId = fieldSetFlags()[0] ? this.deviceId : (java.lang.String) defaultValue(fields()[0]);
         record.value = fieldSetFlags()[1] ? this.value : (java.lang.Double) defaultValue(fields()[1]);
         record.timestamp = fieldSetFlags()[2] ? this.timestamp : (java.lang.Long) defaultValue(fields()[2]);
-        record.extraField = fieldSetFlags()[3] ? this.extraField : (java.lang.String) defaultValue(fields()[3]);
         return record;
       } catch (org.apache.avro.AvroMissingFieldException e) {
         throw e;
@@ -500,8 +430,6 @@ public class OutputEventAvro extends org.apache.avro.specific.SpecificRecordBase
 
     out.writeLong(this.timestamp);
 
-    out.writeString(this.extraField);
-
   }
 
   @Override public void customDecode(org.apache.avro.io.ResolvingDecoder in)
@@ -515,10 +443,8 @@ public class OutputEventAvro extends org.apache.avro.specific.SpecificRecordBase
 
       this.timestamp = in.readLong();
 
-      this.extraField = in.readString();
-
     } else {
-      for (int i = 0; i < 4; i++) {
+      for (int i = 0; i < 3; i++) {
         switch (fieldOrder[i].pos()) {
         case 0:
           this.deviceId = in.readString();
@@ -530,10 +456,6 @@ public class OutputEventAvro extends org.apache.avro.specific.SpecificRecordBase
 
         case 2:
           this.timestamp = in.readLong();
-          break;
-
-        case 3:
-          this.extraField = in.readString();
           break;
 
         default:

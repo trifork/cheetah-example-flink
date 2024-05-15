@@ -22,4 +22,10 @@ public class OutputEvent implements Serializable {
         this.value = inputEvent.getValue();
         this.enrichValue = enrichEvent.getValue();
     }
+
+    // Ensure no sensitive data is logged by overriding toString. Eg. Value is printed as ***
+    @Override
+    public String toString() {
+        return "DeviceId: %s, Value: ***, EnrichValue: %s".formatted(deviceId, enrichValue);
+    }
 }

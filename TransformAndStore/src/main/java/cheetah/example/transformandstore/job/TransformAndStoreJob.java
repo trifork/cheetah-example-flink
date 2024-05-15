@@ -1,5 +1,6 @@
 package cheetah.example.transformandstore.job;
 
+import cheetah.example.transformandstore.config.ConfigProvider;
 import cheetah.example.transformandstore.model.InputEvent;
 import cheetah.example.transformandstore.model.OutputEvent;
 import com.trifork.cheetah.processing.connector.opensearch.serde.SimpleEmitter;
@@ -32,17 +33,20 @@ public class TransformAndStoreJob extends Job implements Serializable {
     @Override
     protected void setup() {
         // Get index-base-name from parameters
-        ParameterTool parameters = getParameters();
-        String indexBaseName = Objects.requireNonNull(parameters.get("index-base-name"), "--index-base-name is required");
+        final ConfigProvider configProvider = new ConfigProvider(this);
+
+        String indexBaseName = configProvider.getOpensearchIndexBaseName();
 
         // Setup reading from input stream
-        final KafkaSource<InputEvent> kafkaSource = CheetahKafkaSource.builder(InputEvent.class, this)
+        final KafkaSource<InputEvent> kafkaSource = CheetahKafkaSource.builder(InputEvent.class, this, "main-source")
                 .build();
-        final DataStream<InputEvent> inputStream = CheetahKafkaSource.toDataStream(this, kafkaSource, "transform-and-store-source");
+        final DataStream<InputEvent> inputStream = CheetahKafkaSource.toDataStream(this, kafkaSource, "transform-and-store-source", "transform-and-store-source");
 
         // Transform stream
         final SingleOutputStreamOperator<OutputEvent> outputStream =
-                inputStream.map(new TransformAndStoreMapper());
+                inputStream.map(new TransformAndStoreMapper())
+                        .name("TransformAndStoreMapper")
+                        .uid("TransformAndStoreMapper");
 
         // Store the transformed object in OpenSearch using the OpenSearchSink.
         // In this process, the output is serialized to JSON. The index name is constructed using the indexBaseName
@@ -56,6 +60,8 @@ public class TransformAndStoreJob extends Job implements Serializable {
                 .build();
 
         // Connect transformed stream to openSearchSink
-        outputStream.sinkTo(openSearchSink).name(TransformAndStoreJob.class.getSimpleName());
+        outputStream.sinkTo(openSearchSink).
+                name("TransformAndStoreKafkaSink")
+                .uid("TransformAndStoreKafkaSink");
     }
 }

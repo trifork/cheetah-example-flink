@@ -1,10 +1,9 @@
 ---
-version: "3"
+version: "3.8"
 services:
   observability-test:
     build:
       context: ComponentTest
-      dockerfile: Dockerfile
       secrets:
         - GITHUB_TOKEN
         - GITHUB_ACTOR
@@ -19,11 +18,7 @@ services:
         condition: service_healthy
 
   observability-job:
-    image: ${DOCKER_REGISTRY-}observability-job
     build:
-      dockerfile: Dockerfile
-      args:
-        - MAVEN_ARGS=${EXTRA_MAVEN_ARGS-}
       secrets:
         - GITHUB_TOKEN
         - GITHUB_ACTOR
@@ -31,8 +26,7 @@ services:
       standalone-job
       --job-classname cheetah.example.observability.job.ObservabilityJob
       --kafka-bootstrap-servers kafka:19092
-      --input-kafka-topic ObservabilityInputTopic
-      --output-kafka-topic ObservabilityOutputTopic
+      --input-kafka-topic-main-source ObservabilityInputTopic
       --kafka-group-id Observability-group-id
       --kafka-security-protocol SASL_PLAINTEXT
     environment:
@@ -64,18 +58,13 @@ services:
       retries: 6
 
   observability-job-taskmanager:
-    image: ${DOCKER_REGISTRY-}observability-job
     build:
-      dockerfile: Dockerfile
-      args:
-        - MAVEN_ARGS=${EXTRA_MAVEN_ARGS-}
       secrets:
         - GITHUB_TOKEN
         - GITHUB_ACTOR
     command: taskmanager
     environment:
-      - |
-        FLINK_PROPERTIES=
+      FLINK_PROPERTIES: |
         jobmanager.rpc.address: observability-job
         taskmanager.memory.process.size: 4gb
         taskmanager.numberOfTaskSlots: 2

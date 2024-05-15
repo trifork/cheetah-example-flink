@@ -1,4 +1,4 @@
- # ExternalLookup
+# ExternalLookup
 
 This respository contains a templated flink job. Processing is handled by Apache Flink which is a statefull scalable stream processing framework. You can find more information about Apache Flink [here](https://flink.apache.org/).
 
@@ -48,7 +48,7 @@ For local development, you will need to clone the [cheetah-development-infrastru
 You'll then be able to run necessary infrastructure with the following command from within that repository:
 
 ```bash
-docker compose up --profile kafka -d
+docker compose --profile kafka up -d
 ```
 
 This will start `kafka`, `keycloak` , `schema-registry` (used for AVRO schemas) and `redpanda`, which can be used to inspect what topics and messages exist in `kafka`. 
