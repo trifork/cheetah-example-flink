@@ -62,6 +62,9 @@ jobs:
             
           - folder: TumblingWindow
             initial-kafka-topics: "TumblingWindowInputTopic TumblingWindowOutputTopic"
+
+          - folder: KeySerializationSchema
+            initial-kafka-topics: "KeySerializationSchemaInputTopic KeySerializationSchemaOutputTopic"
             
     steps:
       - name: Checkout repository
