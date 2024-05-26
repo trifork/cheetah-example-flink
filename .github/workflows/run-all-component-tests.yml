@@ -73,7 +73,7 @@ jobs:
         uses: ./.github/actions/component-test
         with:
           context-path: ./${{ matrix.folder }}/
-          access-token: ${{ secrets.PACKAGE_PAT }}
+          access-token: ${{ secrets.READ_PACKAGE_PAT }}
           initial-kafka-topics: ${{ matrix.initial-kafka-topics }}
           development-infrastructure-ref: ${{ inputs.development-infrastructure-ref }}
 
