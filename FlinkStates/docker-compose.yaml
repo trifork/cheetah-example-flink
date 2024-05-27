@@ -1,5 +1,4 @@
 ---
-version: "3.8"
 services:
   flinkstates-test:
     build:
@@ -28,7 +27,7 @@ services:
       --kafka-bootstrap-servers kafka:19092
       --kafka-group-id FlinkStates-group-id
       --kafka-security-protocol SASL_PLAINTEXT
-      --input-kafka-topic FlinkStatesInputTopic
+      --input-kafka-topic-main-source FlinkStatesInputTopic
       --output-kafka-topic-value FlinkStatesOutputTopic-value
       --output-kafka-topic-reducing FlinkStatesOutputTopic-reducing
       --output-kafka-topic-aggregating FlinkStatesOutputTopic-aggregating

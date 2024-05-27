@@ -34,14 +34,14 @@ public class EnrichStreamJob extends Job implements Serializable {
                 .toKafkaSourceBuilder(EnrichEvent.class)
                 .build();
 
-        final DataStream<EnrichEvent> enrichingStream  = CheetahKafkaSource.toDataStream(this, enrichingKafkaSource, "enriching-kafka-stream");
+        final DataStream<EnrichEvent> enrichingStream  = CheetahKafkaSource.toDataStream(this, enrichingKafkaSource, "enriching-kafka-stream", "enriching-kafka-stream");
 
         // Setup reading from Stream B
-        final KafkaSource<InputEvent> inputKafkaSource = CheetahKafkaSourceConfig.builder(this, "main")
+        final KafkaSource<InputEvent> inputKafkaSource = CheetahKafkaSourceConfig.builder(this, "main-source")
                 .toKafkaSourceBuilder(InputEvent.class)
                 .build();
 
-        final DataStream<InputEvent> inputStream = CheetahKafkaSource.toDataStream(this, inputKafkaSource, "input-kafka-stream");
+        final DataStream<InputEvent> inputStream = CheetahKafkaSource.toDataStream(this, inputKafkaSource, "input-kafka-stream", "input-kafka-stream");
 
         // Merge the two streams by connecting them, giving the KeyBy, which tells which fields to merge by.
         // Final processing is done by the Enricher
@@ -53,7 +53,7 @@ public class EnrichStreamJob extends Job implements Serializable {
                 .uid("EnrichStreamProcessor");
 
         // Output the result to a new Stream
-       final KafkaSink<OutputEvent> kafkaSink = CheetahKafkaSink.builder(OutputEvent.class, this)
+       final KafkaSink<OutputEvent> kafkaSink = CheetahKafkaSink.builder(OutputEvent.class, this, "main-sink")
                .build();
 
         // Connect transformed stream to sink

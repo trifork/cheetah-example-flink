@@ -2,7 +2,6 @@ name: Run Component Tests
 
 on:
   workflow_call:
-  workflow_dispatch:
   schedule:
     - cron: "0 3 * * *"
   push:
@@ -53,13 +52,19 @@ jobs:
             initial-kafka-topics: "ObservabilityInputTopic"
             
           - folder: SerializationErrorCatch
-            initial-kafka-topics: "SerializationErrorCatchInputTopic SerializationErrorCatchInputTopic SerializationErrorCatchOutputTopic"
+            initial-kafka-topics: "SerializationErrorCatchInputTopic SerializationErrorCatchOutputTopic"
             
+          - folder: SerializationErrorSideOutput
+            initial-kafka-topics: "SerializationErrorSideOutputInputTopic SerializationErrorSideOutputOutputTopic SerializationErrorSideOutputOutputTopicUnParsed"
+
           - folder: TransformAndStore
             initial-kafka-topics: "TransformAndStoreInputTopic"
             
           - folder: TumblingWindow
             initial-kafka-topics: "TumblingWindowInputTopic TumblingWindowOutputTopic"
+
+          - folder: KeySerializationSchema
+            initial-kafka-topics: "KeySerializationSchemaInputTopic KeySerializationSchemaOutputTopic"
             
     steps:
       - name: Checkout repository
@@ -77,7 +82,7 @@ jobs:
         if: ${{ steps.changed-files.outputs.any_changed == 'true' }}
         with:
           context-path: ./${{ matrix.folder }}/
-          access-token: ${{ secrets.PACKAGE_PAT }}
+          access-token: ${{ secrets.READ_PACKAGE_PAT }}
           initial-kafka-topics: ${{ matrix.initial-kafka-topics }}
 
   success:

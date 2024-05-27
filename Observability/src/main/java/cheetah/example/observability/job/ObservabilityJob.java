@@ -25,9 +25,9 @@ public class ObservabilityJob extends Job implements Serializable {
     @Override
     protected void setup() {
         // Input source
-        final KafkaSource<InputEvent> kafkaSource = CheetahKafkaSourceConfig.builder(this).toKafkaSourceBuilder(InputEvent.class).build();
+        final KafkaSource<InputEvent> kafkaSource = CheetahKafkaSourceConfig.builder(this, "main-source").toKafkaSourceBuilder(InputEvent.class).build();
 
-        final DataStream<InputEvent> inputStream = CheetahKafkaSource.toDataStream(this, kafkaSource,"my-source-name");
+        final DataStream<InputEvent> inputStream = CheetahKafkaSource.toDataStream(this, kafkaSource,"Observability-source", "Observability-source");
 
         //Use three distinct mappers to add the different types of metrics, that are available
         final SingleOutputStreamOperator<InputEvent> countedStream =

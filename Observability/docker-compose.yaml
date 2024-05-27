@@ -1,5 +1,4 @@
 ---
-version: "3.8"
 services:
   observability-test:
     build:
@@ -26,7 +25,7 @@ services:
       standalone-job
       --job-classname cheetah.example.observability.job.ObservabilityJob
       --kafka-bootstrap-servers kafka:19092
-      --input-kafka-topic ObservabilityInputTopic
+      --input-kafka-topic-main-source ObservabilityInputTopic
       --kafka-group-id Observability-group-id
       --kafka-security-protocol SASL_PLAINTEXT
     environment:

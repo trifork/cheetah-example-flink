@@ -1,4 +1,4 @@
- # FlinkStates
+# FlinkStates
 
 This repository contains a templated flink job. Processing is handled by Apache Flink which is a statefull scalable stream processing framework. You can find more information about Apache Flink [here](https://flink.apache.org/).
 

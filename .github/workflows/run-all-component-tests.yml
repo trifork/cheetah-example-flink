@@ -1,0 +1,87 @@
+name: Run All Component Tests
+
+on:
+  workflow_dispatch:
+    inputs:
+      cheetah-flink-image-tag:
+        description: The image tag to use for the cheetah-flink image when running the component tests
+        required: false
+        default: latest
+      development-infrastructure-ref:
+        description: Which branch to run development infrastructure from
+        required: false
+        default: v2.0.0
+
+concurrency:
+  group: ${{ github.ref }}-${{ github.workflow }}
+  cancel-in-progress: true
+
+jobs:
+  should-run:
+    uses: trifork/cheetah-infrastructure-utils-workflows/.github/workflows/e2e-should-run.yml@main
+
+  run-component-tests:
+    name: ${{ matrix.folder }}
+    needs: should-run
+    if: ${{ needs.should-run.outputs.should-run }}
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - folder: AvroToJson
+            initial-kafka-topics: "AvroToJsonInputTopic AvroToJsonOutputTopic"
+
+          - folder: DockerComposeExamples/RunMultipleFlinkJobs
+            initial-kafka-topics: "JsonToAvroInputTopic JsonToAvroOutputTopic"
+
+          - folder: EnrichStream
+            initial-kafka-topics: "EnrichStreamEnrichTopic EnrichStreamInputTopic EnrichStreamOutputTopic"
+            
+          - folder: ExternalLookup
+            initial-kafka-topics: "ExternalLookupInputTopic ExternalLookupOutputTopic"
+            
+          - folder: FlinkStates
+            initial-kafka-topics: "FlinkStatesInputTopic FlinkStatesOutputTopic-value FlinkStatesOutputTopic-reducing FlinkStatesOutputTopic-aggregating FlinkStatesOutputTopic-list FlinkStatesOutputTopic-map"
+
+          - folder: JsonToAvro
+            initial-kafka-topics: "jsonToAvroInputTopic jsonToAvroOutputTopic"
+            
+          - folder: MultipleSideOutput
+            initial-kafka-topics: "MultipleSideOutputExampleInputTopic OutputA-events OutputB-events OutputCD-events"
+            
+          - folder: Observability
+            initial-kafka-topics: "ObservabilityInputTopic"
+            
+          - folder: SerializationErrorCatch
+            initial-kafka-topics: "SerializationErrorCatchInputTopic SerializationErrorCatchOutputTopic"
+
+          - folder: SerializationErrorSideOutput
+            initial-kafka-topics: "SerializationErrorSideOutputInputTopic SerializationErrorSideOutputOutputTopic SerializationErrorSideOutputOutputTopicUnParsed"
+            
+          - folder: TransformAndStore
+            initial-kafka-topics: "TransformAndStoreInputTopic"
+            
+          - folder: TumblingWindow
+            initial-kafka-topics: "TumblingWindowInputTopic TumblingWindowOutputTopic"
+            
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build Flink States example image and run component test
+        uses: ./.github/actions/component-test
+        with:
+          context-path: ./${{ matrix.folder }}/
+          access-token: ${{ secrets.READ_PACKAGE_PAT }}
+          initial-kafka-topics: ${{ matrix.initial-kafka-topics }}
+          development-infrastructure-ref: ${{ inputs.development-infrastructure-ref }}
+
+  success:
+    name: Success
+    needs: run-component-tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Success
+        shell: bash
+        run: echo success

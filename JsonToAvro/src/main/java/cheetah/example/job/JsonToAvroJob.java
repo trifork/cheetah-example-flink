@@ -24,11 +24,11 @@ public class JsonToAvroJob extends Job implements Serializable {
     @Override
     protected void setup() {
         // Input source
-        final KafkaSource<InputEvent> kafkaSource = CheetahKafkaSourceConfig.builder(this, "jsonToAvro")
+        final KafkaSource<InputEvent> kafkaSource = CheetahKafkaSourceConfig.builder(this, "main-source")
                 .toKafkaSourceBuilder(InputEvent.class)
                 .build();
 
-        final DataStream<InputEvent> inputStream = CheetahKafkaSource.toDataStream(this, kafkaSource, "jsonToAvro-source");
+        final DataStream<InputEvent> inputStream = CheetahKafkaSource.toDataStream(this, kafkaSource, "jsonToAvro-source", "jsonToAvro-source");
 
         // Transform stream
         final SingleOutputStreamOperator<OutputEventAvro> outputStream =
@@ -37,7 +37,7 @@ public class JsonToAvroJob extends Job implements Serializable {
                 .uid("JsonToAvroMapper");
 
         // Output sink
-        KafkaSink<OutputEventAvro> kafkaSink = CheetahKafkaSink.avroSpecificBuilder(OutputEventAvro.class, this)
+        KafkaSink<OutputEventAvro> kafkaSink = CheetahKafkaSink.avroSpecificBuilder(OutputEventAvro.class, this, "main-sink")
                 .build();
 
         // Connect transformed stream to sink
