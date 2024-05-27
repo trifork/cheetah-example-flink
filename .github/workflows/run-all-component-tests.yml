@@ -46,6 +46,9 @@ jobs:
 
           - folder: JsonToAvro
             initial-kafka-topics: "jsonToAvroInputTopic jsonToAvroOutputTopic"
+
+          - folder: KeySerializationSchema
+            initial-kafka-topics: "KeySerializationSchemaInputTopic KeySerializationSchemaOutputTopic"
             
           - folder: MultipleSideOutput
             initial-kafka-topics: "MultipleSideOutputExampleInputTopic OutputA-events OutputB-events OutputCD-events"
