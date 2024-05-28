@@ -1,0 +1,106 @@
+---
+version: "3.8"
+services:
+  flinkstates-test:
+    build:
+      context: ComponentTest
+      secrets:
+        - GITHUB_TOKEN
+        - GITHUB_ACTOR
+    environment:
+      KAFKA__URL: kafka:19092
+      KAFKA__OAUTH2__CLIENTID: default-access
+      KAFKA__OAUTH2__CLIENTSECRET: default-access-secret
+      KAFKA__OAUTH2__SCOPE: kafka
+      KAFKA__OAUTH2__TOKENENDPOINT: http://keycloak:1852/realms/local-development/protocol/openid-connect/token
+    depends_on:
+      kafkaflinksqljoin-jobmanager:
+        condition: service_healthy
+
+  kafkaflinksqljoin-jobmanager:
+    build:
+      secrets:
+        - GITHUB_TOKEN
+        - GITHUB_ACTOR
+    command: |
+      standalone-job
+      --job-classname cheetah.example.flinksql_interval_join.job.KafkaFlinkSQLJoinJob
+      --kafka-bootstrap-servers kafka:19092
+      --kafka-group-id kafkaflinksqljoin-group-id
+      --leftSource A_SalesOrderItem
+      --rightSource A_SalesOrder
+      --leftDLQ SQL-Test-Join-LeftDLQ
+      --rightDLQ SQL-Test-Join-RightDLQ
+      --sink SQL-Test-Join-Enriched-Output
+      --join-key SalesOrder
+      --groupId Sql-group-id
+      --clientId Sql-client-id
+    ports:
+      - "8098:8081"
+    environment:
+      #SECURITY_PROTOCOL: SASL_PLAINTEXT
+      TOKEN_URL: http://keycloak:1852/realms/local-development/protocol/openid-connect/token
+      KAFKA_CLIENT_ID: default-access
+      KAFKA_CLIENT_SECRET: default-access-secret
+      KAFKA_SCOPE: kafka
+      FLINK_PROPERTIES: |
+        jobmanager.rpc.address: kafkaflinksqljoin-jobmanager
+        scheduler-mode: reactive
+        rest.flamegraph.enabled: true
+        state.backend: hashmap
+        state.checkpoints.dir: file:///checkpoints/processing
+        state.savepoints.dir: file:///checkpoints/processing
+        execution.checkpointing.interval: 30 seconds
+        execution.checkpointing.min-pause: 10 seconds
+
+      # To get the schema - should be done differently in the future(?)
+      ODATA_URL: http://sapdata:8080/
+      ODATA_API_KEY: AeBlsqj7AnAwGj0Ka2uGQHdEYQZzVUHl
+      ODATA_USERNAME: CHEETAH
+      ODATA_PASSWORD: ${CHEETAH_SAP_PASSWORD}
+      ODATA_ENTIYSET_NAME_1: salesorderitems
+      ODATA_ENTIYSET_NAME_2: salesorders1
+      ODATA_ENTIYSET_METADATA_IDENTIFIER_1: API_SALES_ORDER_SRV/A_SalesOrderItemType # normally same as entity_set_name?
+      ODATA_ENTIYSET_METADATA_IDENTIFIER_2: API_SALES_ORDER_SRV/A_SalesOrderType
+      STATE_TIMEOUT_SECONDS: 15
+
+    volumes:
+      - flink:/checkpoints
+    healthcheck:
+      test: curl localhost:8081/jobs | grep -q '"status":"RUNNING"' || exit -1
+      interval: 1s
+      timeout: 1s
+      retries: 30
+    depends_on:
+      - kafkaflinksqljoin-taskmanager
+
+  kafkaflinksqljoin-taskmanager:
+    build:
+      dockerfile: Dockerfile
+      args:
+        - MAVEN_ARGS=${EXTRA_MAVEN_ARGS-}
+      secrets:
+        - GITHUB_TOKEN
+        - GITHUB_ACTOR
+    command: taskmanager
+    environment:
+      FLINK_PROPERTIES: |
+        jobmanager.rpc.address: kafkaflinksqljoin-jobmanager
+        taskmanager.memory.process.size: 4gb
+        taskmanager.numberOfTaskSlots: 1
+    volumes:
+      - flink:/checkpoints
+
+volumes:
+  flink:
+
+secrets:
+  GITHUB_TOKEN:
+    environment: GITHUB_TOKEN
+  GITHUB_ACTOR:
+    environment: GITHUB_ACTOR
+
+networks:
+  default:
+    name: "cheetah-infrastructure"
+    external: true

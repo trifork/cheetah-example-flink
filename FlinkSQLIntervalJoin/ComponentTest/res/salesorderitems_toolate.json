@@ -1,0 +1,243 @@
+[
+{
+  "SalesOrderItemText": "Trad.Good 22,Reorder Point,Batch-ExpD",
+  "AdditionalValueDays": "0",
+  "SDProcessStatus": "C",
+  "ContractAccount": "",
+  "SDDocReferenceStatus": "",
+  "BillingDocumentDate": "2021-11-04T00:00:00Z",
+  "ItemVolumeUnit": "M3",
+  "MaterialByCustomer": "",
+  "PricingReferenceMaterial": "",
+  "RequestedQuantityUnit": "PC",
+  "ItemWeightSAPUnit": "KG",
+  "TransactionCurrency": "USD",
+  "to_Text": {
+    "__deferred": {
+      "uri": "http://vhcals4hci.northeurope.cloudapp.azure.com:50000/sap/opu/odata/sap/API_SALES_ORDER_SRV/A_SalesOrderItem(SalesOrder='4363',SalesOrderItem='40')/to_Text"
+    }
+  },
+  "FixedValueDate": null,
+  "OrderQuantityISOUnit": "PCE",
+  "ItemNetWeight": 900,
+  "NetAmount": 0,
+  "IncotermsTransferLocation": "Palo Alto",
+  "SalesOrderItemCategory": "CFN",
+  "to_Partner": {
+    "__deferred": {
+      "uri": "http://vhcals4hci.northeurope.cloudapp.azure.com:50000/sap/opu/odata/sap/API_SALES_ORDER_SRV/A_SalesOrderItem(SalesOrder='4363',SalesOrderItem='40')/to_Partner"
+    }
+  },
+  "SalesOrder": "4363",
+  "ItemVolumeSAPUnit": "M3",
+  "AccountingExchangeRate": 0,
+  "ShippingType": "",
+  "ConfdDelivQtyInOrderQtyUnit": 10,
+  "ItemWeightUnit": "KG",
+  "ExternalItemID": "",
+  "CustomerGroup": "01",
+  "to_SalesOrder": {
+    "__deferred": {
+      "uri": "http://vhcals4hci.northeurope.cloudapp.azure.com:50000/sap/opu/odata/sap/API_SALES_ORDER_SRV/A_SalesOrderItem(SalesOrder='4363',SalesOrderItem='40')/to_SalesOrder"
+    }
+  },
+  "ReferenceSDDocumentItem": "0",
+  "MatlAccountAssignmentGroup": "01",
+  "SalesDocumentRjcnReason": "",
+  "PurchaseOrderByShipToParty": "",
+  "IncotermsClassification": "EXW",
+  "DeliveryGroup": "0",
+  "PricingDate": "2021-10-27T00:00:00Z",
+  "MaterialGroup": "L001",
+  "OrderQuantitySAPUnit": "ST",
+  "AdditionalMaterialGroup3": "",
+  "AdditionalMaterialGroup4": "",
+  "HigherLevelItemUsage": "",
+  "AdditionalMaterialGroup1": "",
+  "SalesOrderItem": "40",
+  "AdditionalMaterialGroup2": "",
+  "HigherLevelItem": "0",
+  "TotalSDDocReferenceStatus": "",
+  "RequestedQuantity": 10,
+  "ItemWeightISOUnit": "KGM",
+  "AdditionalMaterialGroup5": "",
+  "WBSElement": "",
+  "ItemBillingBlockReason": "",
+  "ItemVolume": 10,
+  "DeliveryDateTypeRule": "",
+  "RequestedQuantityISOUnit": "PCE",
+  "to_ScheduleLine": {
+    "__deferred": {
+      "uri": "http://vhcals4hci.northeurope.cloudapp.azure.com:50000/sap/opu/odata/sap/API_SALES_ORDER_SRV/A_SalesOrderItem(SalesOrder='4363',SalesOrderItem='40')/to_ScheduleLine"
+    }
+  },
+  "ShippingPoint": "1710",
+  "OrderRelatedBillingStatus": "",
+  "MaterialSubstitutionReason": "",
+  "ItemGrossWeight": 1000,
+  "Batch": "",
+  "ItemVolumeISOUnit": "MTQ",
+  "DeliveryStatus": "C",
+  "__metadata": {
+    "id": "http://vhcals4hci.northeurope.cloudapp.azure.com:50000/sap/opu/odata/sap/API_SALES_ORDER_SRV/A_SalesOrderItem(SalesOrder='4363',SalesOrderItem='40')",
+    "type": "API_SALES_ORDER_SRV.A_SalesOrderItemType",
+    "uri": "http://vhcals4hci.northeurope.cloudapp.azure.com:50000/sap/opu/odata/sap/API_SALES_ORDER_SRV/A_SalesOrderItem(SalesOrder='4363',SalesOrderItem='40')"
+  },
+  "StorageLocation": "",
+  "OrderQuantityUnit": "PC",
+  "RequestedQuantitySAPUnit": "ST",
+  "ServicesRenderedDate": null,
+  "ProductionPlant": "1710",
+  "IncotermsLocation2": "",
+  "ProfitCenter": "YB700",
+  "IncotermsLocation1": "Palo Alto",
+  "SlsDocIsRlvtForProofOfDeliv": true,
+  "PurchaseOrderByCustomer": "400027102021-1IU1.1",
+  "RequirementSegment": "",
+  "Material": "TG22",
+  "ProductTaxClassification1": "1",
+  "to_PricingElement": {
+    "__deferred": {
+      "uri": "http://vhcals4hci.northeurope.cloudapp.azure.com:50000/sap/opu/odata/sap/API_SALES_ORDER_SRV/A_SalesOrderItem(SalesOrder='4363',SalesOrderItem='40')/to_PricingElement"
+    }
+  },
+  "ProductTaxClassification6": "",
+  "ProductTaxClassification7": "",
+  "ProductTaxClassification8": "",
+  "to_RelatedObject": {
+    "__deferred": {
+      "uri": "http://vhcals4hci.northeurope.cloudapp.azure.com:50000/sap/opu/odata/sap/API_SALES_ORDER_SRV/A_SalesOrderItem(SalesOrder='4363',SalesOrderItem='40')/to_RelatedObject"
+    }
+  },
+  "DeliveryPriority": "2",
+  "ProductTaxClassification9": "",
+  "ProductTaxClassification2": "",
+  "ProductTaxClassification3": "",
+  "CustomerPaymentTerms": "0004",
+  "ProductTaxClassification4": "",
+  "ReferenceSDDocument": "",
+  "ProductTaxClassification5": "",
+  "MaterialPricingGroup": ""
+},
+  {
+    "SalesOrderItemText": "Trad.Good 11,PD,Reg.Trading",
+    "AdditionalValueDays": "0",
+    "SDProcessStatus": "C",
+    "ContractAccount": "",
+    "SDDocReferenceStatus": "",
+    "BillingDocumentDate": "2019-10-22T00:00:00Z",
+    "ItemVolumeUnit": "M3",
+    "MaterialByCustomer": "",
+    "PricingReferenceMaterial": "",
+    "RequestedQuantityUnit": "PC",
+    "ItemWeightSAPUnit": "KG",
+    "TransactionCurrency": "USD",
+    "to_Text": {
+      "__deferred": {
+        "uri": "http://vhcals4hci.northeurope.cloudapp.azure.com:50000/sap/opu/odata/sap/API_SALES_ORDER_SRV/A_SalesOrderItem(SalesOrder='1858',SalesOrderItem='10')/to_Text"
+      }
+    },
+    "FixedValueDate": null,
+    "OrderQuantityISOUnit": "PCE",
+    "ItemNetWeight": 81,
+    "NetAmount": 87.75,
+    "IncotermsTransferLocation": "Palo Alto",
+    "SalesOrderItemCategory": "TAN",
+    "to_Partner": {
+      "__deferred": {
+        "uri": "http://vhcals4hci.northeurope.cloudapp.azure.com:50000/sap/opu/odata/sap/API_SALES_ORDER_SRV/A_SalesOrderItem(SalesOrder='1858',SalesOrderItem='10')/to_Partner"
+      }
+    },
+    "SalesOrder": "1858",
+    "ItemVolumeSAPUnit": "M3",
+    "AccountingExchangeRate": 0,
+    "ShippingType": "",
+    "ConfdDelivQtyInOrderQtyUnit": 5,
+    "ItemWeightUnit": "KG",
+    "ExternalItemID": "",
+    "CustomerGroup": "01",
+    "to_SalesOrder": {
+      "__deferred": {
+        "uri": "http://vhcals4hci.northeurope.cloudapp.azure.com:50000/sap/opu/odata/sap/API_SALES_ORDER_SRV/A_SalesOrderItem(SalesOrder='1858',SalesOrderItem='10')/to_SalesOrder"
+      }
+    },
+    "ReferenceSDDocumentItem": "0",
+    "MatlAccountAssignmentGroup": "01",
+    "SalesDocumentRjcnReason": "",
+    "PurchaseOrderByShipToParty": "",
+    "IncotermsClassification": "EXW",
+    "DeliveryGroup": "0",
+    "PricingDate": "2019-10-22T00:00:00Z",
+    "MaterialGroup": "L001",
+    "OrderQuantitySAPUnit": "ST",
+    "AdditionalMaterialGroup3": "",
+    "AdditionalMaterialGroup4": "",
+    "HigherLevelItemUsage": "",
+    "AdditionalMaterialGroup1": "",
+    "SalesOrderItem": "10",
+    "AdditionalMaterialGroup2": "",
+    "HigherLevelItem": "0",
+    "TotalSDDocReferenceStatus": "",
+    "RequestedQuantity": 5,
+    "ItemWeightISOUnit": "KGM",
+    "AdditionalMaterialGroup5": "",
+    "WBSElement": "",
+    "ItemBillingBlockReason": "",
+    "ItemVolume": 0.9,
+    "DeliveryDateTypeRule": "",
+    "RequestedQuantityISOUnit": "PCE",
+    "to_ScheduleLine": {
+      "__deferred": {
+        "uri": "http://vhcals4hci.northeurope.cloudapp.azure.com:50000/sap/opu/odata/sap/API_SALES_ORDER_SRV/A_SalesOrderItem(SalesOrder='1858',SalesOrderItem='10')/to_ScheduleLine"
+      }
+    },
+    "ShippingPoint": "1710",
+    "OrderRelatedBillingStatus": "",
+    "MaterialSubstitutionReason": "",
+    "ItemGrossWeight": 90,
+    "Batch": "",
+    "ItemVolumeISOUnit": "MTQ",
+    "DeliveryStatus": "C",
+    "__metadata": {
+      "id": "http://vhcals4hci.northeurope.cloudapp.azure.com:50000/sap/opu/odata/sap/API_SALES_ORDER_SRV/A_SalesOrderItem(SalesOrder='1858',SalesOrderItem='10')",
+      "type": "API_SALES_ORDER_SRV.A_SalesOrderItemType",
+      "uri": "http://vhcals4hci.northeurope.cloudapp.azure.com:50000/sap/opu/odata/sap/API_SALES_ORDER_SRV/A_SalesOrderItem(SalesOrder='1858',SalesOrderItem='10')"
+    },
+    "StorageLocation": "",
+    "OrderQuantityUnit": "PC",
+    "RequestedQuantitySAPUnit": "ST",
+    "ServicesRenderedDate": null,
+    "ProductionPlant": "1710",
+    "IncotermsLocation2": "",
+    "ProfitCenter": "YB700",
+    "IncotermsLocation1": "Palo Alto",
+    "SlsDocIsRlvtForProofOfDeliv": true,
+    "PurchaseOrderByCustomer": "BD9 OR 2",
+    "RequirementSegment": "",
+    "Material": "TG11",
+    "ProductTaxClassification1": "1",
+    "to_PricingElement": {
+      "__deferred": {
+        "uri": "http://vhcals4hci.northeurope.cloudapp.azure.com:50000/sap/opu/odata/sap/API_SALES_ORDER_SRV/A_SalesOrderItem(SalesOrder='1858',SalesOrderItem='10')/to_PricingElement"
+      }
+    },
+    "ProductTaxClassification6": "",
+    "ProductTaxClassification7": "",
+    "ProductTaxClassification8": "",
+    "to_RelatedObject": {
+      "__deferred": {
+        "uri": "http://vhcals4hci.northeurope.cloudapp.azure.com:50000/sap/opu/odata/sap/API_SALES_ORDER_SRV/A_SalesOrderItem(SalesOrder='1858',SalesOrderItem='10')/to_RelatedObject"
+      }
+    },
+    "DeliveryPriority": "2",
+    "ProductTaxClassification9": "",
+    "ProductTaxClassification2": "",
+    "ProductTaxClassification3": "",
+    "CustomerPaymentTerms": "0004",
+    "ProductTaxClassification4": "",
+    "ReferenceSDDocument": "",
+    "ProductTaxClassification5": "",
+    "MaterialPricingGroup": ""
+  }
+  
+]

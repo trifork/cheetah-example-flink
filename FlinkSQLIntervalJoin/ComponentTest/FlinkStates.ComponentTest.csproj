@@ -4,12 +4,15 @@
         <TargetFramework>net8.0</TargetFramework>
         <Nullable>enable</Nullable>
         <IsPackable>false</IsPackable>
+        <OutputType>WinExe</OutputType>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Cheetah.Kafka" Version="0.2.0" />
+        <PackageReference Include="Cheetah.Kafka" Version="0.3.0-writer-modification-chfr-SNAPSHOT38" />
         <PackageReference Include="FluentAssertions" Version="6.12.0" />
+        <PackageReference Include="JsonDiffPatch.Net" Version="2.3.0" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
         <PackageReference Include="xunit" Version="2.8.0" />
         <PackageReference Include="xunit.runner.visualstudio" Version="2.8.0">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -23,6 +26,24 @@
 
     <ItemGroup>
       <None Update="appsettings.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="res\salesorders_cannotbejoined.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="res\salesorderitems_canbejoined.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="res\salesorderitems_cannotbejoined.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="res\salesorderitems_tooearly.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="res\salesorderitems_toolate.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="res\salesorders_canbejoined.json">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
     </ItemGroup>

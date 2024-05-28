@@ -1,0 +1,122 @@
+[
+  {
+    "SalesOrderItemText": "C990 Bike",
+    "AdditionalValueDays": "0",
+    "SDProcessStatus": "C",
+    "ContractAccount": "",
+    "SDDocReferenceStatus": "",
+    "BillingDocumentDate": "2019-10-21T00:00:00Z",
+    "ItemVolumeUnit": "",
+    "MaterialByCustomer": "",
+    "PricingReferenceMaterial": "",
+    "RequestedQuantityUnit": "PC",
+    "ItemWeightSAPUnit": "KG",
+    "TransactionCurrency": "USD",
+    "to_Text": {
+      "__deferred": {
+        "uri": "http://vhcals4hci.northeurope.cloudapp.azure.com:50000/sap/opu/odata/sap/API_SALES_ORDER_SRV/A_SalesOrderItem(SalesOrder='1804',SalesOrderItem='10')/to_Text"
+      }
+    },
+    "FixedValueDate": null,
+    "OrderQuantityISOUnit": "PCE",
+    "ItemNetWeight": 56,
+    "NetAmount": 8016,
+    "IncotermsTransferLocation": "Cost & Freight",
+    "SalesOrderItemCategory": "TAN",
+    "to_Partner": {
+      "__deferred": {
+        "uri": "http://vhcals4hci.northeurope.cloudapp.azure.com:50000/sap/opu/odata/sap/API_SALES_ORDER_SRV/A_SalesOrderItem(SalesOrder='1804',SalesOrderItem='10')/to_Partner"
+      }
+    },
+    "SalesOrder": "1804",
+    "ItemVolumeSAPUnit": "",
+    "AccountingExchangeRate": 0,
+    "ShippingType": "",
+    "ConfdDelivQtyInOrderQtyUnit": 8,
+    "ItemWeightUnit": "KG",
+    "ExternalItemID": "",
+    "CustomerGroup": "Z2",
+    "to_SalesOrder": {
+      "__deferred": {
+        "uri": "http://vhcals4hci.northeurope.cloudapp.azure.com:50000/sap/opu/odata/sap/API_SALES_ORDER_SRV/A_SalesOrderItem(SalesOrder='1804',SalesOrderItem='10')/to_SalesOrder"
+      }
+    },
+    "ReferenceSDDocumentItem": "10",
+    "MatlAccountAssignmentGroup": "",
+    "SalesDocumentRjcnReason": "",
+    "PurchaseOrderByShipToParty": "",
+    "IncotermsClassification": "CFR",
+    "DeliveryGroup": "0",
+    "PricingDate": "2019-10-21T00:00:00Z",
+    "MaterialGroup": "ZCRUISE",
+    "OrderQuantitySAPUnit": "ST",
+    "AdditionalMaterialGroup3": "",
+    "AdditionalMaterialGroup4": "",
+    "HigherLevelItemUsage": "",
+    "AdditionalMaterialGroup1": "",
+    "SalesOrderItem": "10",
+    "AdditionalMaterialGroup2": "",
+    "HigherLevelItem": "0",
+    "TotalSDDocReferenceStatus": "",
+    "RequestedQuantity": 8,
+    "ItemWeightISOUnit": "KGM",
+    "AdditionalMaterialGroup5": "",
+    "WBSElement": "",
+    "ItemBillingBlockReason": "",
+    "ItemVolume": 0,
+    "DeliveryDateTypeRule": "",
+    "RequestedQuantityISOUnit": "PCE",
+    "to_ScheduleLine": {
+      "__deferred": {
+        "uri": "http://vhcals4hci.northeurope.cloudapp.azure.com:50000/sap/opu/odata/sap/API_SALES_ORDER_SRV/A_SalesOrderItem(SalesOrder='1804',SalesOrderItem='10')/to_ScheduleLine"
+      }
+    },
+    "ShippingPoint": "1710",
+    "OrderRelatedBillingStatus": "",
+    "MaterialSubstitutionReason": "",
+    "ItemGrossWeight": 120,
+    "Batch": "",
+    "ItemVolumeISOUnit": "",
+    "DeliveryStatus": "C",
+    "__metadata": {
+      "id": "http://vhcals4hci.northeurope.cloudapp.azure.com:50000/sap/opu/odata/sap/API_SALES_ORDER_SRV/A_SalesOrderItem(SalesOrder='1804',SalesOrderItem='10')",
+      "type": "API_SALES_ORDER_SRV.A_SalesOrderItemType",
+      "uri": "http://vhcals4hci.northeurope.cloudapp.azure.com:50000/sap/opu/odata/sap/API_SALES_ORDER_SRV/A_SalesOrderItem(SalesOrder='1804',SalesOrderItem='10')"
+    },
+    "StorageLocation": "",
+    "OrderQuantityUnit": "PC",
+    "RequestedQuantitySAPUnit": "ST",
+    "ServicesRenderedDate": null,
+    "ProductionPlant": "1710",
+    "IncotermsLocation2": "",
+    "ProfitCenter": "US10_PLC",
+    "IncotermsLocation1": "Cost & Freight",
+    "SlsDocIsRlvtForProofOfDeliv": false,
+    "PurchaseOrderByCustomer": "4500108477",
+    "RequirementSegment": "",
+    "Material": "MZ-FG-C990",
+    "ProductTaxClassification1": "0",
+    "to_PricingElement": {
+      "__deferred": {
+        "uri": "http://vhcals4hci.northeurope.cloudapp.azure.com:50000/sap/opu/odata/sap/API_SALES_ORDER_SRV/A_SalesOrderItem(SalesOrder='1804',SalesOrderItem='10')/to_PricingElement"
+      }
+    },
+    "ProductTaxClassification6": "",
+    "ProductTaxClassification7": "",
+    "ProductTaxClassification8": "",
+    "to_RelatedObject": {
+      "__deferred": {
+        "uri": "http://vhcals4hci.northeurope.cloudapp.azure.com:50000/sap/opu/odata/sap/API_SALES_ORDER_SRV/A_SalesOrderItem(SalesOrder='1804',SalesOrderItem='10')/to_RelatedObject"
+      }
+    },
+    "DeliveryPriority": "0",
+    "ProductTaxClassification9": "",
+    "ProductTaxClassification2": "",
+    "ProductTaxClassification3": "",
+    "CustomerPaymentTerms": "NT30",
+    "ProductTaxClassification4": "",
+    "ReferenceSDDocument": "20000766",
+    "ProductTaxClassification5": "",
+    "MaterialPricingGroup": ""
+  }
+]
