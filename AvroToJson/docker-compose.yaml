@@ -43,7 +43,7 @@ services:
         jobmanager.rpc.address: avrotojson-jobmanager
         scheduler-mode: reactive
         rest.flamegraph.enabled: true
-        state.backend: hashmap
+        state.backend.type: hashmap
         state.checkpoints.dir: file:///checkpoints/processing
         state.savepoints.dir: file:///checkpoints/processing
         execution.checkpointing.interval: 300 seconds
