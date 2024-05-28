@@ -30,7 +30,7 @@ services:
         jobmanager.rpc.address: storage-job-jobmanager
         scheduler-mode: reactive
         rest.flamegraph.enabled: true
-        state.backend: hashmap
+        state.backend.type: hashmap
         state.checkpoints.dir: file:///checkpoints/storage
         state.savepoints.dir: file:///checkpoints/storage
         execution.checkpointing.interval: 20 seconds

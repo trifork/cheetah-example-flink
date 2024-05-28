@@ -42,7 +42,7 @@ services:
         jobmanager.rpc.address: flinkstates-jobmanager
         scheduler-mode: reactive
         rest.flamegraph.enabled: true
-        state.backend: rocksdb
+        state.backend.type: rocksdb
         state.checkpoints.dir: file:///checkpoints/processing
         state.savepoints.dir: file:///checkpoints/processing
         execution.checkpointing.interval: 300 seconds
