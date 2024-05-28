@@ -1,8 +1,8 @@
-package cheetah.example.flinksql_interval_join.job;
+package cheetah.example.flinksqlintervaljoin.job;
 
-import cheetah.example.flinksql_interval_join.mapping.EdmToSqlTypesMapper;
-import cheetah.example.flinksql_interval_join.mapping.SqlSchemaBuilder;
-import cheetah.example.flinksql_interval_join.util.ODataUtil;
+import cheetah.example.flinksqlintervaljoin.mapping.EdmToSqlTypesMapper;
+import cheetah.example.flinksqlintervaljoin.mapping.SqlSchemaBuilder;
+import cheetah.example.flinksqlintervaljoin.util.ODataUtil;
 import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.table.api.*;

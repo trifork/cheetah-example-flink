@@ -1,4 +1,4 @@
-package cheetah.example.flinksql_interval_join.mapping;
+package cheetah.example.flinksqlintervaljoin.mapping;
 
 import org.apache.flink.table.types.logical.LogicalTypeRoot;
 import org.apache.olingo.odata2.api.edm.Edm;

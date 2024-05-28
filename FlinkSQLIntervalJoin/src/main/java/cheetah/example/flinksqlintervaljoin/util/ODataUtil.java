@@ -1,4 +1,4 @@
-package cheetah.example.flinksql_interval_join.util;
+package cheetah.example.flinksqlintervaljoin.util;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;

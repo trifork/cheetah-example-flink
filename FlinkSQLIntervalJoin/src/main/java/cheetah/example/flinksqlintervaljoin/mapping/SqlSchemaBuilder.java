@@ -1,4 +1,4 @@
-package cheetah.example.flinksql_interval_join.mapping;
+package cheetah.example.flinksqlintervaljoin.mapping;
 
 import org.apache.flink.table.api.DataTypes;
 import org.apache.flink.table.api.Schema;

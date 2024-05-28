@@ -1,4 +1,4 @@
-package cheetah.example.flinksql_interval_join.mapping;
+package cheetah.example.flinksqlintervaljoin.mapping;
 
 import org.json.JSONObject;
 

@@ -31,7 +31,7 @@ RUN --mount=type=secret,id=GITHUB_TOKEN \
 #
 #  Install jar onto clean runtime system.
 #
-FROM ghcr.io/trifork/cheetah-flink:5.1.1-flink-1.18.1-java17
+FROM flink:1.18.1-scala_2.12-java17 as runtime
 
 COPY --from=build /app/target/flinksqljoin*.jar /opt/flink/usrlib/artifacts/flinksqljoin.jar
 

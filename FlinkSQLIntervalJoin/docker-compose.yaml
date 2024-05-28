@@ -24,7 +24,7 @@ services:
         - GITHUB_ACTOR
     command: |
       standalone-job
-      --job-classname cheetah.example.flinksql_interval_join.job.KafkaFlinkSQLJoinJob
+      --job-classname cheetah.example.flinksqlintervaljoin.job.KafkaFlinkSQLJoinJob
       --kafka-bootstrap-servers kafka:19092
       --kafka-group-id kafkaflinksqljoin-group-id
       --leftSource A_SalesOrderItem
@@ -39,7 +39,7 @@ services:
       - "8098:8081"
     environment:
       #SECURITY_PROTOCOL: SASL_PLAINTEXT
-      TOKEN_URL: http://keycloak:1852/realms/local-development/protocol/openid-connect/token
+      TOKEN_URL: http://keycloak:1852/realms/local-development/protocol/openid- connect/token
       KAFKA_CLIENT_ID: default-access
       KAFKA_CLIENT_SECRET: default-access-secret
       KAFKA_SCOPE: kafka

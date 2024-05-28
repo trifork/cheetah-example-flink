@@ -22,7 +22,7 @@ under the License.
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>cheetah.example</groupId>
-    <artifactId>flinkstates</artifactId>
+    <artifactId>flinksqljoin</artifactId>
     <version>0.0.1</version>
     <packaging>jar</packaging>
 
@@ -190,7 +190,7 @@ under the License.
                             </filters>
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>cheetah.example.flinksql_interval_join.job.KafkaFlinkSQLJoinJob</mainClass>
+                                    <mainClass>cheetah.example.flinksqlintervaljoin.job.KafkaFlinkSQLJoinJob</mainClass>
                                 </transformer>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
                             </transformers>
