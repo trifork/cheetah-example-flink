@@ -1,7 +1,7 @@
 #
 #  Install dependencies, compile sources, build jar.
 #
-FROM maven:3.9.6-eclipse-temurin-17-alpine as build
+FROM maven:3.9.7-eclipse-temurin-17-alpine as build
 
 WORKDIR /app
 
