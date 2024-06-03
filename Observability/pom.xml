@@ -49,7 +49,7 @@ under the License.
         <dependency>
             <groupId>com.trifork.cheetah.processing</groupId>
             <artifactId>cheetah-lib-processing</artifactId>
-            <version>5.1.1</version>
+            <version>5.1.2</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -116,7 +116,7 @@ under the License.
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.5.3</version>
+                <version>3.6.0</version>
                 <executions>
                     <!-- Run shade goal on package phase -->
                     <execution>
