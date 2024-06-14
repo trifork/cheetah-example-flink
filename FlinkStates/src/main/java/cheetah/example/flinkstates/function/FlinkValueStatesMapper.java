@@ -19,7 +19,7 @@ public class FlinkValueStatesMapper extends RichFlatMapFunction<InputEvent, Doub
 
     @Override
     public void flatMap(InputEvent value, Collector<Double> out) throws Exception {
-        var currentSum = sum.value();
+        Tuple2<Long, Double> currentSum = sum.value();
         if (currentSum == null) {
             currentSum = new Tuple2<>(0L, 0.0);
         }

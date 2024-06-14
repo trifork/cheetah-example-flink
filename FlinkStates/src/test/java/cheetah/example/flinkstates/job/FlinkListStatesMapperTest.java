@@ -10,6 +10,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 class FlinkListStatesMapperTest {
 
     private KeyedOneInputStreamOperatorTestHarness<String, InputEvent, Double[]> harness;
@@ -17,7 +19,7 @@ class FlinkListStatesMapperTest {
     //Setup test harness for all the below tests
     @BeforeEach
     public void setup() throws Exception {
-        var sut = new FlinkListStatesMapper();
+        FlinkListStatesMapper sut = new FlinkListStatesMapper();
         harness = new KeyedOneInputStreamOperatorTestHarness<>(new StreamFlatMap<>(sut), InputEvent::getDeviceId, Types.STRING);
         harness.setup();
         harness.open();
@@ -27,17 +29,17 @@ class FlinkListStatesMapperTest {
     public void ensureElementsAreStored() throws Exception {
         harness.processElement(new StreamRecord<>(new InputEvent("device", 1.0, System.currentTimeMillis())));
         harness.processElement(new StreamRecord<>(new InputEvent("device", 2.0, System.currentTimeMillis())));
-        var output = harness.extractOutputValues();
+        List<Double[]> output = harness.extractOutputValues();
         Assertions.assertEquals(1, (long) output.size());
         Assertions.assertEquals(2, output.get(0).length);
-        Assertions.assertEquals(1, output.get(0)[0].doubleValue());
-        Assertions.assertEquals(2, output.get(0)[1].doubleValue());
+        Assertions.assertEquals(1, output.get(0)[0]);
+        Assertions.assertEquals(2, output.get(0)[1]);
     }
 
     @Test
     public void ensureNoOutputIfOnlyOneMessage() throws Exception {
         harness.processElement(new StreamRecord<>(new InputEvent("device", 1.0, System.currentTimeMillis())));
-        var output = harness.extractOutputValues();
+        List<Double[]> output = harness.extractOutputValues();
         Assertions.assertEquals(0, (long) output.size());
     }
 }

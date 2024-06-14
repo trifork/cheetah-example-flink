@@ -1,7 +1,6 @@
 package cheetah.example.flinkstates.function;
 
 import cheetah.example.flinkstates.model.InputEvent;
-import org.apache.flink.api.common.functions.ReduceFunction;
 import org.apache.flink.api.common.functions.RichFlatMapFunction;
 import org.apache.flink.api.common.state.ReducingState;
 import org.apache.flink.api.common.state.ReducingStateDescriptor;
@@ -29,13 +28,9 @@ public class FlinkReducingStatesMapper extends RichFlatMapFunction<InputEvent, D
         ReducingStateDescriptor<Double> descriptor =
                 new ReducingStateDescriptor<>(
                         "values", // the state name
-                        getReduceFunction(),
+                        Double::sum,
                         Types.DOUBLE);
         sum = getRuntimeContext().getReducingState(descriptor);
-    }
-
-    private static ReduceFunction<Double> getReduceFunction() {
-        return (a, b) -> Double.sum(a, b);
     }
 
 }

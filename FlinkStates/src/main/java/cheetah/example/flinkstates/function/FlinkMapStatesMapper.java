@@ -23,7 +23,7 @@ public class FlinkMapStatesMapper extends RichFlatMapFunction<InputEvent, Double
      */
     @Override
     public void flatMap(InputEvent value, Collector<Double> out) throws Exception {
-        var sum = sumPerDevice.get(value.getDeviceId());
+        Double sum = sumPerDevice.get(value.getDeviceId());
         if (sum == null) {
             sum = 0.0;
         }

@@ -2,6 +2,8 @@ package cheetah.example.serializationerrorcatch.job;
 
 import cheetah.example.serializationerrorcatch.function.SerializationErrorCatchMapper;
 import cheetah.example.serializationerrorcatch.model.InputEvent;
+import cheetah.example.serializationerrorcatch.model.OutputEvent;
+
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
@@ -16,9 +18,9 @@ class SerializationErrorCatchMapperTest {
         final String deviceId = UUID.randomUUID().toString();
         final double value = 1.0;
         final long timestamp = 0;
-        final var input = new InputEvent(deviceId, value, timestamp);
+        final InputEvent input = new InputEvent(deviceId, value, timestamp);
 
-        final var actual = mapper.map(input);
+        final OutputEvent actual = mapper.map(input);
 
         assertEquals(deviceId, actual.getDeviceId());
         assertEquals(value, actual.getValue());

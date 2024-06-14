@@ -27,7 +27,7 @@ public class FlinkListStatesMapper extends RichFlatMapFunction<InputEvent, Doubl
     @Override
     public void flatMap(InputEvent value, Collector<Double[]> out) throws Exception {
         values.add(value.getValue());
-        var iterator = values.get();
+        Iterable<Double> iterator = values.get();
         int counter = 0;
         for (Double ignored : iterator) {
             counter++;

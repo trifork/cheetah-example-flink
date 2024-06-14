@@ -1,6 +1,8 @@
 package com.cheetah.example.job;
 
 import com.cheetah.example.model.InputEvent;
+import com.cheetah.example.model.OutputEvent;
+
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
@@ -18,9 +20,9 @@ class KeySerializationSchemaMapperTest {
         final double value = 1.0;
         final long timestamp = 0;
         final String keys = "keys";
-        final var input = new InputEvent(deviceId, value, timestamp, keys);
+        final InputEvent input = new InputEvent(deviceId, value, timestamp, keys);
 
-        final var actual = mapper.map(input);
+        final OutputEvent actual = mapper.map(input);
 
         assertEquals(deviceId, actual.getDeviceId());
         assertEquals(value, actual.getValue());

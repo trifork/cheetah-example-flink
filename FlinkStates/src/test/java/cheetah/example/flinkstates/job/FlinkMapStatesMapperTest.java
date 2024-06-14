@@ -2,6 +2,9 @@ package cheetah.example.flinkstates.job;
 
 import cheetah.example.flinkstates.function.FlinkMapStatesMapper;
 import cheetah.example.flinkstates.model.InputEvent;
+
+import java.util.List;
+
 import org.apache.flink.api.common.typeinfo.Types;
 import org.apache.flink.streaming.api.operators.StreamFlatMap;
 import org.apache.flink.streaming.runtime.streamrecord.StreamRecord;
@@ -17,7 +20,7 @@ class FlinkMapStatesMapperTest {
     //Setup test harness for all the below tests
     @BeforeEach
     public void setup() throws Exception {
-        var sut = new FlinkMapStatesMapper();
+        FlinkMapStatesMapper sut = new FlinkMapStatesMapper();
         harness = new KeyedOneInputStreamOperatorTestHarness<>(new StreamFlatMap<>(sut), InputEvent::getDeviceId, Types.STRING);
         harness.setup();
         harness.open();
@@ -26,7 +29,7 @@ class FlinkMapStatesMapperTest {
     @Test
     public void outputIfOnlyOneMessage() throws Exception {
         harness.processElement(new StreamRecord<>(new InputEvent("device", 1.0, System.currentTimeMillis())));
-        var output = harness.extractOutputValues();
+        List<Double> output = harness.extractOutputValues();
         Assertions.assertEquals(1, (long) output.size());
         Assertions.assertEquals(1, output.get(0));
     }
@@ -35,7 +38,7 @@ class FlinkMapStatesMapperTest {
     public void ensureSumIsCalculated() throws Exception {
         harness.processElement(new StreamRecord<>(new InputEvent("device", 1.0, System.currentTimeMillis())));
         harness.processElement(new StreamRecord<>(new InputEvent("device", 2.0, System.currentTimeMillis())));
-        var output = harness.extractOutputValues();
+        List<Double> output = harness.extractOutputValues();
         Assertions.assertEquals(2, (long) output.size());
         Assertions.assertEquals(1, output.get(0));
         Assertions.assertEquals(3, output.get(1));
@@ -46,7 +49,7 @@ class FlinkMapStatesMapperTest {
         harness.processElement(new StreamRecord<>(new InputEvent("device", 1.0, System.currentTimeMillis())));
         harness.processElement(new StreamRecord<>(new InputEvent("device2", 2.0, System.currentTimeMillis())));
         harness.processElement(new StreamRecord<>(new InputEvent("device", 3.0, System.currentTimeMillis())));
-        var output = harness.extractOutputValues();
+        List<Double> output = harness.extractOutputValues();
         Assertions.assertEquals(3, (long) output.size());
         Assertions.assertEquals(1, output.get(0));
         Assertions.assertEquals(2, output.get(1));
