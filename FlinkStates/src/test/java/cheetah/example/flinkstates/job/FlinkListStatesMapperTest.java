@@ -2,9 +2,6 @@ package cheetah.example.flinkstates.job;
 
 import cheetah.example.flinkstates.function.FlinkListStatesMapper;
 import cheetah.example.flinkstates.model.InputEvent;
-
-import java.util.List;
-
 import org.apache.flink.api.common.typeinfo.Types;
 import org.apache.flink.streaming.api.operators.StreamFlatMap;
 import org.apache.flink.streaming.runtime.streamrecord.StreamRecord;
@@ -12,6 +9,8 @@ import org.apache.flink.streaming.util.KeyedOneInputStreamOperatorTestHarness;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 class FlinkListStatesMapperTest {
 
@@ -33,8 +32,8 @@ class FlinkListStatesMapperTest {
         List<Double[]> output = harness.extractOutputValues();
         Assertions.assertEquals(1, (long) output.size());
         Assertions.assertEquals(2, output.get(0).length);
-        Assertions.assertEquals(1, output.get(0)[0].doubleValue());
-        Assertions.assertEquals(2, output.get(0)[1].doubleValue());
+        Assertions.assertEquals(1, output.get(0)[0]);
+        Assertions.assertEquals(2, output.get(0)[1]);
     }
 
     @Test
