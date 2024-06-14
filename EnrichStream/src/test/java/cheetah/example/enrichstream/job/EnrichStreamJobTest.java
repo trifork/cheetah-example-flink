@@ -19,8 +19,8 @@ class EnrichStreamJobTest {
     //Setup test harness for all the below tests
     @BeforeEach
     void setup() throws Exception {
-        var sut = new EventEnricher();
-        var operator = new KeyedCoProcessOperator<>(sut);
+        EventEnricher sut = new EventEnricher();
+        KeyedCoProcessOperator<String, EnrichEvent, InputEvent, OutputEvent> operator = new KeyedCoProcessOperator<>(sut);
         harness = new KeyedTwoInputStreamOperatorTestHarness<>(operator, EnrichEvent::getDeviceId, InputEvent::getDeviceId, Types.STRING);
         harness.setup();
         harness.open();
@@ -50,7 +50,7 @@ class EnrichStreamJobTest {
         harness.processElement1(new StreamRecord<>(new EnrichEvent("device", 1, 0)));
         harness.processElement2(new StreamRecord<>(new InputEvent("device", 2, 0)));
         Assertions.assertFalse(harness.getOutput().isEmpty());
-        var element = harness.extractOutputValues().get(0);
+        OutputEvent element = harness.extractOutputValues().get(0);
         Assertions.assertEquals("device", element.getDeviceId());
         Assertions.assertEquals(2, element.getValue());
         Assertions.assertEquals(1, element.getEnrichValue());

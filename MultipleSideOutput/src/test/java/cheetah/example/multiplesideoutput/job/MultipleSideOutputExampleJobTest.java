@@ -21,8 +21,8 @@ class MultipleSideOutputExampleJobTest {
     // Setup the job before each state
     @BeforeEach
     public void setup() throws Exception {
-        var sut = new MultipleSideOutputExampleProcess();
-        var operator = new KeyedProcessOperator<>(sut);
+        MultipleSideOutputExampleProcess sut = new MultipleSideOutputExampleProcess();
+        KeyedProcessOperator<String, InputEvent, InputEvent> operator = new KeyedProcessOperator<>(sut);
         harness = new KeyedOneInputStreamOperatorTestHarness<>(operator, InputEvent::getDeviceId, Types.STRING);
         harness.setup();
         harness.open();

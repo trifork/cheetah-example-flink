@@ -2,6 +2,9 @@ package cheetah.example.flinkstates.job;
 
 import cheetah.example.flinkstates.function.FlinkListStatesMapper;
 import cheetah.example.flinkstates.model.InputEvent;
+
+import java.util.List;
+
 import org.apache.flink.api.common.typeinfo.Types;
 import org.apache.flink.streaming.api.operators.StreamFlatMap;
 import org.apache.flink.streaming.runtime.streamrecord.StreamRecord;
@@ -17,7 +20,7 @@ class FlinkListStatesMapperTest {
     //Setup test harness for all the below tests
     @BeforeEach
     public void setup() throws Exception {
-        var sut = new FlinkListStatesMapper();
+        FlinkListStatesMapper sut = new FlinkListStatesMapper();
         harness = new KeyedOneInputStreamOperatorTestHarness<>(new StreamFlatMap<>(sut), InputEvent::getDeviceId, Types.STRING);
         harness.setup();
         harness.open();
@@ -27,7 +30,7 @@ class FlinkListStatesMapperTest {
     public void ensureElementsAreStored() throws Exception {
         harness.processElement(new StreamRecord<>(new InputEvent("device", 1.0, System.currentTimeMillis())));
         harness.processElement(new StreamRecord<>(new InputEvent("device", 2.0, System.currentTimeMillis())));
-        var output = harness.extractOutputValues();
+        List<Double[]> output = harness.extractOutputValues();
         Assertions.assertEquals(1, (long) output.size());
         Assertions.assertEquals(2, output.get(0).length);
         Assertions.assertEquals(1, output.get(0)[0].doubleValue());
@@ -37,7 +40,7 @@ class FlinkListStatesMapperTest {
     @Test
     public void ensureNoOutputIfOnlyOneMessage() throws Exception {
         harness.processElement(new StreamRecord<>(new InputEvent("device", 1.0, System.currentTimeMillis())));
-        var output = harness.extractOutputValues();
+        List<Double[]> output = harness.extractOutputValues();
         Assertions.assertEquals(0, (long) output.size());
     }
 }
