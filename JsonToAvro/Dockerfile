@@ -31,7 +31,7 @@ RUN --mount=type=secret,id=GITHUB_TOKEN \
 #
 #  Install jar onto clean runtime system.
 #
-FROM ghcr.io/trifork/cheetah-flink:5.1.2-flink-1.18.1-java17
+FROM ghcr.io/trifork/cheetah-flink:5.2.0-bump-flink-version-SNAPSHOT76-flink-1.19.1-java17
 
 COPY --from=build /app/target/jsonToAvro*.jar /opt/flink/usrlib/artifacts/jsonToAvro.jar
 
