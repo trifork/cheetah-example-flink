@@ -8,7 +8,7 @@ import com.trifork.cheetah.processing.job.Job;
 import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.connector.kafka.source.KafkaSource;
 import com.trifork.cheetah.processing.connector.kafka.CheetahKafkaSource;
-import org.apache.flink.connector.opensearch.sink.OpensearchSink;
+import org.apache.flink.connector.opensearch.sink.Opensearch2Sink;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 
@@ -54,7 +54,7 @@ public class TransformAndStoreJob extends Job implements Serializable {
         // Additionally, the deviceId field is intentionally set to null through the SimpleEmitter Class, which prompts
         // OpenSearch to assign a unique identifier to the stored element.
         // Lastly the OpenSearch database is set to flush every 200ms.
-        final OpensearchSink<OutputEvent> openSearchSink = CheetahOpensearchSink.builder(OutputEvent.class, this)
+        final Opensearch2Sink<OutputEvent> openSearchSink = CheetahOpensearchSink.builder(OutputEvent.class, this)
                 .setEmitter((SimpleEmitter<OutputEvent>) element -> indexBaseName + element.getYearStringFromTimestamp())
                 .setBulkFlushInterval(200)
                 .build();
