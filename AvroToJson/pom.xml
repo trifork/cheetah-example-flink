@@ -49,7 +49,7 @@
         <dependency>
             <groupId>com.trifork.cheetah.processing</groupId>
             <artifactId>cheetah-lib-processing</artifactId>
-            <version>5.2.0-bump-flink-version-SNAPSHOT</version>
+            <version>5.2.0-renovate-flink-flink-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
