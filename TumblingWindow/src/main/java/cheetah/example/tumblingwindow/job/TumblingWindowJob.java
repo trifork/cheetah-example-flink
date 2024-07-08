@@ -16,11 +16,11 @@ import org.apache.flink.connector.kafka.source.enumerator.initializer.OffsetsIni
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows;
-import org.apache.flink.streaming.api.windowing.time.Time;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
+import java.time.Duration;
 import java.time.Instant;
 
 /** TumblingWindowJob sets up the data processing job. */
@@ -59,7 +59,7 @@ public class TumblingWindowJob extends Job implements Serializable {
                 .name("PrintMapper")
                 .uid("PrintMapper")
                 .keyBy(InputEvent::getDeviceId)
-                .window(TumblingEventTimeWindows.of(Time.minutes(5)))
+                .window(TumblingEventTimeWindows.of(Duration.ofMinutes(5)))
                 .aggregate(new TumblingWindowAggregate(), new TumblingWindowFunction())
                 .name("WindowAggregate")
                 .uid("WindowAggregate");

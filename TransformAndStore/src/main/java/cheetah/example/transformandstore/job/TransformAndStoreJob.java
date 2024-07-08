@@ -5,7 +5,6 @@ import cheetah.example.transformandstore.model.InputEvent;
 import cheetah.example.transformandstore.model.OutputEvent;
 import com.trifork.cheetah.processing.connector.opensearch.serde.SimpleEmitter;
 import com.trifork.cheetah.processing.job.Job;
-import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.connector.kafka.source.KafkaSource;
 import com.trifork.cheetah.processing.connector.kafka.CheetahKafkaSource;
 import org.apache.flink.connector.opensearch.sink.Opensearch2Sink;
@@ -15,7 +14,6 @@ import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import com.trifork.cheetah.processing.connector.opensearch.CheetahOpensearchSink;
 
 import java.io.Serializable;
-import java.util.Objects;
 
 /**
  * The TransformAndStoreJob serves as an example for simple transformation and storing data in OpenSearch.

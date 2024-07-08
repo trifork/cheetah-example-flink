@@ -29,7 +29,7 @@ public class FlinkListStatesMapper extends RichFlatMapFunction<InputEvent, Doubl
         values.add(value.getValue());
         Iterable<Double> iterator = values.get();
         int counter = 0;
-        for (Double ignored : iterator) {
+        for (@SuppressWarnings("unused") Double ignored : iterator) {
             counter++;
             if (counter == 2) {
                 out.collect(IterableUtils.toStream(values.get()).toArray(Double[]::new));
