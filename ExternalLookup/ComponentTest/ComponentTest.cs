@@ -6,6 +6,7 @@ using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Xunit;
 using ExternalLookup.ComponentTest.Models;
+using Confluent.Kafka;
 
 namespace ExternalLookup.ComponentTest;
 
@@ -26,8 +27,8 @@ public class ComponentTest
         var kafkaClientFactory = KafkaTestClientFactory.Create(configuration);
         
         // Create a KafkaTestWriter to write messages and a KafkaTestReader to read messages
-        var writer = kafkaClientFactory.CreateTestWriter<string, InputEvent>("ExternalLookupInputTopic",model => model.DeviceId);
-        var reader = kafkaClientFactory.CreateTestReader<string, OutputEvent>("ExternalLookupOutputTopic", "MyGroup");
+        var writer = kafkaClientFactory.CreateTestWriter<string, InputEvent>("ExternalLookupInputTopic", model => model.DeviceId);
+        var reader = kafkaClientFactory.CreateTestReader<Null, OutputEvent>("ExternalLookupOutputTopic", "MyGroup", keyDeserializer: Deserializers.Null);
         
         // Act
         // Create Input event and publish it to Kafka

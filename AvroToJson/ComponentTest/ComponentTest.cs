@@ -28,7 +28,7 @@ public class ComponentTest
         var kafkaClientFactory = KafkaTestClientFactory.Create(configuration);
         var avroKafkaClientFactory = AvroKafkaTestClientFactory.Create(configuration);
         var writer = avroKafkaClientFactory.CreateTestWriter<InputEventAvro>("AvroToJsonInputTopic");
-        var reader = kafkaClientFactory.CreateTestReader<Null, OutputEventJson>("AvroToJsonOutputTopic");
+        var reader = kafkaClientFactory.CreateTestReader<Null, OutputEventJson>("AvroToJsonOutputTopic", keyDeserializer: Deserializers.Null);
         
         // Act
         // Use the clients/writers/readers that you created
