@@ -1,11 +1,9 @@
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Cheetah.Kafka.Testing;
 using Cheetah.OpenSearch.Testing;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
-using OpenSearch.Client;
 using Xunit;
 using TransformAndStore.ComponentTest.Models;
 
