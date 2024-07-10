@@ -1,14 +1,10 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Xunit;
 using EnrichStream.ComponentTest.Models;
 using System.Threading.Tasks;
 using Cheetah.Kafka.Testing;
-using Microsoft.Extensions.Hosting.Internal;
 
 namespace EnrichStream.ComponentTest;
 
@@ -77,9 +73,9 @@ public class ComponentTest
         // Verify that the output topic contains the expected message
         var messages = outputReader.ReadMessages(1, TimeSpan.FromSeconds(5));
         messages.Should().ContainSingle(message => 
-            message.DeviceId == inputEventB.DeviceId &&
-            message.EnrichValue == enrichEventA.Value &&
-            message.Value == inputEventB.Value
+            message.Value.DeviceId == inputEventB.DeviceId &&
+            message.Value.EnrichValue == enrichEventA.Value &&
+            message.Value.Value == inputEventB.Value
         );
         outputReader.VerifyNoMoreMessages(TimeSpan.FromSeconds(5)).Should().BeTrue();
     }

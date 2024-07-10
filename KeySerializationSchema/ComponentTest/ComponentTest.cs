@@ -38,18 +38,18 @@ public class ComponentTest
         var messages = reader.ReadMessages(2, TimeSpan.FromSeconds(10));
         
         messages.Should().Contain(message => 
-            message.DeviceId == inputEventKey1.DeviceId && 
-            message.Value == inputEventKey1.Value &&
-            message.Timestamp == inputEventKey1.Timestamp &&
-            message.Keys == inputEventKey1.Keys &&
-            message.ExtraField == "ExtraFieldValue");
+            message.Value.DeviceId == inputEventKey1.DeviceId && 
+            message.Value.Value == inputEventKey1.Value &&
+            message.Value.Timestamp == inputEventKey1.Timestamp &&
+            message.Value.Keys == inputEventKey1.Keys &&
+            message.Value.ExtraField == "ExtraFieldValue");
         
         messages.Should().Contain(message =>
-            message.DeviceId == inputEventKey2.DeviceId && 
-            message.Value == inputEventKey2.Value &&
-            message.Timestamp == inputEventKey2.Timestamp &&
-            message.Keys == inputEventKey2.Keys &&
-            message.ExtraField == "ExtraFieldValue");
+            message.Value.DeviceId == inputEventKey2.DeviceId && 
+            message.Value.Value == inputEventKey2.Value &&
+            message.Value.Timestamp == inputEventKey2.Timestamp &&
+            message.Value.Keys == inputEventKey2.Keys &&
+            message.Value.ExtraField == "ExtraFieldValue");
         
         reader.VerifyNoMoreMessages(TimeSpan.FromSeconds(10)).Should().BeTrue();
     }

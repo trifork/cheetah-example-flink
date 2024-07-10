@@ -66,9 +66,9 @@ public class ComponentTest
         
         // Evaluate the messages 
         messages.Should().ContainSingle(message => 
-            message.DeviceId == inputEvent1.DeviceId &&
-            message.Values.Count == 3 &&
-            message.Values.All(item => new double[]{inputEvent1.Value,
+            message.Value.DeviceId == inputEvent1.DeviceId &&
+            message.Value.Values.Count == 3 &&
+            message.Value.Values.All(item => new double[]{inputEvent1.Value,
                     inputEvent2.Value,
                     inputEvent3.Value}
                 .Contains(item)));

@@ -6,6 +6,7 @@ using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Xunit;
 using jsonToAvro.ComponentTest.Models;
+using Cheetah.SchemaRegistry.Testing;
 
 namespace jsonToAvro.ComponentTest;
 
@@ -24,10 +25,11 @@ public class ComponentTest
         
         // Create a KafkaTestClientFactory to create KafkaTestReaders and KafkaTestWriters
         var kafkaClientFactory = KafkaTestClientFactory.Create(configuration);
+        var avroKafkaClientFactory = AvroKafkaTestClientFactory.Create(configuration);
         
         // Create writer and reader
         var writer = kafkaClientFactory.CreateTestWriter<InputEvent>("jsonToAvroInputTopic");
-        var reader = kafkaClientFactory.CreateAvroTestReader<OutputEventAvro>("jsonToAvroOutputTopic");
+        var reader = avroKafkaClientFactory.CreateTestReader<OutputEventAvro>("jsonToAvroOutputTopic");
         
         // Act
         // Create InputEvent
@@ -44,9 +46,9 @@ public class ComponentTest
         var messages = reader.ReadMessages(1, TimeSpan.FromSeconds(10));
         
         messages.Should().ContainSingle(message => 
-            message.deviceId == inputEvent.DeviceId && 
-            message.value == inputEvent.Value &&
-            message.timestamp == inputEvent.Timestamp);
+            message.Value.deviceId == inputEvent.DeviceId && 
+            message.Value.value == inputEvent.Value &&
+            message.Value.timestamp == inputEvent.Timestamp);
         reader.VerifyNoMoreMessages(TimeSpan.FromSeconds(20)).Should().BeTrue();
     }
 }

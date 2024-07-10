@@ -67,10 +67,10 @@ public class ComponentTest
         // Assert 1 message was written to the SerializationErrorCatchOutputTopic topic
         var messages = reader.ReadMessages(1, TimeSpan.FromSeconds(5));
         messages.Should().ContainSingle(message => 
-            message.DeviceId == inputEvent.DeviceId && 
-            message.Value == inputEvent.Value &&
-            message.Timestamp == inputEvent.Timestamp &&
-            message.ExtraField == "ExtraFieldValue");
+            message.Value.DeviceId == inputEvent.DeviceId && 
+            message.Value.Value == inputEvent.Value &&
+            message.Value.Timestamp == inputEvent.Timestamp &&
+            message.Value.ExtraField == "ExtraFieldValue");
         reader.VerifyNoMoreMessages(TimeSpan.FromSeconds(20)).Should().BeTrue();
     }
 }
