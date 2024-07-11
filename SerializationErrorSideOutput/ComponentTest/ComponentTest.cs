@@ -80,7 +80,7 @@ public class ComponentTest
         };
         var badMessage3 = new Message<Null, BadEvent>()
         {
-            Value = badInputEvent2
+            Value = badInputEvent3
         };
         
         // Write the InputEvent and BadEvent to the SerializationErrorSideOutputInputTopic topic
