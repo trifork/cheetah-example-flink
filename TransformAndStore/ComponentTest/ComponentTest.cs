@@ -6,6 +6,7 @@ using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Xunit;
 using TransformAndStore.ComponentTest.Models;
+using Confluent.Kafka;
 
 namespace TransformAndStore.ComponentTest;
 
