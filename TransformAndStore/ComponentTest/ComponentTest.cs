@@ -54,10 +54,23 @@ public class ComponentTest
             Value = 120.60,
             Timestamp = DateTimeOffset.UnixEpoch.AddSeconds(2).ToUnixTimeMilliseconds()
         };
+
+        var messageTooLow = new Message<Null, InputEvent>()
+        {
+            Value = inputEventTooLow
+        };
+        var messageGood = new Message<Null, InputEvent>()
+        {
+            Value = inputEventGood
+        };
+        var messageTooHigh= new Message<Null, InputEvent>()
+        {
+            Value = inputEventTooHigh
+        };
         
-        await writer.WriteAsync(inputEventTooLow);
-        await writer.WriteAsync(inputEventGood);
-        await writer.WriteAsync(inputEventTooHigh);
+        await writer.WriteAsync(messageTooLow);
+        await writer.WriteAsync(messageGood);
+        await writer.WriteAsync(messageTooHigh);
         
         // Add delay to make sure the Job have add time to store data in OpenSearch
         await Task.Delay(TimeSpan.FromSeconds(2));

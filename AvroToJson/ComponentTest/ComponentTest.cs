@@ -38,7 +38,13 @@ public class ComponentTest
             value = 12.34,
             timestamp = DateTimeOffset.Now.ToUnixTimeMilliseconds()
         };
-        await writer.WriteAsync(inputEvent);
+
+        var message = new Message<Null, InputEventAvro>()
+        {
+            Value = inputEvent
+        };
+
+        await writer.WriteAsync(message);
         
         // Assert
         // Use the client/writers/readers to assert some properties that your job should comform to

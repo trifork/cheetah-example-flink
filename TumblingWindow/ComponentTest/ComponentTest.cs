@@ -56,9 +56,26 @@ public class ComponentTest
             Value = 910.1112,
             Timestamp = DateTimeOffset.Now.AddMinutes(10).ToUnixTimeMilliseconds()
         };
+
+        var message1 = new Message<Null, InputEvent>()
+        {
+            Value = inputEvent1
+        };
+        var message2 = new Message<Null, InputEvent>()
+        {
+            Value = inputEvent2
+        };
+        var message3 = new Message<Null, InputEvent>()
+        {
+            Value = inputEvent3
+        };
+        var message4 = new Message<Null, InputEvent>()
+        {
+            Value = inputEvent4
+        };
         
-        await writer.WriteAsync(inputEvent1, inputEvent2, inputEvent3);
-        await writer.WriteAsync(inputEvent4, inputEvent4);
+        await writer.WriteAsync(message1, message2, message3);
+        await writer.WriteAsync(message4, message4);
         
         // Assert
         // Read messages from the reader

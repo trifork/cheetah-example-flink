@@ -27,7 +27,7 @@ public class ComponentTest
         var kafkaClientFactory = KafkaTestClientFactory.Create(configuration);
         
         // Create a KafkaTestWriter to write messages and a KafkaTestReader to read messages
-        var writer = kafkaClientFactory.CreateTestWriter<string, InputEvent>("ExternalLookupInputTopic", model => model.DeviceId);
+        var writer = kafkaClientFactory.CreateTestWriter<string, InputEvent>("ExternalLookupInputTopic");
         var reader = kafkaClientFactory.CreateTestReader<Null, OutputEvent>("ExternalLookupOutputTopic", "MyGroup", keyDeserializer: Deserializers.Null);
         
         // Act
@@ -38,8 +38,13 @@ public class ComponentTest
             Value = 12.34,
             Timestamp = DateTimeOffset.UnixEpoch.ToUnixTimeMilliseconds()
         };
+        var message = new Message<string, InputEvent>()
+        {
+            Key = inputEvent.DeviceId,
+            Value = inputEvent
+        };
         
-        await writer.WriteAsync(inputEvent);
+        await writer.WriteAsync(message);
         
         // Assert
         // Verify one message was written to Kafka and that the message is the same as the input event with an additional field

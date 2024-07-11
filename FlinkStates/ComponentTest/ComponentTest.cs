@@ -28,7 +28,7 @@ public class ComponentTest
         
         // Create a KafkaTestWriter to write messages to the topic "FlinkStatesInputTopic"
         var writer =
-            kafkaClientFactory.CreateTestWriter<string, InputEvent>("FlinkStatesInputTopic", model => model.DeviceId);
+            kafkaClientFactory.CreateTestWriter<string, InputEvent>("FlinkStatesInputTopic");
         
         // Create KafkaTestReaders to read messages from the topics "FlinkStatesOutputTopic-value"
         var valueReader = kafkaClientFactory.CreateTestReader<Null, double>("FlinkStatesOutputTopic-value", "MyGroup", keyDeserializer: Deserializers.Null);
@@ -52,9 +52,20 @@ public class ComponentTest
             Value = 56.78,
             Timestamp = DateTimeOffset.UnixEpoch.ToUnixTimeMilliseconds()
         };
+
+        var message = new Message<string, InputEvent>()
+        {
+            Key = inputEvent.DeviceId,
+            Value = inputEvent
+        };
+        var message2 = new Message<string, InputEvent>()
+        {
+            Key = inputEvent2.DeviceId,
+            Value = inputEvent
+        };
         
-        await writer.WriteAsync(inputEvent);
-        await writer.WriteAsync(inputEvent2);
+        await writer.WriteAsync(message);
+        await writer.WriteAsync(message2);
         
         // Assert
         await Task.Delay(TimeSpan.FromSeconds(20));

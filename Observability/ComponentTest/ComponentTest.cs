@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Linq;
 using Cheetah.Kafka.Testing;
 using Cheetah.MetricsTesting.PrometheusMetrics;
+using Confluent.Kafka;
 
 namespace Observability.ComponentTest;
 
@@ -49,10 +50,19 @@ public class ComponentTest
             Timestamp = DateTimeOffset.UnixEpoch.ToUnixTimeMilliseconds()
         };
 
-        await writer.WriteAsync(inputEvent);
-        await writer.WriteAsync(inputEvent2);
-        await writer.WriteAsync(inputEvent2);
-        await writer.WriteAsync(inputEvent);
+        var message = new Message<Null, InputEvent>()
+        {
+            Value = inputEvent
+        };
+        var message2 = new Message<Null, InputEvent>()
+        {
+            Value = inputEvent2
+        };
+
+        await writer.WriteAsync(message);
+        await writer.WriteAsync(message2);
+        await writer.WriteAsync(message2);
+        await writer.WriteAsync(message);
 
         //Wait, to ensure processing is done
         await Task.Delay(TimeSpan.FromSeconds(10));

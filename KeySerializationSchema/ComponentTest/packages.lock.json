@@ -4,8 +4,8 @@
     "net8.0": {
       "Cheetah.Kafka": {
         "type": "Direct",
-        "requested": "[1.1.0-fix-kafka-test-reader-and-writer-SNAPSHOT5, )",
-        "resolved": "1.1.0-fix-kafka-test-reader-and-writer-SNAPSHOT5",
+        "requested": "[1.1.0-fix-kafka-test-reader-and-writer-SNAPSHOT7, )",
+        "resolved": "1.1.0-fix-kafka-test-reader-and-writer-SNAPSHOT7",
         "contentHash": "RgoAA+mv79XdfMEep5hxOtaoxH5J8mJtiBOnr24s6L3fRgB27cFA6e62z5hpWZPmYgWiXeVN87nkVnl3at5tAw==",
         "dependencies": {
           "Confluent.Kafka": "2.4.0",

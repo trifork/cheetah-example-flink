@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Xunit;
 using jsonToAvro.ComponentTest.Models;
 using Cheetah.SchemaRegistry.Testing;
+using Confluent.Kafka;
 
 namespace jsonToAvro.ComponentTest;
 
@@ -39,8 +40,13 @@ public class ComponentTest
             Value = 12.34,
             Timestamp = DateTimeOffset.UnixEpoch.ToUnixTimeMilliseconds()
         };
+
+        var message = new Message<Null, InputEvent>()
+        {
+            Value = inputEvent
+        };
         
-        writer.WriteAsync(inputEvent);
+        writer.WriteAsync(message);
         
         // Assert
         var messages = reader.ReadMessages(1, TimeSpan.FromSeconds(10));

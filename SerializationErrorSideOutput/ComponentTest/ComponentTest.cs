@@ -64,12 +64,29 @@ public class ComponentTest
             Timestamp = DateTimeOffset.UnixEpoch.ToUnixTimeMilliseconds(),
             BadField = "BadFieldValue"
         };
+
+        var message = new Message<Null, InputEvent>()
+        {
+            Value = inputEvent
+        };
+        var badMessage1 = new Message<Null, BadEvent>()
+        {
+            Value = badInputEvent1
+        };
+        var badMessage2 = new Message<Null, BadEvent>()
+        {
+            Value = badInputEvent2
+        };
+        var badMessage3 = new Message<Null, BadEvent>()
+        {
+            Value = badInputEvent2
+        };
         
         // Write the InputEvent and BadEvent to the SerializationErrorSideOutputInputTopic topic
-        await badWriter.WriteAsync(badInputEvent1);
-        await writer.WriteAsync(inputEvent);
-        await badWriter.WriteAsync(badInputEvent2);
-        await badWriter.WriteAsync(badInputEvent3);
+        await badWriter.WriteAsync(badMessage1);
+        await writer.WriteAsync(message);
+        await badWriter.WriteAsync(badMessage2);
+        await badWriter.WriteAsync(badMessage3);
         
         //Wait, to ensure processing is done
         await Task.Delay(TimeSpan.FromSeconds(5));

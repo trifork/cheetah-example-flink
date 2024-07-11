@@ -5,6 +5,7 @@ using Xunit;
 using EnrichStream.ComponentTest.Models;
 using System.Threading.Tasks;
 using Cheetah.Kafka.Testing;
+using Confluent.Kafka;
 
 namespace EnrichStream.ComponentTest;
 
@@ -45,8 +46,17 @@ public class ComponentTest
             Timestamp = DateTimeOffset.UnixEpoch.ToUnixTimeMilliseconds()
         };
 
-        await enrichEventWriter.WriteAsync(enrichEventA);
-        await enrichEventWriter.WriteAsync(enrichEventB);
+        var messageA = new Message<Null, EnrichEvent>()
+        {
+            Value = enrichEventA
+        };
+        var messageB = new Message<Null, EnrichEvent>()
+        {
+            Value = enrichEventB
+        };
+
+        await enrichEventWriter.WriteAsync(messageA);
+        await enrichEventWriter.WriteAsync(messageB);
         
         // Wait to make sure the elements on enriching stream have been processed before writing to input stream
         await Task.Delay(500);
@@ -66,8 +76,17 @@ public class ComponentTest
             Timestamp = DateTimeOffset.UnixEpoch.ToUnixTimeMilliseconds()
         };
         
-        await inputEventWriter.WriteAsync(inputEventA);
-        await inputEventWriter.WriteAsync(inputEventB);
+        var messageA = new Message<Null, InputEvent>()
+        {
+            Value = inputEventA
+        };
+        var messageB = new Message<Null, InputEvent>()
+        {
+            Value = inputEventB
+        };
+        
+        await inputEventWriter.WriteAsync(messageA);
+        await inputEventWriter.WriteAsync(messageB);
         
         // Assert
         // Verify that the output topic contains the expected message
