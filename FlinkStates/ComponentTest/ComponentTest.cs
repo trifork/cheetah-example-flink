@@ -61,7 +61,7 @@ public class ComponentTest
         var message2 = new Message<string, InputEvent>()
         {
             Key = inputEvent2.DeviceId,
-            Value = inputEvent
+            Value = inputEvent2
         };
         
         await writer.WriteAsync(message);
