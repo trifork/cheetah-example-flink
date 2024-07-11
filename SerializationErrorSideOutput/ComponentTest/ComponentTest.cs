@@ -7,6 +7,7 @@ using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Xunit;
 using SerializationErrorSideOutput.ComponentTest.Models;
+using Confluent.Kafka;
 
 namespace SerializationErrorSideOutput.ComponentTest;
 
