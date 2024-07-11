@@ -7,6 +7,7 @@ using TumblingWindow.ComponentTest.Models;
 using System.Linq;
 using System.Threading.Tasks;
 using Cheetah.Kafka.Testing;
+using Confluent.Kafka;
 
 namespace TumblingWindow.ComponentTest;
 
