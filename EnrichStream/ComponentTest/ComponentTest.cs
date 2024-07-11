@@ -46,17 +46,17 @@ public class ComponentTest
             Timestamp = DateTimeOffset.UnixEpoch.ToUnixTimeMilliseconds()
         };
 
-        var messageA = new Message<Null, EnrichEvent>()
+        var enrichMessageA = new Message<Null, EnrichEvent>()
         {
             Value = enrichEventA
         };
-        var messageB = new Message<Null, EnrichEvent>()
+        var enrichMessageB = new Message<Null, EnrichEvent>()
         {
             Value = enrichEventB
         };
 
-        await enrichEventWriter.WriteAsync(messageA);
-        await enrichEventWriter.WriteAsync(messageB);
+        await enrichEventWriter.WriteAsync(enrichMessageA);
+        await enrichEventWriter.WriteAsync(enrichMessageB);
         
         // Wait to make sure the elements on enriching stream have been processed before writing to input stream
         await Task.Delay(500);
@@ -76,17 +76,17 @@ public class ComponentTest
             Timestamp = DateTimeOffset.UnixEpoch.ToUnixTimeMilliseconds()
         };
         
-        var messageA = new Message<Null, InputEvent>()
+        var inputMessageA = new Message<Null, InputEvent>()
         {
             Value = inputEventA
         };
-        var messageB = new Message<Null, InputEvent>()
+        var inputMessageB = new Message<Null, InputEvent>()
         {
             Value = inputEventB
         };
         
-        await inputEventWriter.WriteAsync(messageA);
-        await inputEventWriter.WriteAsync(messageB);
+        await inputEventWriter.WriteAsync(inputMessageA);
+        await inputEventWriter.WriteAsync(inputMessageB);
         
         // Assert
         // Verify that the output topic contains the expected message
