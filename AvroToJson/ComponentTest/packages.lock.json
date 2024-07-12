@@ -2,41 +2,11 @@
   "version": 1,
   "dependencies": {
     "net8.0": {
-      "Apache.Avro": {
-        "type": "Direct",
-        "requested": "[1.11.3, )",
-        "resolved": "1.11.3",
-        "contentHash": "rmm+jcVKDbwe5wYM3UBQ8N+CGicre+epSvP7KuB1crUV7Z0mGL9ndTZLxdCm8006gf/zgVhPfbee43FIYccXzQ==",
-        "dependencies": {
-          "Newtonsoft.Json": "10.0.3",
-          "System.CodeDom": "7.0.0"
-        }
-      },
-      "Cheetah.Kafka": {
-        "type": "Direct",
-        "requested": "[1.0.1-RC5, )",
-        "resolved": "1.0.1-RC5",
-        "contentHash": "pwJFrSTGh2kBQC7yWJ/eX8KdldGhU0MnVNfK7nmXvFhPMZbrc6pF1+g70kZ3kL3jryTJnKbhz5ZzsSXWAwyyUg==",
-        "dependencies": {
-          "Confluent.Kafka": "2.4.0",
-          "IdentityModel": "7.0.0",
-          "Microsoft.Extensions.Caching.Abstractions": "8.0.0",
-          "Microsoft.Extensions.Caching.Memory": "8.0.0",
-          "Microsoft.Extensions.Configuration": "8.0.0",
-          "Microsoft.Extensions.DependencyInjection": "8.0.0",
-          "Microsoft.Extensions.Hosting": "8.0.0",
-          "Microsoft.Extensions.Hosting.Abstractions": "8.0.0",
-          "Microsoft.Extensions.Http": "8.0.0",
-          "Microsoft.Extensions.Logging.Abstractions": "8.0.1",
-          "Microsoft.Extensions.Options.ConfigurationExtensions": "8.0.0",
-          "System.IdentityModel.Tokens.Jwt": "7.6.2"
-        }
-      },
       "Cheetah.SchemaRegistry": {
         "type": "Direct",
-        "requested": "[1.0.1-RC6, )",
-        "resolved": "1.0.1-RC6",
-        "contentHash": "NsJ90k9l8CZMaPDjPDESarUdlHv6wW04+2tprHRkQsu23imUkxx2RbMiZRIH1HrwJFvDAUCgwYXnAcgtiDXI6w==",
+        "requested": "[1.0.1, )",
+        "resolved": "1.0.1",
+        "contentHash": "hfL3+Lp2plH+97I8MccDiWNhnXuA4177equKHh8eTuZ+ICe8kXIHQOZ12Gj06dkORVIPjFyc761NH/aISGSafw==",
         "dependencies": {
           "Confluent.Kafka": "2.4.0",
           "Confluent.SchemaRegistry": "2.4.0",
@@ -95,6 +65,18 @@
         "requested": "[2.8.1, )",
         "resolved": "2.8.1",
         "contentHash": "qBTK0WAcnw65mymIjVDqWUTdqjMyzjwu9e9SF0oGYfYELgbcteDZ4fQLJaXw8mzkvpAD7YdoexBbg8VYQFkWWA=="
+      },
+      "Apache.Avro": {
+        "type": "Transitive",
+        "resolved": "1.11.0",
+        "contentHash": "JpBxUTE/JeVt9yugkIiu0N+FHl+SIihDjs4VZsGFmlZM42nntj2QB8nAdj5yu8LOla54pSAQqdqHcxPa458KWQ==",
+        "dependencies": {
+          "Newtonsoft.Json": "10.0.3",
+          "System.CodeDom": "4.4.0",
+          "System.Reflection": "4.3.0",
+          "System.Reflection.Emit.ILGeneration": "4.3.0",
+          "System.Reflection.Emit.Lightweight": "4.3.0"
+        }
       },
       "Confluent.Kafka": {
         "type": "Transitive",
@@ -628,8 +610,8 @@
       },
       "System.CodeDom": {
         "type": "Transitive",
-        "resolved": "7.0.0",
-        "contentHash": "GLltyqEsE5/3IE+zYRP5sNa1l44qKl9v+bfdMcwg+M9qnQf47wK3H0SUR/T+3N4JEQXF3vV4CSuuo0rsg+nq2A=="
+        "resolved": "4.4.0",
+        "contentHash": "2sCCb7doXEwtYAbqzbF/8UAeDRMNmPaQbU2q50Psg1J9KzumyVVCgKQY8s53WIPTufNT0DpSe9QRvVjOzfDWBA=="
       },
       "System.Collections": {
         "type": "Transitive",
@@ -877,6 +859,27 @@
           "Microsoft.NETCore.Platforms": "1.1.0",
           "Microsoft.NETCore.Targets": "1.1.0",
           "System.IO": "4.3.0",
+          "System.Reflection.Primitives": "4.3.0",
+          "System.Runtime": "4.3.0"
+        }
+      },
+      "System.Reflection.Emit.ILGeneration": {
+        "type": "Transitive",
+        "resolved": "4.3.0",
+        "contentHash": "59tBslAk9733NXLrUJrwNZEzbMAcu8k344OYo+wfSVygcgZ9lgBdGIzH/nrg3LYhXceynyvTc8t5/GD4Ri0/ng==",
+        "dependencies": {
+          "System.Reflection": "4.3.0",
+          "System.Reflection.Primitives": "4.3.0",
+          "System.Runtime": "4.3.0"
+        }
+      },
+      "System.Reflection.Emit.Lightweight": {
+        "type": "Transitive",
+        "resolved": "4.3.0",
+        "contentHash": "oadVHGSMsTmZsAF864QYN1t1QzZjIcuKU3l2S9cZOwDdDueNTrqq1yRj7koFfIGEnKpt6NjpL3rOzRhs4ryOgA==",
+        "dependencies": {
+          "System.Reflection": "4.3.0",
+          "System.Reflection.Emit.ILGeneration": "4.3.0",
           "System.Reflection.Primitives": "4.3.0",
           "System.Runtime": "4.3.0"
         }
