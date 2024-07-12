@@ -4,9 +4,9 @@
     "net8.0": {
       "Cheetah.Kafka": {
         "type": "Direct",
-        "requested": "[1.1.0-fix-kafka-test-reader-and-writer-SNAPSHOT7, )",
-        "resolved": "1.1.0-fix-kafka-test-reader-and-writer-SNAPSHOT7",
-        "contentHash": "wz4E1iJnWJhcUxQXiNdN1V08+/MlMH9rvJ4FT0tv+cFguyBOxHKBbn3eAZPe0YKEQ0vd8GewAfallFiwj4UekQ==",
+        "requested": "[1.0.1-RC5, )",
+        "resolved": "1.0.1-RC5",
+        "contentHash": "pwJFrSTGh2kBQC7yWJ/eX8KdldGhU0MnVNfK7nmXvFhPMZbrc6pF1+g70kZ3kL3jryTJnKbhz5ZzsSXWAwyyUg==",
         "dependencies": {
           "Confluent.Kafka": "2.4.0",
           "IdentityModel": "7.0.0",

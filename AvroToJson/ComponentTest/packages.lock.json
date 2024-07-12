@@ -14,9 +14,9 @@
       },
       "Cheetah.Kafka": {
         "type": "Direct",
-        "requested": "[1.1.0-fix-kafka-test-reader-and-writer-SNAPSHOT7, )",
-        "resolved": "1.1.0-fix-kafka-test-reader-and-writer-SNAPSHOT7",
-        "contentHash": "wz4E1iJnWJhcUxQXiNdN1V08+/MlMH9rvJ4FT0tv+cFguyBOxHKBbn3eAZPe0YKEQ0vd8GewAfallFiwj4UekQ==",
+        "requested": "[1.0.1-RC5, )",
+        "resolved": "1.0.1-RC5",
+        "contentHash": "pwJFrSTGh2kBQC7yWJ/eX8KdldGhU0MnVNfK7nmXvFhPMZbrc6pF1+g70kZ3kL3jryTJnKbhz5ZzsSXWAwyyUg==",
         "dependencies": {
           "Confluent.Kafka": "2.4.0",
           "IdentityModel": "7.0.0",
@@ -34,9 +34,9 @@
       },
       "Cheetah.SchemaRegistry": {
         "type": "Direct",
-        "requested": "[1.1.0-fix-kafka-test-reader-and-writer-SNAPSHOT8, )",
-        "resolved": "1.1.0-fix-kafka-test-reader-and-writer-SNAPSHOT8",
-        "contentHash": "rQPZ3oTd9gHBOiIR/Id3Hty6QJ+5IuBBK1j9F4rl5cn7yVQXqOVUr9sSjIBolIM9uM57Btwa6msQOAbgc8lF6g==",
+        "requested": "[1.0.1-RC6, )",
+        "resolved": "1.0.1-RC6",
+        "contentHash": "NsJ90k9l8CZMaPDjPDESarUdlHv6wW04+2tprHRkQsu23imUkxx2RbMiZRIH1HrwJFvDAUCgwYXnAcgtiDXI6w==",
         "dependencies": {
           "Confluent.Kafka": "2.4.0",
           "Confluent.SchemaRegistry": "2.4.0",
