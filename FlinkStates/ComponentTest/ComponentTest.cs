@@ -6,6 +6,7 @@ using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Xunit;
 using FlinkStates.ComponentTest.Models;
+using Confluent.Kafka;
 
 namespace FlinkStates.ComponentTest;
 
@@ -27,14 +28,14 @@ public class ComponentTest
         
         // Create a KafkaTestWriter to write messages to the topic "FlinkStatesInputTopic"
         var writer =
-            kafkaClientFactory.CreateTestWriter<string, InputEvent>("FlinkStatesInputTopic", model => model.DeviceId);
+            kafkaClientFactory.CreateTestWriter<string, InputEvent>("FlinkStatesInputTopic");
         
         // Create KafkaTestReaders to read messages from the topics "FlinkStatesOutputTopic-value"
-        var valueReader = kafkaClientFactory.CreateTestReader<string, double>("FlinkStatesOutputTopic-value", "MyGroup");
-        var reducingReader = kafkaClientFactory.CreateTestReader<string, double>("FlinkStatesOutputTopic-reducing", "MyGroup");
-        var aggregatingReader = kafkaClientFactory.CreateTestReader<string, double>("FlinkStatesOutputTopic-aggregating", "MyGroup");
-        var listReader = kafkaClientFactory.CreateTestReader<string, double[]>("FlinkStatesOutputTopic-list", "MyGroup");
-        var mapReader = kafkaClientFactory.CreateTestReader<string, double>("FlinkStatesOutputTopic-map", "MyGroup");
+        var valueReader = kafkaClientFactory.CreateTestReader<Null, double>("FlinkStatesOutputTopic-value", "MyGroup", keyDeserializer: Deserializers.Null);
+        var reducingReader = kafkaClientFactory.CreateTestReader<Null, double>("FlinkStatesOutputTopic-reducing", "MyGroup", keyDeserializer: Deserializers.Null);
+        var aggregatingReader = kafkaClientFactory.CreateTestReader<Null, double>("FlinkStatesOutputTopic-aggregating", "MyGroup", keyDeserializer: Deserializers.Null);
+        var listReader = kafkaClientFactory.CreateTestReader<Null, double[]>("FlinkStatesOutputTopic-list", "MyGroup", keyDeserializer: Deserializers.Null);
+        var mapReader = kafkaClientFactory.CreateTestReader<Null, double>("FlinkStatesOutputTopic-map", "MyGroup", keyDeserializer: Deserializers.Null);
         
         // Act
         // Create two different input events
@@ -51,9 +52,20 @@ public class ComponentTest
             Value = 56.78,
             Timestamp = DateTimeOffset.UnixEpoch.ToUnixTimeMilliseconds()
         };
+
+        var message = new Message<string, InputEvent>()
+        {
+            Key = inputEvent.DeviceId,
+            Value = inputEvent
+        };
+        var message2 = new Message<string, InputEvent>()
+        {
+            Key = inputEvent2.DeviceId,
+            Value = inputEvent2
+        };
         
-        await writer.WriteAsync(inputEvent);
-        await writer.WriteAsync(inputEvent2);
+        await writer.WriteAsync(message);
+        await writer.WriteAsync(message2);
         
         // Assert
         await Task.Delay(TimeSpan.FromSeconds(20));
@@ -64,18 +76,18 @@ public class ComponentTest
         var mapMessages = mapReader.ReadMessages(2, TimeSpan.FromSeconds(1));
 
         // Evaluate the results
-        valueMessages.Should().ContainSingle(message => message == 34.56);
+        valueMessages.Should().ContainSingle(message => message.Value == 34.56);
 
-        reducingMessages.Should().ContainSingle(message => message == 12.34);
-        reducingMessages.Should().ContainSingle(message => message == 69.12);
+        reducingMessages.Should().ContainSingle(message => message.Value == 12.34);
+        reducingMessages.Should().ContainSingle(message => message.Value == 69.12);
 
-        aggregatingMessages.Should().ContainSingle(message => message == 12.34);
-        aggregatingMessages.Should().ContainSingle(message => message == 69.12);
+        aggregatingMessages.Should().ContainSingle(message => message.Value == 12.34);
+        aggregatingMessages.Should().ContainSingle(message => message.Value == 69.12);
 
-        listMessages.Should().ContainSingle(message => message.Length == 2 && message[0] == 12.34 && message[1] == 56.78);
+        listMessages.Should().ContainSingle(message => message.Value.Length == 2 && message.Value[0] == 12.34 && message.Value[1] == 56.78);
 
-        mapMessages.Should().ContainSingle(message => message == 12.34);
-        mapMessages.Should().ContainSingle(message => message == 69.12);
+        mapMessages.Should().ContainSingle(message => message.Value == 12.34);
+        mapMessages.Should().ContainSingle(message => message.Value == 69.12);
         
         valueReader.VerifyNoMoreMessages(TimeSpan.FromSeconds(1)).Should().BeTrue();
         reducingReader.VerifyNoMoreMessages(TimeSpan.FromSeconds(1)).Should().BeTrue();

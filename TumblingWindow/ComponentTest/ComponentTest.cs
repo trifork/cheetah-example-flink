@@ -7,6 +7,7 @@ using TumblingWindow.ComponentTest.Models;
 using System.Linq;
 using System.Threading.Tasks;
 using Cheetah.Kafka.Testing;
+using Confluent.Kafka;
 
 namespace TumblingWindow.ComponentTest;
 
@@ -56,9 +57,26 @@ public class ComponentTest
             Value = 910.1112,
             Timestamp = DateTimeOffset.Now.AddMinutes(10).ToUnixTimeMilliseconds()
         };
+
+        var message1 = new Message<Null, InputEvent>()
+        {
+            Value = inputEvent1
+        };
+        var message2 = new Message<Null, InputEvent>()
+        {
+            Value = inputEvent2
+        };
+        var message3 = new Message<Null, InputEvent>()
+        {
+            Value = inputEvent3
+        };
+        var message4 = new Message<Null, InputEvent>()
+        {
+            Value = inputEvent4
+        };
         
-        await writer.WriteAsync(inputEvent1, inputEvent2, inputEvent3);
-        await writer.WriteAsync(inputEvent4, inputEvent4);
+        await writer.WriteAsync(message1, message2, message3);
+        await writer.WriteAsync(message4, message4);
         
         // Assert
         // Read messages from the reader
@@ -66,9 +84,9 @@ public class ComponentTest
         
         // Evaluate the messages 
         messages.Should().ContainSingle(message => 
-            message.DeviceId == inputEvent1.DeviceId &&
-            message.Values.Count == 3 &&
-            message.Values.All(item => new double[]{inputEvent1.Value,
+            message.Value.DeviceId == inputEvent1.DeviceId &&
+            message.Value.Values.Count == 3 &&
+            message.Value.Values.All(item => new double[]{inputEvent1.Value,
                     inputEvent2.Value,
                     inputEvent3.Value}
                 .Contains(item)));

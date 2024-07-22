@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Xunit;
 using Cheetah.Kafka.Testing;
 using KeySerializationSchema.ComponentTest.Models;
+using Confluent.Kafka;
 
 namespace KeySerializationSchema.ComponentTest;
 
@@ -24,7 +25,7 @@ public class ComponentTest
         // Set up clients, writers, and readers
         var kafkaClientFactory = KafkaTestClientFactory.Create(configuration);
         var writer = kafkaClientFactory.CreateTestWriter<InputEvent>("KeySerializationSchemaInputTopic");
-        var reader = kafkaClientFactory.CreateTestReader<string, OutputEvent>("KeySerializationSchemaOutputTopic");
+        var reader = kafkaClientFactory.CreateTestReader<string, OutputEvent>("KeySerializationSchemaOutputTopic", keyDeserializer: Deserializers.Utf8);
         
         // Act
         // Send two messages to the input topic
@@ -38,18 +39,20 @@ public class ComponentTest
         var messages = reader.ReadMessages(2, TimeSpan.FromSeconds(10));
         
         messages.Should().Contain(message => 
-            message.DeviceId == inputEventKey1.DeviceId && 
-            message.Value == inputEventKey1.Value &&
-            message.Timestamp == inputEventKey1.Timestamp &&
-            message.Keys == inputEventKey1.Keys &&
-            message.ExtraField == "ExtraFieldValue");
+            message.Value.DeviceId == inputEventKey1.DeviceId && 
+            message.Value.Value == inputEventKey1.Value &&
+            message.Value.Timestamp == inputEventKey1.Timestamp &&
+            message.Value.Keys == inputEventKey1.Keys &&
+            message.Value.ExtraField == "ExtraFieldValue" &&
+            message.Key == inputEventKey1.Keys);
         
         messages.Should().Contain(message =>
-            message.DeviceId == inputEventKey2.DeviceId && 
-            message.Value == inputEventKey2.Value &&
-            message.Timestamp == inputEventKey2.Timestamp &&
-            message.Keys == inputEventKey2.Keys &&
-            message.ExtraField == "ExtraFieldValue");
+            message.Value.DeviceId == inputEventKey2.DeviceId && 
+            message.Value.Value == inputEventKey2.Value &&
+            message.Value.Timestamp == inputEventKey2.Timestamp &&
+            message.Value.Keys == inputEventKey2.Keys &&
+            message.Value.ExtraField == "ExtraFieldValue" &&
+            message.Key == inputEventKey2.Keys);
         
         reader.VerifyNoMoreMessages(TimeSpan.FromSeconds(10)).Should().BeTrue();
     }

@@ -7,11 +7,13 @@ services:
         - GITHUB_TOKEN
         - GITHUB_ACTOR
     environment:
-      KAFKA__URL: kafka:19092
-      KAFKA__OAUTH2__CLIENTID: default-access
-      KAFKA__OAUTH2__CLIENTSECRET: default-access-secret
-      KAFKA__OAUTH2__SCOPE: kafka
-      KAFKA__OAUTH2__TOKENENDPOINT: http://keycloak:1852/realms/local-development/protocol/openid-connect/token
+      Kafka__Url: kafka:19092
+      Kafka__SecurityProtocol: SaslPlaintext
+      Kafka__SaslMechanism: OAuthBearer
+      Kafka__OAuth2__ClientId: default-access
+      Kafka__OAuth2__ClientSecret: default-access-secret
+      Kafka__OAuth2__TokenEndpoint: http://keycloak:1852/realms/local-development/protocol/openid-connect/token
+      Kafka__OAuth2__Scope: kafka
       OPENSEARCH__URL: http://opensearch:9200
       OPENSEARCH__AUTHMODE: oauth2
       OPENSEARCH__OAUTH2__CLIENTID: default-access

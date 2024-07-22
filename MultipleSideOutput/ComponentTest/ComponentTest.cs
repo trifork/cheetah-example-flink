@@ -50,24 +50,24 @@ public class ComponentTest
         var messagesTopicCd = readerTopicCD.ReadMessages(1, TimeSpan.FromSeconds(1));
 
         messagesTopicA.Should().ContainSingle(message =>
-            message.DeviceId == inputEvent.DeviceId &&
-            message.Value == inputEvent.ValueA &&
-            message.Timestamp == inputEvent.Timestamp
+            message.Value.DeviceId == inputEvent.DeviceId &&
+            message.Value.Value == inputEvent.ValueA &&
+            message.Value.Timestamp == inputEvent.Timestamp
         );
         readerTopicA.VerifyNoMoreMessages(TimeSpan.FromSeconds(5)).Should().BeTrue();
 
         messagesTopicB.Should().ContainSingle(message =>
-            message.DeviceId == inputEvent.DeviceId &&
-            message.Value == inputEvent.ValueB &&
-            message.Timestamp == inputEvent.Timestamp
+            message.Value.DeviceId == inputEvent.DeviceId &&
+            message.Value.Value == inputEvent.ValueB &&
+            message.Value.Timestamp == inputEvent.Timestamp
         );
         readerTopicB.VerifyNoMoreMessages(TimeSpan.FromSeconds(5)).Should().BeTrue();
 
         messagesTopicCd.Should().ContainSingle(message =>
-            message.DeviceId == inputEvent.DeviceId &&
-            message.ValueC == inputEvent.ValueC &&
-            message.ValueD == inputEvent.ValueD &&
-            message.Timestamp == inputEvent.Timestamp
+            message.Value.DeviceId == inputEvent.DeviceId &&
+            message.Value.ValueC == inputEvent.ValueC &&
+            message.Value.ValueD == inputEvent.ValueD &&
+            message.Value.Timestamp == inputEvent.Timestamp
         );
         readerTopicCD.VerifyNoMoreMessages(TimeSpan.FromSeconds(5)).Should().BeTrue();
     }

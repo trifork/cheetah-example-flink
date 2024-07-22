@@ -7,6 +7,7 @@ using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Xunit;
 using SerializationErrorSideOutput.ComponentTest.Models;
+using Confluent.Kafka;
 
 namespace SerializationErrorSideOutput.ComponentTest;
 
@@ -64,12 +65,29 @@ public class ComponentTest
             Timestamp = DateTimeOffset.UnixEpoch.ToUnixTimeMilliseconds(),
             BadField = "BadFieldValue"
         };
+
+        var message = new Message<Null, InputEvent>()
+        {
+            Value = inputEvent
+        };
+        var badMessage1 = new Message<Null, BadEvent>()
+        {
+            Value = badInputEvent1
+        };
+        var badMessage2 = new Message<Null, BadEvent>()
+        {
+            Value = badInputEvent2
+        };
+        var badMessage3 = new Message<Null, BadEvent>()
+        {
+            Value = badInputEvent3
+        };
         
         // Write the InputEvent and BadEvent to the SerializationErrorSideOutputInputTopic topic
-        await badWriter.WriteAsync(badInputEvent1);
-        await writer.WriteAsync(inputEvent);
-        await badWriter.WriteAsync(badInputEvent2);
-        await badWriter.WriteAsync(badInputEvent3);
+        await badWriter.WriteAsync(badMessage1);
+        await writer.WriteAsync(message);
+        await badWriter.WriteAsync(badMessage2);
+        await badWriter.WriteAsync(badMessage3);
         
         //Wait, to ensure processing is done
         await Task.Delay(TimeSpan.FromSeconds(5));
@@ -83,28 +101,28 @@ public class ComponentTest
         var messages = reader.ReadMessages(1, TimeSpan.FromSeconds(5));
         var badMessages = badReader.ReadMessages(3, TimeSpan.FromSeconds(5));
         messages.Should().ContainSingle(message => 
-            message.DeviceId == inputEvent.DeviceId && 
-            message.Value == inputEvent.Value &&
-            message.Timestamp == inputEvent.Timestamp &&
-            message.ExtraField == "ExtraFieldValue");
+            message.Value.DeviceId == inputEvent.DeviceId && 
+            message.Value.Value == inputEvent.Value &&
+            message.Value.Timestamp == inputEvent.Timestamp &&
+            message.Value.ExtraField == "ExtraFieldValue");
 
         badMessages.Should().ContainSingle(message =>
-            message.DeviceId == badInputEvent1.DeviceId &&
-            message.Value == badInputEvent1.Value &&
-            message.Timestamp == badInputEvent1.Timestamp &&
-            message.BadField == badInputEvent1.BadField);
+            message.Value.DeviceId == badInputEvent1.DeviceId &&
+            message.Value.Value == badInputEvent1.Value &&
+            message.Value.Timestamp == badInputEvent1.Timestamp &&
+            message.Value.BadField == badInputEvent1.BadField);
 
         badMessages.Should().ContainSingle(message =>
-            message.DeviceId == badInputEvent2.DeviceId &&
-            message.Value == badInputEvent2.Value &&
-            message.Timestamp == badInputEvent2.Timestamp &&
-            message.BadField == badInputEvent2.BadField);
+            message.Value.DeviceId == badInputEvent2.DeviceId &&
+            message.Value.Value == badInputEvent2.Value &&
+            message.Value.Timestamp == badInputEvent2.Timestamp &&
+            message.Value.BadField == badInputEvent2.BadField);
 
         badMessages.Should().Contain(message =>
-            message.DeviceId == badInputEvent3.DeviceId &&
-            message.Value == badInputEvent3.Value &&
-            message.Timestamp == badInputEvent3.Timestamp &&
-            message.BadField == badInputEvent3.BadField);
+            message.Value.DeviceId == badInputEvent3.DeviceId &&
+            message.Value.Value == badInputEvent3.Value &&
+            message.Value.Timestamp == badInputEvent3.Timestamp &&
+            message.Value.BadField == badInputEvent3.BadField);
             
         reader.VerifyNoMoreMessages(TimeSpan.FromSeconds(20)).Should().BeTrue();
         badReader.VerifyNoMoreMessages(TimeSpan.FromSeconds(20)).Should().BeTrue();

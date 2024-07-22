@@ -5,6 +5,9 @@ using Microsoft.Extensions.Configuration;
 using Xunit;
 using Cheetah.Kafka.Testing;
 using AvroToJson.ComponentTest.Models;
+using Cheetah.SchemaRegistry.Testing;
+using Cheetah.Kafka;
+using Confluent.Kafka;
 
 namespace AvroToJson.ComponentTest;
 
@@ -23,8 +26,9 @@ public class ComponentTest
         // Arrange
         // Here you can set up clients, writers, and readers as needed
         var kafkaClientFactory = KafkaTestClientFactory.Create(configuration);
-        var writer = kafkaClientFactory.CreateAvroTestWriter<InputEventAvro>("AvroToJsonInputTopic");
-        var reader = kafkaClientFactory.CreateTestReader<OutputEventJson>("AvroToJsonOutputTopic");
+        var avroKafkaClientFactory = AvroKafkaTestClientFactory.Create(configuration);
+        var writer = avroKafkaClientFactory.CreateTestWriter<InputEventAvro>("AvroToJsonInputTopic");
+        var reader = kafkaClientFactory.CreateTestReader<Null, OutputEventJson>("AvroToJsonOutputTopic", keyDeserializer: Deserializers.Null);
         
         // Act
         // Use the clients/writers/readers that you created
@@ -34,16 +38,22 @@ public class ComponentTest
             value = 12.34,
             timestamp = DateTimeOffset.Now.ToUnixTimeMilliseconds()
         };
-        await writer.WriteAsync(inputEvent);
+
+        var message = new Message<Null, InputEventAvro>()
+        {
+            Value = inputEvent
+        };
+
+        await writer.WriteAsync(message);
         
         // Assert
         // Use the client/writers/readers to assert some properties that your job should comform to
         var messages = reader.ReadMessages(1, TimeSpan.FromSeconds(10));
 
         messages.Should().ContainSingle(message => 
-            message.DeviceId == inputEvent.deviceId && 
-            message.Value == inputEvent.value &&
-            message.Timestamp == inputEvent.timestamp);
+            message.Value.DeviceId == inputEvent.deviceId && 
+            message.Value.Value == inputEvent.value &&
+            message.Value.Timestamp == inputEvent.timestamp);
         reader.VerifyNoMoreMessages(TimeSpan.FromSeconds(10)).Should().BeTrue();
     }
 }
