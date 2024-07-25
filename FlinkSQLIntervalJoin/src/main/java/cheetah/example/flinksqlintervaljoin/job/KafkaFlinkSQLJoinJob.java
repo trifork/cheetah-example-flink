@@ -1,7 +1,8 @@
 package cheetah.example.flinksqlintervaljoin.job;
 
 import cheetah.example.flinksqlintervaljoin.mapping.EdmToSqlTypesMapper;
-import cheetah.example.flinksqlintervaljoin.mapping.SqlSchemaBuilder;
+import cheetah.example.flinksqlintervaljoin.mapping.SqlBuilder;
+
 import cheetah.example.flinksqlintervaljoin.util.ODataUtil;
 import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
@@ -28,7 +29,7 @@ final public class KafkaFlinkSQLJoinJob implements Serializable {
     private static final Logger LOGGER = LoggerFactory.getLogger(KafkaFlinkSQLJoinJob.class);
     private final ParameterTool parameters;
     private final StreamTableEnvironment tableEnv;
-    private final SqlSchemaBuilder sqlSchemaBuilder;
+    private final SqlBuilder sqlBuilder;
     private final EdmToSqlTypesMapper mapper;
 
     // Using LinkedHashMaps to ensure column ordering (consider using apache LinkedMap?)
@@ -36,10 +37,10 @@ final public class KafkaFlinkSQLJoinJob implements Serializable {
     private LinkedHashMap<String, String> rightTypeMapping;
     private LinkedHashMap<String, String> jointTypeMapping;
 
-    public KafkaFlinkSQLJoinJob(ParameterTool parameters, StreamTableEnvironment tableEnv, SqlSchemaBuilder sqlSchemaBuilder, EdmToSqlTypesMapper mapper) {
+    public KafkaFlinkSQLJoinJob(ParameterTool parameters, StreamTableEnvironment tableEnv, SqlBuilder sqlBuilder, EdmToSqlTypesMapper mapper) {
         this.parameters = parameters;
         this.tableEnv = tableEnv;
-        this.sqlSchemaBuilder = sqlSchemaBuilder;
+        this.sqlBuilder = sqlBuilder;
         this.mapper = mapper;
     }
 
@@ -49,7 +50,7 @@ final public class KafkaFlinkSQLJoinJob implements Serializable {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         StreamTableEnvironment tableEnv = StreamTableEnvironment.create(env, settings);
 
-        KafkaFlinkSQLJoinJob job = new KafkaFlinkSQLJoinJob(parameters, tableEnv, new SqlSchemaBuilder(), new EdmToSqlTypesMapper());
+        KafkaFlinkSQLJoinJob job = new KafkaFlinkSQLJoinJob(parameters, tableEnv, new SqlBuilder(), new EdmToSqlTypesMapper());
         job.setup();
     }
 
@@ -79,40 +80,47 @@ final public class KafkaFlinkSQLJoinJob implements Serializable {
         var rightSourceTable = parameters.get("rightSource");
         var joinKeyName = parameters.get("join-key");
 
-        var leftEscaped = escapeString(leftSourceTable);
-        var rightEscaped = escapeString(rightSourceTable);
-
         //Execute user SQL and put into the sink
-        var selectString = sqlSchemaBuilder.buildSelectStringForMappingsWithLeftTablePrecedence(leftTypeMapping, leftSourceTable, rightTypeMapping, rightSourceTable);
-        var equalityClause = sqlSchemaBuilder.buildEqualityString(leftSourceTable, joinKeyName, rightSourceTable, joinKeyName);
-        var intervalClause = sqlSchemaBuilder.buildIntervalClause(leftSourceTable, rightSourceTable, timeoutTimeSeconds);
+        var selectString = sqlBuilder.buildSelectStringForMappingsWithLeftTablePrecedence(leftTypeMapping, leftSourceTable, rightTypeMapping, rightSourceTable);
+        var equalityClause = sqlBuilder.buildEqualityString(leftSourceTable, joinKeyName, rightSourceTable, joinKeyName);
+        var intervalClause = sqlBuilder.buildIntervalClause(leftSourceTable, rightSourceTable, timeoutTimeSeconds);
+        var whereClause = sqlBuilder.concatenateWithAnd(equalityClause, intervalClause);
+        var fromBothSourcesClause = sqlBuilder.buildFromClauseFromSources(leftSourceTable, rightSourceTable);
 
-        String sqlJoinStatement = "INSERT INTO " + escapeString(parameters.get("sink")) + " SELECT " + selectString + " FROM " //+ joinClause
-                + leftEscaped + ", " + rightEscaped + " WHERE " + equalityClause + " AND " + intervalClause;
-        ;//+ " AND " + intervalClause;
+        String sqlJoinStatement = sqlBuilder.buildInsertIntoStatement(parameters.get("sink"), selectString, fromBothSourcesClause, whereClause);
+        //"INSERT INTO " + escapeString(parameters.get("sink")) + " SELECT " + selectString + " FROM "
+        //+ leftEscaped + ", " + rightEscaped + " WHERE " + equalityClause + " AND " + intervalClause;
 
+        var selectLeftClause = sqlBuilder.buildSelectStringForMapping(leftTypeMapping, leftSourceTable);
+        var notExistsClause = sqlBuilder.buildNotExistsClause(rightSourceTable, whereClause);
+        var fromLeftClause = sqlBuilder.buildFromClauseFromSources(leftSourceTable);
 
-        var selectLeftClause = sqlSchemaBuilder.buildSelectStringForMapping(leftTypeMapping, leftSourceTable);
-        var selectRightClause = sqlSchemaBuilder.buildSelectStringForMapping(rightTypeMapping, rightSourceTable);
+        String leftDLQStatement = sqlBuilder.buildInsertIntoStatement(parameters.get("leftDLQ"), selectLeftClause, fromLeftClause, notExistsClause);
+        //"INSERT INTO " + escapeString(parameters.get("leftDLQ"))
+        //+ " SELECT " + selectLeftClause + " FROM " + leftEscaped
+        //+ " WHERE NOT EXISTS (SELECT 1 FROM " + rightEscaped
+        //+ " WHERE " + equalityClause + " AND " + intervalClause
+        //+ ")";
 
-        String leftDLQStatement = "INSERT INTO " + escapeString(parameters.get("leftDLQ"))
-                + " SELECT " + selectLeftClause + " FROM " + leftEscaped
-                + " WHERE NOT EXISTS (SELECT 1 FROM " + rightEscaped
-                + " WHERE " + equalityClause + " AND " + intervalClause
-                + ")";
+        var selectRightClause = sqlBuilder.buildSelectStringForMapping(rightTypeMapping, rightSourceTable);
+        var rightJoinClause = sqlBuilder.buildLeftJoinString(rightSourceTable, joinKeyName, leftSourceTable, joinKeyName);
+        var fromRightJoinClause = sqlBuilder.concatenateWithAnd(rightJoinClause, intervalClause);
+        var joinKeyColumnNullClause = sqlBuilder.buildJoinKeyNullClause(leftSourceTable, joinKeyName);
 
+        String rightDLQStatement = sqlBuilder.buildInsertIntoStatement(parameters.get("rightDLQ"), selectRightClause, fromRightJoinClause, joinKeyColumnNullClause);
+        //"INSERT INTO " + escapeString(parameters.get("rightDLQ")) + " SELECT " + selectRightClause + " FROM " + rightJoinClause
+        //+ " AND " + intervalClause + " WHERE " + leftEscaped + "." +  escapeString(joinKeyName) + " is NULL";
 
-        var rightJoinClause = sqlSchemaBuilder.buildLeftJoinString(rightSourceTable, joinKeyName, leftSourceTable, joinKeyName);
-        String rightDLQStatement = "INSERT INTO " + escapeString(parameters.get("rightDLQ")) + " SELECT " + selectRightClause + " FROM " + rightJoinClause
-                + " AND " + intervalClause + " WHERE " + leftEscaped + "." +  escapeString(joinKeyName) + " is NULL";
-
+        LOGGER.debug(sqlJoinStatement);
+        LOGGER.debug(leftDLQStatement);
+        LOGGER.debug(rightDLQStatement);
 
         StatementSet statementSet = tableEnv.createStatementSet();
         statementSet.addInsertSql(sqlJoinStatement);
         statementSet.addInsertSql(leftDLQStatement);
         statementSet.addInsertSql(rightDLQStatement);
 
-        statementSet.execute();
+        statementSet.execute(); // Executes all statements at the "same time", i.e. we don't need to start reading the kafka topic from the beginning each time
     }
 
 
@@ -135,11 +143,11 @@ final public class KafkaFlinkSQLJoinJob implements Serializable {
 
     private void createInAndOutTablesFromInputODataSchemas() {
 
-        var schemaStringLeftSource = sqlSchemaBuilder.transformTypeMappingToSchemaWithKafkaTimestamp(leftTypeMapping);
-        var schemaStringRightSource = sqlSchemaBuilder.transformTypeMappingToSchemaWithKafkaTimestamp(rightTypeMapping);
-        var outputSchemaString = sqlSchemaBuilder.transformTypeMappingToSchema(jointTypeMapping);
-        var leftDLQSchemaString = sqlSchemaBuilder.transformTypeMappingToSchema(leftTypeMapping);
-        var rightDLQSchemaString = sqlSchemaBuilder.transformTypeMappingToSchema(rightTypeMapping);
+        var schemaStringLeftSource = sqlBuilder.transformTypeMappingToSchemaWithKafkaTimestamp(leftTypeMapping);
+        var schemaStringRightSource = sqlBuilder.transformTypeMappingToSchemaWithKafkaTimestamp(rightTypeMapping);
+        var outputSchemaString = sqlBuilder.transformTypeMappingToSchema(jointTypeMapping);
+        var leftDLQSchemaString = sqlBuilder.transformTypeMappingToSchema(leftTypeMapping);
+        var rightDLQSchemaString = sqlBuilder.transformTypeMappingToSchema(rightTypeMapping);
 
         Map<String, String> tableParams = new HashMap<>();
         tableParams.put("groupId", parameters.get("groupId"));
@@ -167,12 +175,12 @@ final public class KafkaFlinkSQLJoinJob implements Serializable {
 
     }
 
-    public void createTable(Map<String, String> tableParams, Schema tableSchema, StreamTableEnvironment tableEnv, String format) {
+    private void createTable(Map<String, String> tableParams, Schema tableSchema, StreamTableEnvironment tableEnv, String format) {
         //Create input topic / table
         //If topic already exists - table data is based upon that and
         //any data inserted is inserted into topic as well.
         //If topic doesnt exist - new topic is created.
-        var tableName = escapeString(tableParams.get("userTopic"));
+        var tableName = SqlBuilder.escapeString(tableParams.get("userTopic"));
         var tableDescriptor = TableDescriptor.forConnector("kafka")
                 .schema(tableSchema)
                 .format(format)
@@ -205,8 +213,15 @@ final public class KafkaFlinkSQLJoinJob implements Serializable {
         return resultMap;
     }
 
-    private String escapeString(String string) {
-        return '`' + string + '`';
-    }
+    private LinkedHashMap<String, String> createRightMappingWithoutKeysFromLeft(LinkedHashMap<String, String> leftTypeMapping, LinkedHashMap<String, String> rightTypeMapping) {
+        var resultMap = new LinkedHashMap<String, String>();
 
+        rightTypeMapping.forEach((key, value) -> {
+            if (!leftTypeMapping.containsKey(key)) {
+                resultMap.put(key, value);
+            }
+        });
+
+        return resultMap;
+    }
 }

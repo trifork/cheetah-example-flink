@@ -5,10 +5,11 @@ import org.apache.flink.table.api.Schema;
 
 import java.util.Map;
 
-public class SqlSchemaBuilder {
+public class SqlBuilder {
 
     private static final String WATERMARK_COLUMN_NAME = "ts";
     private static final int WATER_TIMESTAMP_PRECISION = 3;
+    private static final String AND = " AND ";
 
     public Schema transformTypeMappingToSchemaWithKafkaTimestamp(Map<String, String> namesAndTypes) {
         var schema = transformTypeMappingToSchema(namesAndTypes);
@@ -84,7 +85,47 @@ public class SqlSchemaBuilder {
                 + rightWatermarkColumn + " + " + interval;
     }
 
-    private String escapeString(String string) {
+    public String concatenateWithAnd(String... clauses) {
+        var stringBuilder = new StringBuilder();
+        for (String clause: clauses) {
+            stringBuilder.append(clause);
+            stringBuilder.append(AND);
+        }
+
+        var indexOfLastAnd = stringBuilder.length() - AND.length();
+        stringBuilder.delete(indexOfLastAnd, stringBuilder.length());   // remove last " AND "
+        return stringBuilder.toString();
+    }
+
+    public String buildFromClauseFromSources(String... sources) {
+        var stringBuilder = new StringBuilder();
+        for (String source: sources) {
+            stringBuilder.append(escapeString(source));
+            stringBuilder.append(',');
+        }
+
+        stringBuilder.deleteCharAt(stringBuilder.length() - 1);   // remove last ','
+        return stringBuilder.toString();
+    }
+
+    public String buildNotExistsClause(String source, String whereClause) {
+        return "NOT EXISTS (SELECT 1 FROM " + escapeString(source)
+                + " WHERE " + whereClause
+                + ")";
+    }
+
+    public String buildJoinKeyNullClause(String source, String keyColumn) {
+        return escapeString(source) + "." +  escapeString(keyColumn) + " is NULL";
+    }
+
+    public String buildInsertIntoStatement(String sink, String selectClause, String fromClause, String whereClause) {
+        return "INSERT INTO " + escapeString(sink) + " SELECT " + selectClause + " FROM "
+                + fromClause + " WHERE " + whereClause;
+    }
+
+    public static String escapeString(String string) {
         return '`' + string + '`';
     }
+
+
 }
