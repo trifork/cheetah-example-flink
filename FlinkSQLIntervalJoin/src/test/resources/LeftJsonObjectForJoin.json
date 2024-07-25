@@ -1,0 +1,8 @@
+{
+  "KeyOnlyInLeft": "ValueInLeft",
+  "KeyInBoth": "ValueInLeft",
+  "ObjectInBoth": {
+    "KeyInLeft": "ValueInLeft"
+  },
+  "ArrayInBoth": ["ValueInLeft"]
+}
