@@ -85,4 +85,103 @@ public class SqlBuilderTest {
         var expectedString = "`leftSource` LEFT OUTER JOIN `rightSource` ON `leftSource`.`leftKeyColumn`=`rightSource`.`rightKeyColumn`";
         Assertions.assertEquals(expectedString, joinString);
     }
+
+    @Test
+    public void testBuildEqualityString() {
+        var leftSourceTable = "leftSource";
+        var leftJoinKey = "leftKeyColumn";
+        var rightSourceTable = "rightSource";
+        var rightJoinKey = "rightKeyColumn";
+
+        // Act
+        var equalityString = sqlBuilder.buildEqualityString(leftSourceTable, leftJoinKey, rightSourceTable, rightJoinKey);
+
+
+        // Assert
+        var expectedString = "`leftSource`.`leftKeyColumn`=`rightSource`.`rightKeyColumn`";
+        Assertions.assertEquals(expectedString, equalityString);
+    }
+
+    @Test
+    public void testBuildIntervalString() {
+        var leftSourceTable = "leftSource";
+        var rightSourceTable = "rightSource";
+        int timeoutTimeSeconds = 6000;
+
+        // Act
+        var intervalString = sqlBuilder.buildIntervalClause(leftSourceTable, rightSourceTable, timeoutTimeSeconds);
+
+
+        // Assert
+        var expectedString = "`leftSource`.ts BETWEEN `rightSource`.ts - INTERVAL '6000' SECOND(4) AND `rightSource`.ts + INTERVAL '6000' SECOND(4)";
+        Assertions.assertEquals(expectedString, intervalString);
+    }
+
+    @Test
+    public void testConcatenateWithAndOneValue() {
+        var andString = sqlBuilder.concatenateWithAnd("some clause");
+        Assertions.assertEquals("some clause", andString);
+    }
+
+    @Test
+    public void testConcatenateWithAndMultipleValues() {
+        var andString = sqlBuilder.concatenateWithAnd("some clause", "another clause", "three");
+        Assertions.assertEquals("some clause AND another clause AND three", andString);
+    }
+
+
+    @Test
+    public void testBuildFromClauseFromSourcesOneSource() {
+        var fromString = sqlBuilder.buildFromClauseFromSources("one source");
+        Assertions.assertEquals("`one source`", fromString);
+    }
+
+    @Test
+    public void testBuildFromClauseFromSourcesMultipleSources() {
+        var fromString = sqlBuilder.buildFromClauseFromSources("one source", "second", "thi.rd");
+        Assertions.assertEquals("`one source`,`second`,`thi.rd`", fromString);
+    }
+
+    @Test
+    public void testBuildNotExistsClause() {
+        var sourceTable = "sourceTable";
+        var whereClause = "someColumn = aValue";
+
+        var notExistsClause = sqlBuilder.buildNotExistsClause(sourceTable, whereClause);
+        var expectedString = "NOT EXISTS (SELECT 1 FROM `sourceTable` WHERE someColumn = aValue)";
+        Assertions.assertEquals(expectedString, notExistsClause);
+    }
+
+    @Test
+    public void testBuildJoinKeyNullClause() {
+        var sourceTable = "sourceTable";
+        var keyColumn = "key";
+
+        var clause = sqlBuilder.buildJoinKeyNullClause(sourceTable, keyColumn);
+
+        var expectedString = "`sourceTable`.`key` is NULL";
+        Assertions.assertEquals(expectedString, clause);
+    }
+
+    @Test
+    public void testBuildInsertIntoStatement() {
+        var sink = "targetTable";
+        var selectClause = "someSource.someColumn,x.y";
+        var fromClause = "someSource,x";
+        var whereClause = "someCondition";
+
+        var insertIntoStatement = sqlBuilder.buildInsertIntoStatement(sink, selectClause, fromClause, whereClause);
+
+        var expectedString = "INSERT INTO `targetTable` SELECT someSource.someColumn,x.y FROM someSource,x WHERE someCondition";
+        Assertions.assertEquals(expectedString, insertIntoStatement);
+    }
+
+    @Test
+    public void testEscapeString() {
+        var string = "string";
+
+        var escapedString = SqlBuilder.escapeString(string);
+
+        Assertions.assertEquals("`string`", escapedString);
+    }
 }
