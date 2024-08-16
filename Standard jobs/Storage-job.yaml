@@ -1,7 +1,7 @@
 ---
 services:
   storage-job-jobmanager:
-    image: ghcr.io/trifork/cheetah-app-jobs:3.2.1
+    image: ghcr.io/trifork/cheetah-app-jobs:4.0.0
     ports:
       - "28087:8081"
       - "29256:9249"
@@ -43,7 +43,7 @@ services:
       - storage-job-taskmanager
 
   storage-job-taskmanager:
-    image: ghcr.io/trifork/cheetah-app-jobs:3.2.1
+    image: ghcr.io/trifork/cheetah-app-jobs:4.0.0
     command: taskmanager
     environment:
       FLINK_PROPERTIES: |
