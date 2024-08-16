@@ -31,7 +31,7 @@ RUN --mount=type=secret,id=GITHUB_TOKEN \
 #
 #  Install jar onto clean runtime system.
 #
-FROM ghcr.io/trifork/cheetah-flink:6.1.0-RC.1-flink-1.20.0-java17
+FROM ghcr.io/trifork/cheetah-flink:6.1.0-flink-1.20.0-java17
 
 COPY --from=build /app/target/observability*.jar /opt/flink/usrlib/artifacts/observability.jar
 
