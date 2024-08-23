@@ -23,7 +23,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: MegaLinter
-        uses: oxsecurity/megalinter/flavors/java@v7.13.0
+        uses: oxsecurity/megalinter/flavors/java@v8.0.0
         env:
           # All available variables are described in documentation
           # https://megalinter.io/configuration/
