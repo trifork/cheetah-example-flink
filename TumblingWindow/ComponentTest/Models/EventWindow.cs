@@ -1,4 +1,4 @@
-﻿using System.Text.Json.Serialization;
+﻿using Newtonsoft.Json;
 using System.Collections.Generic;
 
 namespace TumblingWindow.ComponentTest.Models;
@@ -6,12 +6,12 @@ namespace TumblingWindow.ComponentTest.Models;
 // Rename and implement a model that fits the one you expect your job to produce
 public class EventWindow
 {
-    [JsonPropertyName("deviceId")]
+    [JsonProperty("deviceId")]
     public string DeviceId { get; set; }
 
-    [JsonPropertyName("value")]
+    [JsonProperty("value")]
     public List<double> Values { get; set; }
 
-    [JsonPropertyName("timestamp")]
+    [JsonProperty("timestamp")]
     public long Timestamp { get; set; }
 }

@@ -1,19 +1,19 @@
-using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 
 namespace MultipleSideOutputExample.ComponentTest.Models;
 
 // Rename and implement a model that fits the one you expect your job to produce
 public class OutputEvent2
 {
-    [JsonPropertyName("deviceId")]
+    [JsonProperty("deviceId")]
     public string DeviceId { get; set; }
 
-    [JsonPropertyName("valueC")]
+    [JsonProperty("valueC")]
     public double ValueC { get; set; }
 
-    [JsonPropertyName("valueD")]
+    [JsonProperty("valueD")]
     public double ValueD { get; set; }
 
-    [JsonPropertyName("timestamp")]
+    [JsonProperty("timestamp")]
     public long Timestamp { get; set; }
 }
