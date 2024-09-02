@@ -1,4 +1,4 @@
-﻿using System.Text.Json.Serialization;
+﻿using Newtonsoft.Json;
 
 namespace KeySerializationSchema.ComponentTest.Models;
 
@@ -13,19 +13,19 @@ public class OutputEvent
         ExtraField = extraField;
     }
 
-    [JsonPropertyName("deviceId")]
+    [JsonProperty("deviceId")]
     public string DeviceId { get; set; }
 
-    [JsonPropertyName("value")]
+    [JsonProperty("value")]
     public double Value { get; set; }
     
-    [JsonPropertyName("timestamp")]
+    [JsonProperty("timestamp")]
     public long Timestamp { get; set; }
     
-    [JsonPropertyName("keys")]
+    [JsonProperty("keys")]
     public string Keys { get; set; }
 
-    [JsonPropertyName("extraField")]
+    [JsonProperty("extraField")]
     public string ExtraField { get; set; }
     
 

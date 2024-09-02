@@ -6,7 +6,6 @@ using Xunit;
 using Cheetah.Kafka.Testing;
 using AvroToJson.ComponentTest.Models;
 using Cheetah.SchemaRegistry.Testing;
-using Cheetah.Kafka;
 using Confluent.Kafka;
 
 namespace AvroToJson.ComponentTest;

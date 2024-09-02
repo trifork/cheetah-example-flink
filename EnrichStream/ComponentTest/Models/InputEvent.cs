@@ -1,15 +1,15 @@
-﻿using System.Text.Json.Serialization;
+﻿using Newtonsoft.Json;
 
 namespace EnrichStream.ComponentTest.Models;
 
 public class InputEvent
 {
-    [JsonPropertyName("deviceId")]
+    [JsonProperty("deviceId")]
     public string DeviceId { get; set; }
 
-    [JsonPropertyName("value")]
+    [JsonProperty("value")]
     public double Value { get; set; }
 
-    [JsonPropertyName("timestamp")]
+    [JsonProperty("timestamp")]
     public long Timestamp { get; set; }
 }

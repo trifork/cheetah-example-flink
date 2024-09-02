@@ -1,19 +1,19 @@
-﻿using System.Text.Json.Serialization;
+﻿using Newtonsoft.Json;
 
 namespace FlinkStates.ComponentTest.Models;
 
 // Rename and implement a model that fits the one you expect your job to produce
 public class FlinkStatesOutputEvent
 {
-    [JsonPropertyName("deviceId")]
+    [JsonProperty("deviceId")]
     public string DeviceId { get; set; }
 
-    [JsonPropertyName("value")]
+    [JsonProperty("value")]
     public double Value { get; set; }
 
-    [JsonPropertyName("timestamp")]
+    [JsonProperty("timestamp")]
     public long Timestamp { get; set; }
 
-    [JsonPropertyName("extraField")]
+    [JsonProperty("extraField")]
     public string ExtraField { get; set; }
 }

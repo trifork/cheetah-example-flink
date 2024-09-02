@@ -1,15 +1,15 @@
-﻿using System.Text.Json.Serialization;
+﻿using Newtonsoft.Json;
 
 namespace AvroToJson.ComponentTest.Models;
 
 public class OutputEventJson
 {
-    [JsonPropertyName("deviceId")]
+    [JsonProperty("deviceId")]
     public string DeviceId { get; set; }
 
-    [JsonPropertyName("value")]
+    [JsonProperty("value")]
     public double Value { get; set; }
 
-    [JsonPropertyName("timestamp")]
+    [JsonProperty("timestamp")]
     public long Timestamp { get; set; }
 }

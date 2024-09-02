@@ -1,16 +1,16 @@
-using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 
 namespace EnrichStream.ComponentTest.Models;
 
 // Inputs used to enrich stream based on deviceId
 public class EnrichEvent
 {
-    [JsonPropertyName("deviceId")]
+    [JsonProperty("deviceId")]
     public string DeviceId { get; set; }
 
-    [JsonPropertyName("value")]
+    [JsonProperty("value")]
     public double Value { get; set; }
 
-    [JsonPropertyName("timestamp")]
+    [JsonProperty("timestamp")]
     public long Timestamp { get; set; }
 }
