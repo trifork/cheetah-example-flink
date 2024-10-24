@@ -31,7 +31,7 @@ RUN --mount=type=secret,id=GITHUB_TOKEN \
 #
 #  Install jar onto clean runtime system.
 #
-FROM ghcr.io/trifork/cheetah-flink:6.1.1-flink-1.20.0-java17
+FROM ghcr.io/trifork/cheetah-flink:6.1.2-flink-1.20.0-java17
 
 COPY --from=build /app/target/transform-and-store*.jar /opt/flink/usrlib/artifacts/transform-and-store.jar
 
