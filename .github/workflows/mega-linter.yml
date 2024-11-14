@@ -86,8 +86,8 @@ jobs:
         env:
           branch_name: ${{ github.head_ref || github.ref_name }}
         run: |
-          git config --global user.email "nicolas.vuillamy@ox.security"
-          git config --global user.name "megalinter-bot"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "GitHub Actions Bot"
           git config --global commit.gpgSign false
           git checkout -B $branch_name
           git add .
