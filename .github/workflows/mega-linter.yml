@@ -110,5 +110,5 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git pull origin ${{ github.head_ref || github.ref_name }}
+          git pull --no-rebase origin ${{ github.head_ref || github.ref_name }}
           git push origin ${{ github.head_ref || github.ref_name }}
