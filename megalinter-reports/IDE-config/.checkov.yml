@@ -1,0 +1,8 @@
+---
+skip-check:
+  - CKV2_GHA_1 # Ensure top-level permissions are not set to write-all. The workflow users currently have a lot of permissions since the repo is private, but I might come back to this at some point
+  - CKV_GHA_7 # dispatch_workflow must not have inputs. Our workflow setup currently relies on user inputs so this makes no sense
+  - CKV_DOCKER_2 # Ensure healthcheck instructions in all images. This is a very strict rule, but we might revisit it
+  - CKV_DOCKER_3 # Ensure that a user for the container has been created. I am not sure if this makes sense when running in GitHub actions, but I might come back to it
+
+quiet: true # Do not print passed checks
