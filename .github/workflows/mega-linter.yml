@@ -107,5 +107,4 @@ jobs:
       - name: Push changes
         if: steps.commit.outputs.commit
         run: |
-          git pull origin ${{ github.head_ref || github.ref_name }}
-          git push origin ${{ github.head_ref || github.ref_name }}
+          git push origin ${{ github.head_ref || github.ref_name }} --force
