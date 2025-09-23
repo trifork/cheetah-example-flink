@@ -22,10 +22,10 @@ import java.util.concurrent.ExecutionException;
  */
 public class ExternalLookupMapper extends RichAsyncFunction<InputEvent, OutputEvent> {
 
+    private final static String TOKEN_ID = "ServiceToken";
     private final String idServiceHost;
     private HttpClient client;
     private KeyedTokenProvider tokenProvider;
-    private final static String TOKEN_ID = "ServiceToken";
     private HttpRequest.Builder requestBuilder;
     private final String tokenUrl;
     private final String clientId;
