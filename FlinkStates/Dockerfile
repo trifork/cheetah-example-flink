@@ -31,7 +31,7 @@ RUN --mount=type=secret,id=GITHUB_TOKEN \
 #
 #  Install jar onto clean runtime system.
 #
-FROM ghcr.io/trifork/cheetah-flink:6.2.0-main-SNAPSHOT90-flink-1.20.2-java17
+FROM ghcr.io/trifork/cheetah-flink:6.2.0-test-snapshot-SNAPSHOT91-flink-1.20.2-java17
 
 COPY --from=build /app/target/flinkstates*.jar /opt/flink/usrlib/artifacts/flinkstates.jar
 
