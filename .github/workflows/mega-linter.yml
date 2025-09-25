@@ -8,6 +8,7 @@ on:
   push:
     branches: [main, "release/**"]
   pull_request:
+    branches: [main, "release/**", "renovate/**"]
 
 concurrency:
   group: ${{ github.ref }}-${{ github.workflow }}
