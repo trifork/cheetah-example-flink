@@ -4,6 +4,7 @@
 name: MegaLinter
 
 on:
+  workflow_dispatch:
   push:
     branches: [main, "release/**"]
   pull_request:
@@ -32,7 +33,7 @@ jobs:
 
       - name: MegaLinter
         id: ml
-        uses: oxsecurity/megalinter/flavors/java@v8.8.0
+        uses: oxsecurity/megalinter/flavors/java@v9.0.0
         env:
           # All available variables are described in documentation
           # https://megalinter.io/configuration/
@@ -113,7 +114,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git pull origin ${{ github.head_ref || github.ref_name }} --rebase
+          git pull origin ${{ github.head_ref || github.ref_name }} --no-rebase
 
       - name: Push changes
         if: ${{ steps.commit.outputs.commit || env.changes == 'true' }}
