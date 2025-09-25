@@ -25,7 +25,7 @@ public class ExternalLookupMapper extends RichAsyncFunction<InputEvent, OutputEv
     private final String idServiceHost;
     private HttpClient client;
     private KeyedTokenProvider tokenProvider;
-    private final static String TOKEN_ID = "ServiceToken";
+    private static final String TOKEN_ID = "ServiceToken";
     private HttpRequest.Builder requestBuilder;
     private final String tokenUrl;
     private final String clientId;
