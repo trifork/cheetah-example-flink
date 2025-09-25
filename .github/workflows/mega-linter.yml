@@ -6,7 +6,7 @@ name: MegaLinter
 on:
   workflow_dispatch:
   push:
-    branches: [main, "release/**"]
+    branches: [main, "release/**", "renovate/**"]
   pull_request:
     branches: [main]
 
