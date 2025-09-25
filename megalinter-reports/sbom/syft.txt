@@ -1,0 +1,30 @@
+[0000]  WARN no explicit name and version provided for directory source, deriving artifact ID from the given path (which is not ideal)
+NAME                                                                                 VERSION         TYPE                                     
+./.github/actions/component-test                                                     UNKNOWN         github-action           (+1 duplicate)   
+AvroToJson                                                                           1.0.0           java-archive                             
+KeySerializationSchema                                                               3.0.0           java-archive                             
+SerializationErrorCatch                                                              1.0.0-SNAPSHOT  java-archive                             
+SerializationErrorSideOutput                                                         1.0.0-SNAPSHOT  java-archive                             
+actions/checkout                                                                     v5              github-action           (+3 duplicates)  
+actions/upload-artifact                                                              v4              github-action                            
+cheetah-lib-processing                                                               6.1.2           java-archive                             
+docker/login-action                                                                  v3              github-action                            
+enrichstream                                                                         0.0.1           java-archive                             
+externallookup                                                                       1.0.0-SNAPSHOT  java-archive                             
+flink-clients                                                                        1.20.2          java-archive                             
+flink-metrics-dropwizard                                                             1.20.2          java-archive                             
+flink-streaming-java                                                                 1.20.2          java-archive                             
+flink-test-utils                                                                     1.20.2          java-archive                             
+flinkstates                                                                          0.0.1           java-archive                             
+jsonToAvro                                                                           1.0.0-SNAPSHOT  java-archive                             
+junit-jupiter                                                                        5.11.4          java-archive                             
+lombok                                                                               1.18.42         java-archive                             
+multiplesideoutput                                                                   1.0.0-SNAPSHOT  java-archive                             
+observability                                                                        1.0.0           java-archive                             
+oxsecurity/megalinter/flavors/java                                                   v9.0.0          github-action                            
+peter-evans/create-pull-request                                                      v7.0.8          github-action                            
+qoomon/actions--create-commit                                                        v1              github-action                            
+tj-actions/changed-files                                                             v47             github-action                            
+transform-and-store                                                                  1.0.0-SNAPSHOT  java-archive                             
+trifork/cheetah-infrastructure-utils-workflows/.github/workflows/e2e-should-run.yml  main            github-action-workflow  (+1 duplicate)   
+tumblingwindow                                                                       1.0.0-SNAPSHOT  java-archive
