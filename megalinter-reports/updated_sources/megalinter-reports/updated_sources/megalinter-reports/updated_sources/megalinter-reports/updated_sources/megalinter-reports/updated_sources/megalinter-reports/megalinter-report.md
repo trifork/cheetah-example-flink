@@ -1,30 +1,30 @@
-## ✅⚠️[MegaLinter](https://megalinter.io/9.0.0) analysis: Success with warnings
+## ✅⚠️[MegaLinter](https://megalinter.io/9.0.1) analysis: Success with warnings
 
 
 
 | Descriptor  |                                               Linter                                                |Files|Fixed|Errors|Warnings|Elapsed time|
 |-------------|-----------------------------------------------------------------------------------------------------|----:|----:|-----:|-------:|-----------:|
-|✅ DOCKERFILE|[hadolint](https://megalinter.io/9.0.0/descriptors/dockerfile_hadolint)                              |   25|     |     0|       0|        0.9s|
-|✅ JAVA      |[checkstyle](https://megalinter.io/9.0.0/descriptors/java_checkstyle)                                |   92|     |     0|       0|       3.26s|
-|✅ JAVA      |[pmd](https://megalinter.io/9.0.0/descriptors/java_pmd)                                              |   92|     |     0|       0|       5.64s|
-|✅ JSON      |[prettier](https://megalinter.io/9.0.0/descriptors/json_prettier)                                    |   43|    1|     0|       0|       0.59s|
-|✅ JSON      |[v8r](https://megalinter.io/9.0.0/descriptors/json_v8r)                                              |   43|     |     0|       0|      12.22s|
-|⚠️ MARKDOWN  |[markdownlint](https://megalinter.io/9.0.0/descriptors/markdown_markdownlint)                        |   30|    6|    64|       0|        2.4s|
-|✅ MARKDOWN  |[markdown-table-formatter](https://megalinter.io/9.0.0/descriptors/markdown_markdown_table_formatter)|   30|    6|     0|       0|       0.42s|
-|✅ REPOSITORY|[gitleaks](https://megalinter.io/9.0.0/descriptors/repository_gitleaks)                              |  yes|     |    no|      no|       0.95s|
-|✅ REPOSITORY|[git_diff](https://megalinter.io/9.0.0/descriptors/repository_git_diff)                              |  yes|     |    no|      no|       0.03s|
-|✅ REPOSITORY|[secretlint](https://megalinter.io/9.0.0/descriptors/repository_secretlint)                          |  yes|     |    no|      no|       3.55s|
-|✅ REPOSITORY|[syft](https://megalinter.io/9.0.0/descriptors/repository_syft)                                      |  yes|     |    no|      no|       1.67s|
-|✅ REPOSITORY|[trufflehog](https://megalinter.io/9.0.0/descriptors/repository_trufflehog)                          |  yes|     |    no|      no|       2.33s|
-|✅ XML       |[xmllint](https://megalinter.io/9.0.0/descriptors/xml_xmllint)                                       |   39|    0|     0|       0|       5.73s|
-|✅ YAML      |[prettier](https://megalinter.io/9.0.0/descriptors/yaml_prettier)                                    |   18|    0|     0|       0|       0.93s|
-|✅ YAML      |[v8r](https://megalinter.io/9.0.0/descriptors/yaml_v8r)                                              |   18|     |     0|       0|       5.06s|
-|✅ YAML      |[yamllint](https://megalinter.io/9.0.0/descriptors/yaml_yamllint)                                    |   18|     |     0|       0|       0.98s|
+|✅ DOCKERFILE|[hadolint](https://megalinter.io/9.0.1/descriptors/dockerfile_hadolint)                              |   25|     |     0|       0|       0.93s|
+|✅ JAVA      |[checkstyle](https://megalinter.io/9.0.1/descriptors/java_checkstyle)                                |   92|     |     0|       0|       3.29s|
+|✅ JAVA      |[pmd](https://megalinter.io/9.0.1/descriptors/java_pmd)                                              |   92|     |     0|       0|       5.35s|
+|✅ JSON      |[prettier](https://megalinter.io/9.0.1/descriptors/json_prettier)                                    |   43|    1|     0|       0|       0.54s|
+|✅ JSON      |[v8r](https://megalinter.io/9.0.1/descriptors/json_v8r)                                              |   43|     |     0|       0|      11.63s|
+|⚠️ MARKDOWN  |[markdownlint](https://megalinter.io/9.0.1/descriptors/markdown_markdownlint)                        |   31|    7|    66|       0|       2.38s|
+|✅ MARKDOWN  |[markdown-table-formatter](https://megalinter.io/9.0.1/descriptors/markdown_markdown_table_formatter)|   31|    7|     0|       0|       0.42s|
+|✅ REPOSITORY|[gitleaks](https://megalinter.io/9.0.1/descriptors/repository_gitleaks)                              |  yes|     |    no|      no|       1.05s|
+|✅ REPOSITORY|[git_diff](https://megalinter.io/9.0.1/descriptors/repository_git_diff)                              |  yes|     |    no|      no|       0.03s|
+|✅ REPOSITORY|[secretlint](https://megalinter.io/9.0.1/descriptors/repository_secretlint)                          |  yes|     |    no|      no|       3.26s|
+|✅ REPOSITORY|[syft](https://megalinter.io/9.0.1/descriptors/repository_syft)                                      |  yes|     |    no|      no|       1.89s|
+|✅ REPOSITORY|[trufflehog](https://megalinter.io/9.0.1/descriptors/repository_trufflehog)                          |  yes|     |    no|      no|       2.31s|
+|✅ XML       |[xmllint](https://megalinter.io/9.0.1/descriptors/xml_xmllint)                                       |   39|    0|     0|       0|       5.62s|
+|✅ YAML      |[prettier](https://megalinter.io/9.0.1/descriptors/yaml_prettier)                                    |   18|    0|     0|       0|       0.86s|
+|✅ YAML      |[v8r](https://megalinter.io/9.0.1/descriptors/yaml_v8r)                                              |   18|     |     0|       0|        5.1s|
+|✅ YAML      |[yamllint](https://megalinter.io/9.0.1/descriptors/yaml_yamllint)                                    |   18|     |     0|       0|       0.92s|
 
 ## Detailed Issues
 
 <details>
-<summary>⚠️ MARKDOWN / markdownlint - 64 errors</summary>
+<summary>⚠️ MARKDOWN / markdownlint - 66 errors</summary>
 
 ```
 AvroToJson/README.md:3:196 MD059/descriptive-link-text Link text should be descriptive [Context: "[here]"]
@@ -78,6 +78,8 @@ megalinter-reports/updated_sources/megalinter-reports/updated_sources/megalinter
 megalinter-reports/updated_sources/megalinter-reports/updated_sources/megalinter-reports/updated_sources/megalinter-reports/updated_sources/megalinter-reports/megalinter-report.md:29 MD040/fenced-code-language Fenced code blocks should have a language specified [Context: "```"]
 megalinter-reports/updated_sources/megalinter-reports/updated_sources/megalinter-reports/updated_sources/megalinter-reports/updated_sources/megalinter-reports/updated_sources/megalinter-reports/megalinter-report.md:1 MD041/first-line-heading/first-line-h1 First line in a file should be a top-level heading [Context: "## ✅⚠️[MegaLinter](https://meg..."]
 megalinter-reports/updated_sources/megalinter-reports/updated_sources/megalinter-reports/updated_sources/megalinter-reports/updated_sources/megalinter-reports/updated_sources/megalinter-reports/megalinter-report.md:29 MD040/fenced-code-language Fenced code blocks should have a language specified [Context: "```"]
+megalinter-reports/updated_sources/megalinter-reports/updated_sources/megalinter-reports/updated_sources/megalinter-reports/updated_sources/megalinter-reports/updated_sources/megalinter-reports/updated_sources/megalinter-reports/megalinter-report.md:1 MD041/first-line-heading/first-line-h1 First line in a file should be a top-level heading [Context: "## ✅⚠️[MegaLinter](https://meg..."]
+megalinter-reports/updated_sources/megalinter-reports/updated_sources/megalinter-reports/updated_sources/megalinter-reports/updated_sources/megalinter-reports/updated_sources/megalinter-reports/updated_sources/megalinter-reports/megalinter-report.md:29 MD040/fenced-code-language Fenced code blocks should have a language specified [Context: "```"]
 megalinter-reports/updated_sources/TransformAndStore/README.md:3:196 MD059/descriptive-link-text Link text should be descriptive [Context: "[here]"]
 megalinter-reports/updated_sources/TransformAndStore/README.md:98 MD040/fenced-code-language Fenced code blocks should have a language specified [Context: "```"]
 megalinter-reports/updated_sources/TransformAndStore/README.md:109 MD040/fenced-code-language Fenced code blocks should have a language specified [Context: "```"]
@@ -100,7 +102,7 @@ See detailed reports in MegaLinter artifacts
 
 Your project could benefit from a custom flavor, which would allow you to run only the linters you need, and thus improve runtime performances. (Skip this info by defining `FLAVOR_SUGGESTIONS: false`)
 
-  - Documentation: [Custom Flavors](https://megalinter.io/9.0.0/custom-flavors/)
-  - Command: `npx mega-linter-runner@9.0.0 --custom-flavor-setup --custom-flavor-linters DOCKERFILE_HADOLINT,JAVA_CHECKSTYLE,JAVA_PMD,JSON_V8R,JSON_PRETTIER,MARKDOWN_MARKDOWNLINT,MARKDOWN_MARKDOWN_TABLE_FORMATTER,REPOSITORY_GIT_DIFF,REPOSITORY_GITLEAKS,REPOSITORY_SECRETLINT,REPOSITORY_SYFT,REPOSITORY_TRUFFLEHOG,XML_XMLLINT,YAML_PRETTIER,YAML_YAMLLINT,YAML_V8R`
+  - Documentation: [Custom Flavors](https://megalinter.io/9.0.1/custom-flavors/)
+  - Command: `npx mega-linter-runner@9.0.1 --custom-flavor-setup --custom-flavor-linters DOCKERFILE_HADOLINT,JAVA_CHECKSTYLE,JAVA_PMD,JSON_V8R,JSON_PRETTIER,MARKDOWN_MARKDOWNLINT,MARKDOWN_MARKDOWN_TABLE_FORMATTER,REPOSITORY_GIT_DIFF,REPOSITORY_GITLEAKS,REPOSITORY_SECRETLINT,REPOSITORY_SYFT,REPOSITORY_TRUFFLEHOG,XML_XMLLINT,YAML_PRETTIER,YAML_YAMLLINT,YAML_V8R`
 
 [![MegaLinter is graciously provided by OX Security](https://raw.githubusercontent.com/oxsecurity/megalinter/main/docs/assets/images/ox-banner.png)](https://www.ox.security/?ref=megalinter)
