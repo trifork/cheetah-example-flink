@@ -4,27 +4,27 @@
 
 | Descriptor  |                                               Linter                                                |Files|Fixed|Errors|Warnings|Elapsed time|
 |-------------|-----------------------------------------------------------------------------------------------------|----:|----:|-----:|-------:|-----------:|
-|✅ DOCKERFILE|[hadolint](https://megalinter.io/9.0.0/descriptors/dockerfile_hadolint)                              |   25|     |     0|       0|        0.9s|
-|✅ JAVA      |[checkstyle](https://megalinter.io/9.0.0/descriptors/java_checkstyle)                                |   92|     |     0|       0|       3.26s|
-|✅ JAVA      |[pmd](https://megalinter.io/9.0.0/descriptors/java_pmd)                                              |   92|     |     0|       0|       5.64s|
-|✅ JSON      |[prettier](https://megalinter.io/9.0.0/descriptors/json_prettier)                                    |   43|    1|     0|       0|       0.59s|
-|✅ JSON      |[v8r](https://megalinter.io/9.0.0/descriptors/json_v8r)                                              |   43|     |     0|       0|      12.22s|
-|⚠️ MARKDOWN  |[markdownlint](https://megalinter.io/9.0.0/descriptors/markdown_markdownlint)                        |   30|    6|    64|       0|        2.4s|
-|✅ MARKDOWN  |[markdown-table-formatter](https://megalinter.io/9.0.0/descriptors/markdown_markdown_table_formatter)|   30|    6|     0|       0|       0.42s|
-|✅ REPOSITORY|[gitleaks](https://megalinter.io/9.0.0/descriptors/repository_gitleaks)                              |  yes|     |    no|      no|       0.95s|
+|✅ DOCKERFILE|[hadolint](https://megalinter.io/9.0.0/descriptors/dockerfile_hadolint)                              |   25|     |     0|       0|        0.8s|
+|✅ JAVA      |[checkstyle](https://megalinter.io/9.0.0/descriptors/java_checkstyle)                                |   92|     |     0|       0|       3.25s|
+|✅ JAVA      |[pmd](https://megalinter.io/9.0.0/descriptors/java_pmd)                                              |   92|     |     0|       0|       5.31s|
+|✅ JSON      |[prettier](https://megalinter.io/9.0.0/descriptors/json_prettier)                                    |   43|    1|     0|       0|       0.61s|
+|✅ JSON      |[v8r](https://megalinter.io/9.0.0/descriptors/json_v8r)                                              |   43|     |     0|       0|      11.65s|
+|⚠️ MARKDOWN  |[markdownlint](https://megalinter.io/9.0.0/descriptors/markdown_markdownlint)                        |   31|    7|    66|       0|       2.34s|
+|✅ MARKDOWN  |[markdown-table-formatter](https://megalinter.io/9.0.0/descriptors/markdown_markdown_table_formatter)|   31|    7|     0|       0|       0.38s|
+|✅ REPOSITORY|[gitleaks](https://megalinter.io/9.0.0/descriptors/repository_gitleaks)                              |  yes|     |    no|      no|       0.93s|
 |✅ REPOSITORY|[git_diff](https://megalinter.io/9.0.0/descriptors/repository_git_diff)                              |  yes|     |    no|      no|       0.03s|
-|✅ REPOSITORY|[secretlint](https://megalinter.io/9.0.0/descriptors/repository_secretlint)                          |  yes|     |    no|      no|       3.55s|
-|✅ REPOSITORY|[syft](https://megalinter.io/9.0.0/descriptors/repository_syft)                                      |  yes|     |    no|      no|       1.67s|
-|✅ REPOSITORY|[trufflehog](https://megalinter.io/9.0.0/descriptors/repository_trufflehog)                          |  yes|     |    no|      no|       2.33s|
-|✅ XML       |[xmllint](https://megalinter.io/9.0.0/descriptors/xml_xmllint)                                       |   39|    0|     0|       0|       5.73s|
-|✅ YAML      |[prettier](https://megalinter.io/9.0.0/descriptors/yaml_prettier)                                    |   18|    0|     0|       0|       0.93s|
-|✅ YAML      |[v8r](https://megalinter.io/9.0.0/descriptors/yaml_v8r)                                              |   18|     |     0|       0|       5.06s|
-|✅ YAML      |[yamllint](https://megalinter.io/9.0.0/descriptors/yaml_yamllint)                                    |   18|     |     0|       0|       0.98s|
+|✅ REPOSITORY|[secretlint](https://megalinter.io/9.0.0/descriptors/repository_secretlint)                          |  yes|     |    no|      no|       3.49s|
+|✅ REPOSITORY|[syft](https://megalinter.io/9.0.0/descriptors/repository_syft)                                      |  yes|     |    no|      no|       1.64s|
+|✅ REPOSITORY|[trufflehog](https://megalinter.io/9.0.0/descriptors/repository_trufflehog)                          |  yes|     |    no|      no|       2.38s|
+|✅ XML       |[xmllint](https://megalinter.io/9.0.0/descriptors/xml_xmllint)                                       |   39|    0|     0|       0|        5.5s|
+|✅ YAML      |[prettier](https://megalinter.io/9.0.0/descriptors/yaml_prettier)                                    |   18|    0|     0|       0|       0.96s|
+|✅ YAML      |[v8r](https://megalinter.io/9.0.0/descriptors/yaml_v8r)                                              |   18|     |     0|       0|       5.26s|
+|✅ YAML      |[yamllint](https://megalinter.io/9.0.0/descriptors/yaml_yamllint)                                    |   18|     |     0|       0|       1.07s|
 
 ## Detailed Issues
 
 <details>
-<summary>⚠️ MARKDOWN / markdownlint - 64 errors</summary>
+<summary>⚠️ MARKDOWN / markdownlint - 66 errors</summary>
 
 ```
 AvroToJson/README.md:3:196 MD059/descriptive-link-text Link text should be descriptive [Context: "[here]"]
@@ -78,6 +78,8 @@ megalinter-reports/updated_sources/megalinter-reports/updated_sources/megalinter
 megalinter-reports/updated_sources/megalinter-reports/updated_sources/megalinter-reports/updated_sources/megalinter-reports/updated_sources/megalinter-reports/megalinter-report.md:29 MD040/fenced-code-language Fenced code blocks should have a language specified [Context: "```"]
 megalinter-reports/updated_sources/megalinter-reports/updated_sources/megalinter-reports/updated_sources/megalinter-reports/updated_sources/megalinter-reports/updated_sources/megalinter-reports/megalinter-report.md:1 MD041/first-line-heading/first-line-h1 First line in a file should be a top-level heading [Context: "## ✅⚠️[MegaLinter](https://meg..."]
 megalinter-reports/updated_sources/megalinter-reports/updated_sources/megalinter-reports/updated_sources/megalinter-reports/updated_sources/megalinter-reports/updated_sources/megalinter-reports/megalinter-report.md:29 MD040/fenced-code-language Fenced code blocks should have a language specified [Context: "```"]
+megalinter-reports/updated_sources/megalinter-reports/updated_sources/megalinter-reports/updated_sources/megalinter-reports/updated_sources/megalinter-reports/updated_sources/megalinter-reports/updated_sources/megalinter-reports/megalinter-report.md:1 MD041/first-line-heading/first-line-h1 First line in a file should be a top-level heading [Context: "## ✅⚠️[MegaLinter](https://meg..."]
+megalinter-reports/updated_sources/megalinter-reports/updated_sources/megalinter-reports/updated_sources/megalinter-reports/updated_sources/megalinter-reports/updated_sources/megalinter-reports/updated_sources/megalinter-reports/megalinter-report.md:29 MD040/fenced-code-language Fenced code blocks should have a language specified [Context: "```"]
 megalinter-reports/updated_sources/TransformAndStore/README.md:3:196 MD059/descriptive-link-text Link text should be descriptive [Context: "[here]"]
 megalinter-reports/updated_sources/TransformAndStore/README.md:98 MD040/fenced-code-language Fenced code blocks should have a language specified [Context: "```"]
 megalinter-reports/updated_sources/TransformAndStore/README.md:109 MD040/fenced-code-language Fenced code blocks should have a language specified [Context: "```"]
