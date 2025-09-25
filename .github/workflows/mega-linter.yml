@@ -4,6 +4,7 @@
 name: MegaLinter
 
 on:
+  workflow_dispatch:
   push:
     branches: [main, "release/**"]
   pull_request:
@@ -107,13 +108,6 @@ jobs:
         with:
           message: "[MegaLinter] Apply linters fixes"
           allow-empty: false
-
-      - name: Pull latest changes
-        if: ${{ steps.commit.outputs.commit || env.changes == 'true' }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          git pull origin ${{ github.head_ref || github.ref_name }} --rebase
 
       - name: Push changes
         if: ${{ steps.commit.outputs.commit || env.changes == 'true' }}
