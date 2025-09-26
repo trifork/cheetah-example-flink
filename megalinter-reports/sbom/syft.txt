@@ -11,10 +11,10 @@ cheetah-lib-processing                                                          
 docker/login-action                                                                  v3              github-action                            
 enrichstream                                                                         0.0.1           java-archive                             
 externallookup                                                                       1.0.0-SNAPSHOT  java-archive                             
-flink-clients                                                                        1.20.3          java-archive                             
-flink-metrics-dropwizard                                                             1.20.3          java-archive                             
-flink-streaming-java                                                                 1.20.3          java-archive                             
-flink-test-utils                                                                     1.20.3          java-archive                             
+flink-clients                                                                        2.1.0           java-archive                             
+flink-metrics-dropwizard                                                             2.1.0           java-archive                             
+flink-streaming-java                                                                 2.1.0           java-archive                             
+flink-test-utils                                                                     2.1.0           java-archive                             
 flinkstates                                                                          0.0.1           java-archive                             
 jsonToAvro                                                                           1.0.0-SNAPSHOT  java-archive                             
 junit-jupiter                                                                        5.11.4          java-archive                             
