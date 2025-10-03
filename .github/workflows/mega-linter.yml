@@ -101,14 +101,6 @@ jobs:
           git config --global commit.gpgSign false
           git checkout -B $branch_name
           git add -A
-
-      - name: Commit applied linter fixes
-        if: ${{ steps.ml.outputs.has_updated_sources == 1 && (env.APPLY_FIXES_EVENT == 'all' || env.APPLY_FIXES_EVENT == github.event_name) && env.APPLY_FIXES_MODE == 'commit' && github.ref != 'refs/heads/main' && (github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository) && !contains(github.event.head_commit.message, 'skip fix') && env.changes == 'true' }}
-        id: commit
-        uses: qoomon/actions--create-commit@v1
-        with:
-          message: "[MegaLinter] Apply linters fixes"
-          allow-empty: false
           
       - name: Push changes
         if: ${{ steps.commit.outputs.commit || env.changes == 'true' }}
