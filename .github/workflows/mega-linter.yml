@@ -15,11 +15,11 @@ concurrency:
   group: ${{ github.ref }}-${{ github.workflow }}
   cancel-in-progress: true
 
-# env: # Comment env block if you do not want to apply fixes
-# Apply linter fixes configuration - DISABLED for PR workflow
-# APPLY_FIXES: all # When active, APPLY_FIXES must also be defined as environment variable (in github/workflows/mega-linter.yml or other CI tool)
-# APPLY_FIXES_EVENT: pull_request # Decide which event triggers application of fixes in a commit or a PR (pull_request, push, all)
-# APPLY_FIXES_MODE: commit # If APPLY_FIXES is used, defines if the fixes are directly committed (commit) or posted in a PR (pull_request)
+env: # Comment env block if you do not want to apply fixes
+  # Apply linter fixes configuration - DISABLED for PR workflow
+  APPLY_FIXES: none # Disabled to prevent automatic commits
+  APPLY_FIXES_EVENT: none # Disabled to prevent automatic commits
+  APPLY_FIXES_MODE: none # Disabled to prevent automatic commits
 
 jobs:
   build:
@@ -103,7 +103,7 @@ jobs:
           git add -A
           
       - name: Push changes
-        if: ${{ steps.commit.outputs.commit || env.changes == 'true' }}
+        if: ${{ env.changes == 'true' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
