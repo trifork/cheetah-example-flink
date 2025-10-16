@@ -21,7 +21,7 @@ junit-jupiter                                                                   
 lombok                                                                               1.18.42         java-archive                             
 multiplesideoutput                                                                   1.0.0-SNAPSHOT  java-archive                             
 observability                                                                        1.0.0           java-archive                             
-oxsecurity/megalinter/flavors/java                                                   v9.0.1          github-action                            
+oxsecurity/megalinter/flavors/java                                                   v9.0.1          github-action
 peter-evans/create-pull-request                                                      v7.0.8          github-action                            
 qoomon/actions--create-commit                                                        v1              github-action                            
 tj-actions/changed-files                                                             v47             github-action                            
