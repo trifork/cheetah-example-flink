@@ -42,7 +42,7 @@ jobs:
           VALIDATE_ALL_CODEBASE: true
           DISABLE: "COPYPASTE,SPELL"
           DISABLE_LINTERS: "REPOSITORY_TRIVY,REPOSITORY_TRIVY_SBOM,REPOSITORY_GRYPE,SPELL_LYCHEE,JSON_JSONLINT,MARKDOWN_MARKDOWN_LINK_CHECK"
-          EXCLUDED_DIRECTORIES: ".git,.github,.devcontainer,target,avrorecord"
+          EXCLUDED_DIRECTORIES: ".git,.github,.devcontainer,target,avrorecord,megalinter-reports"
           FILTER_REGEX_EXCLUDE: "catalog-info.yaml"
           JAVA_CHECKSTYLE_CONFIG_FILE: "checkstyle.xml"
           REPOSITORY_CHECKOV_ARGUMENTS: "--skip-check CKV2_GHA_1,CKV_DOCKER_2,CKV_GHA_7,CKV_SECRET_6"
