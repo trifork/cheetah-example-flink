@@ -17,7 +17,7 @@ flink-streaming-java                                                            
 flink-test-utils                                                                     1.20.3          java-archive                             
 flinkstates                                                                          0.0.1           java-archive                             
 jsonToAvro                                                                           1.0.0-SNAPSHOT  java-archive                             
-junit-jupiter                                                                        5.11.4          java-archive                             
+junit-jupiter                                                                        6.0.0           java-archive                             
 lombok                                                                               1.18.42         java-archive                             
 multiplesideoutput                                                                   1.0.0-SNAPSHOT  java-archive                             
 observability                                                                        1.0.0           java-archive                             
