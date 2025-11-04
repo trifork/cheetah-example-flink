@@ -22,7 +22,7 @@ env: # Comment env block if you do not want to apply fixes
   APPLY_FIXES_MODE: commit # If APPLY_FIXES is used, defines if the fixes are directly committed (commit) or posted in a PR (pull_request)
 
 jobs:
-  build:
+  linting:
     name: MegaLinter
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -49,7 +49,7 @@ jobs:
 
       - name: Archive production artifacts
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: MegaLinter reports
           path: |
