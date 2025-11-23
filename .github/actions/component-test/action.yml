@@ -27,7 +27,7 @@ runs:
         password: ${{ inputs.access-token }}
 
     - name: Checkout trifork/cheetah-development-infrastructure
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
       with:
         repository: trifork/cheetah-development-infrastructure
         ref: ${{ inputs.development-infrastructure-ref }}
