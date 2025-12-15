@@ -31,7 +31,7 @@ RUN --mount=type=secret,id=GITHUB_TOKEN \
 #
 #  Install jar onto clean runtime system.
 #
-FROM ghcr.io/trifork/cheetah-flink:6.2.0-main-SNAPSHOT93-flink-1.20.3-java21
+FROM ghcr.io/trifork/cheetah-flink:6.2.0-RC.6.2.1-flink-1.20.3-java11
 
 COPY --from=build /app/target/SerializationErrorCatch*.jar /opt/flink/usrlib/artifacts/SerializationErrorCatch.jar
 
