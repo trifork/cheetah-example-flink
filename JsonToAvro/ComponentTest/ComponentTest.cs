@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using cheetah.example.model.avrorecord;
 using Cheetah.Kafka.Testing;
 using FluentAssertions;
