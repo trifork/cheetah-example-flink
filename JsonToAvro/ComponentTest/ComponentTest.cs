@@ -15,7 +15,7 @@ namespace jsonToAvro.ComponentTest;
 public class ComponentTest
 {
     [Fact]
-    public void Json_To_Avro_Component_Test()
+    public async Task Json_To_Avro_Component_Test()
     {
         // Arrange
         // Setup configuration. Configuration from appsettings.json is overridden by environment variables.
@@ -23,15 +23,15 @@ public class ComponentTest
             .AddJsonFile("appsettings.json")
             .AddEnvironmentVariables()
             .Build();
-        
+
         // Create a KafkaTestClientFactory to create KafkaTestReaders and KafkaTestWriters
         var kafkaClientFactory = KafkaTestClientFactory.Create(configuration);
         var avroKafkaClientFactory = AvroKafkaTestClientFactory.Create(configuration);
-        
+
         // Create writer and reader
         var writer = kafkaClientFactory.CreateTestWriter<InputEvent>("jsonToAvroInputTopic");
         var reader = avroKafkaClientFactory.CreateTestReader<OutputEventAvro>("jsonToAvroOutputTopic");
-        
+
         // Act
         // Create InputEvent
         var inputEvent = new InputEvent()
@@ -45,14 +45,14 @@ public class ComponentTest
         {
             Value = inputEvent
         };
-        
-        writer.WriteAsync(message);
-        
+
+        await writer.WriteAsync(message);
+
         // Assert
         var messages = reader.ReadMessages(1, TimeSpan.FromSeconds(10));
-        
-        messages.Should().ContainSingle(message => 
-            message.Value.deviceId == inputEvent.DeviceId && 
+
+        messages.Should().ContainSingle(message =>
+            message.Value.deviceId == inputEvent.DeviceId &&
             message.Value.value == inputEvent.Value &&
             message.Value.timestamp == inputEvent.Timestamp);
         reader.VerifyNoMoreMessages(TimeSpan.FromSeconds(20)).Should().BeTrue();
