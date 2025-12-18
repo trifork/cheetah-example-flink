@@ -42,6 +42,11 @@ under the License.
                 <updatePolicy>always</updatePolicy>
             </snapshots>
         </repository>
+        <repository>
+            <id>confluent.repository</id>
+            <name>Confluent Repository</name>
+            <url>https://packages.confluent.io/maven/</url>
+        </repository>
     </repositories>
 
     <dependencies>
