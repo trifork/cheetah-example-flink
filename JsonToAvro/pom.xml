@@ -65,6 +65,18 @@ under the License.
             <scope>provided</scope>
         </dependency>
 
+        <!-- Kafka OAuth Support -->
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-clients</artifactId>
+            <version>4.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>io.confluent</groupId>
+            <artifactId>kafka-avro-serializer</artifactId>
+            <version>8.0.2</version>
+        </dependency>
+
         <!-- Util -->
         <dependency>
             <groupId>org.projectlombok</groupId>
