@@ -1,0 +1,139 @@
+---
+version: "3"
+services:
+  odataimporter-job:
+    image: ${DOCKER_REGISTRY-}odataimporter-job
+    build:
+      dockerfile: Dockerfile
+      args:
+        - MAVEN_ARGS=${EXTRA_MAVEN_ARGS-}
+      secrets:
+        - GITHUB_TOKEN
+        - GITHUB_ACTOR
+    command: |
+      standalone-job
+      --job-classname cheetah.example.odataimporter.job.ODataImporterJob
+      --kafka-bootstrap-servers kafka:19092
+      --kafka-group-id odataimporter-group-id
+      --kafka-security-protocol SASL_PLAINTEXT
+      --output-kafka-topic odataimporterOutputTopic
+    environment:
+      KAFKA_CLIENT_ID: default-access
+      KAFKA_CLIENT_SECRET: default-access-secret
+      KAFKA_SCOPE: kafka
+      KAFKA_TOKEN_URL: http://keycloak:1852/realms/local-development/protocol/openid-connect/token
+    
+      # OData
+      ODATA_URL: http://vhcals4hci.northeurope.cloudapp.azure.com:50000/sap/opu/odata/sap/
+      ODATA_USERNAME: CHEETAH
+      ODATA_PASSWORD: ${CHEETAH_SAP_PASSWORD}
+      ODATA_ENTIYSET_NAME: API_MAINTNOTIFICATION/MaintenanceNotification,API_SALES_ORDER_SRV/A_SalesOrder
+      ODATA_VERSION: "2"
+
+      ID_SERVICE_SCOPE: openid
+      FLINK_PROPERTIES: |
+        jobmanager.rpc.address: odataimporter-job
+        scheduler-mode: reactive
+        rest.flamegraph.enabled: true
+        state.backend: rocksdb
+        state.checkpoints.dir: file:///checkpoints/processing
+        state.savepoints.dir: file:///checkpoints/processing
+        execution.checkpointing.interval: 120 seconds
+        execution.checkpointing.min-pause: 60 seconds
+    depends_on:
+      - odataimporter-job-taskmanager
+    ports:
+      - "18081:8081"
+    volumes:
+      - flink:/checkpoints
+    healthcheck:
+      test: curl localhost:8081/jobs | grep -q '"status":"RUNNING"' || exit -1
+      interval: 1s
+      timeout: 1s
+      retries: 30
+
+  odataimporter-job-taskmanager:
+    image: ${DOCKER_REGISTRY-}odataimporter-job
+    build:
+      dockerfile: Dockerfile
+      args:
+        - MAVEN_ARGS=${EXTRA_MAVEN_ARGS-}
+      secrets:
+        - GITHUB_TOKEN
+        - GITHUB_ACTOR
+    command: taskmanager
+    environment:
+      FLINK_PROPERTIES: |
+        jobmanager.rpc.address: odataimporter-job
+        taskmanager.memory.process.size: 4gb
+        taskmanager.numberOfTaskSlots: 2
+    volumes:
+      - flink:/checkpoints
+
+  storage-job-jobmanager:
+    image: ghcr.io/trifork/cheetah-app-jobs:3.0.0
+    ports:
+      - "28087:8081"
+    command: |
+      standalone-job
+      --job-classname com.trifork.cheetah.apps.jobs.storage.OpensearchStorageJob
+      --kafka-bootstrap-servers kafka:19092
+      --kafka-group-id storage-job-odataimporter-group
+      --input-kafka-topic odataimporterOutputTopic
+
+      --index-base-name sap-maintenancenotification2
+
+      --opensearch-hosts http://opensearch:9200
+    environment:
+      - KAFKA_SECURITY_PROTOCOL=SASL_PLAINTEXT
+      - INPUT_KAFKA_CLIENT_ID=default-access
+      - INPUT_KAFKA_CLIENT_SECRET=default-access-secret
+      - KAFKA_SCOPE=kafka
+      - INPUT_KAFKA_TOKEN_URL=http://keycloak:1852/realms/local-development/protocol/openid-connect/token
+      - OPENSEARCH_SECURITY_PROTOCOL=SASL_PLAINTEXT
+      - OPENSEARCH_CLIENT_ID=default-access
+      - OPENSEARCH_CLIENT_SECRET=default-access-secret
+      - OPENSEARCH_SCOPE=opensearch
+      - OPENSEARCH_TOKEN_URL=http://keycloak:1852/realms/local-development/protocol/openid-connect/token
+      - |
+        FLINK_PROPERTIES=
+        jobmanager.rpc.address: storage-job-jobmanager
+        scheduler-mode: reactive
+        rest.flamegraph.enabled: true
+        state.backend: hashmap
+        state.checkpoints.dir: file:///checkpoints/storage
+        state.savepoints.dir: file:///checkpoints/storage
+        execution.checkpointing.interval: 20 seconds
+        execution.checkpointing.min-pause: 10 seconds
+        metrics.reporters: prom
+        metrics.reporter.prom.factory.class: org.apache.flink.metrics.prometheus.PrometheusReporterFactory
+    volumes:
+      - flink:/checkpoints
+    depends_on:
+      - storage-job-taskmanager
+
+  storage-job-taskmanager:
+    image: ghcr.io/trifork/cheetah-app-jobs:3.0.0
+    command: taskmanager
+    environment:
+      - |
+        FLINK_PROPERTIES=
+        jobmanager.rpc.address: storage-job-jobmanager
+        taskmanager.memory.process.size: 4gb
+        taskmanager.numberOfTaskSlots: 2
+    volumes:
+      - flink:/checkpoints
+
+volumes:
+  flink:
+
+secrets:
+  GITHUB_TOKEN:
+    environment: GITHUB_TOKEN
+  GITHUB_ACTOR:
+    environment: GITHUB_ACTOR
+
+networks:
+  default:
+    name: "cheetah-infrastructure"
+    external: true
