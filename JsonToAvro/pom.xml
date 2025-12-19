@@ -42,11 +42,6 @@ under the License.
                 <updatePolicy>always</updatePolicy>
             </snapshots>
         </repository>
-        <repository>
-            <id>confluent.repository</id>
-            <name>Confluent Repository</name>
-            <url>https://packages.confluent.io/maven/</url>
-        </repository>
     </repositories>
 
     <dependencies>
@@ -68,18 +63,6 @@ under the License.
             <artifactId>flink-clients</artifactId>
             <version>${flink.version}</version>
             <scope>provided</scope>
-        </dependency>
-
-        <!-- Kafka OAuth Support -->
-        <dependency>
-            <groupId>org.apache.kafka</groupId>
-            <artifactId>kafka-clients</artifactId>
-            <version>4.1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>io.confluent</groupId>
-            <artifactId>kafka-avro-serializer</artifactId>
-            <version>8.0.2</version>
         </dependency>
 
         <!-- Util -->
