@@ -76,19 +76,6 @@ public class ComponentTest
         var listMessages = listReader.ReadMessages(1, TimeSpan.FromSeconds(1));
         var mapMessages = mapReader.ReadMessages(2, TimeSpan.FromSeconds(1));
 
-        // Debug output
-        Console.WriteLine($"Value messages count: {valueMessages.Count()}");
-        Console.WriteLine($"Reducing messages count: {reducingMessages.Count()}");
-        Console.WriteLine($"Aggregating messages count: {aggregatingMessages.Count()}");
-        Console.WriteLine($"List messages count: {listMessages.Count()}");
-        Console.WriteLine($"Map messages count: {mapMessages.Count()}");
-        
-        Console.WriteLine("Reducing messages values:");
-        foreach (var msg in reducingMessages)
-        {
-            Console.WriteLine($"  Value: {msg.Value}");
-        }
-
         // Evaluate the results
         valueMessages.Should().ContainSingle(message => message.Value == 34.56);
 
