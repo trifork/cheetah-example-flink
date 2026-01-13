@@ -65,6 +65,13 @@
             <scope>provided</scope>
         </dependency>
         
+        <!-- Kafka clients with OAuth support -->
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-clients</artifactId>
+            <version>3.9.0</version>
+        </dependency>
+        
         <!-- Util -->
         <dependency>
             <groupId>org.projectlombok</groupId>
