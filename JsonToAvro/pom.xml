@@ -98,7 +98,6 @@ under the License.
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka-clients</artifactId>
             <version>4.1.1</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>io.confluent</groupId>
