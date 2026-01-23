@@ -55,8 +55,6 @@ services:
         state.savepoints.dir: file:///checkpoints/processing
         execution.checkpointing.interval: 300 seconds
         execution.checkpointing.min-pause: 240 seconds
-    depends_on:
-      - jsontoavro-taskmanager
     volumes:
       - flink:/checkpoints
     healthcheck:
@@ -71,6 +69,8 @@ services:
         - GITHUB_TOKEN
         - GITHUB_ACTOR
     command: taskmanager
+    depends_on:
+      - jsontoavro-jobmanager
     environment:
       FLINK_PROPERTIES: |
         jobmanager.rpc.address: jsontoavro-jobmanager
