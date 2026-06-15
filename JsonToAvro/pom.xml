@@ -42,6 +42,11 @@ under the License.
                 <updatePolicy>always</updatePolicy>
             </snapshots>
         </repository>
+        <repository>
+            <id>confluent.repository</id>
+            <name>Confluent Maven Repository</name>
+            <url>https://packages.confluent.io/maven/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -49,7 +54,7 @@ under the License.
         <dependency>
             <groupId>com.trifork.cheetah.processing</groupId>
             <artifactId>cheetah-lib-processing</artifactId>
-            <version>6.1.2</version>
+            <version>6.2.0-RC.6.2.1</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

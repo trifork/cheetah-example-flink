@@ -34,7 +34,6 @@ To run the docker containers you need to set the following environment variables
 
 ```bash
 export GITHUB_ACTOR=your-github-username # replace with your github username
-export GITHUB_ACTOR=your-github-username # replace with your github username
 export GITHUB_TOKEN=your-github-token # replace with the token you generated in the previous paragraph
 ```
 

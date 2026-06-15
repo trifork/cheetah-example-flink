@@ -7,7 +7,7 @@ SerializationErrorCatch                                                         
 SerializationErrorSideOutput                                                         1.0.0-SNAPSHOT  java-archive                             
 actions/checkout                                                                     v5              github-action           (+3 duplicates)  
 actions/upload-artifact                                                              v4              github-action                            
-cheetah-lib-processing                                                               6.1.2           java-archive                             
+cheetah-lib-processing                                                               6.2.0-RC.6.2.1           java-archive                             
 docker/login-action                                                                  v3              github-action                            
 enrichstream                                                                         0.0.1           java-archive                             
 externallookup                                                                       1.0.0-SNAPSHOT  java-archive                             
